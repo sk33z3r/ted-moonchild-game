@@ -1,0 +1,10 @@
+version: '3.7'
+
+services:
+
+  python:
+    build: .
+    container_name: ted-moonchild-and-the-roadies-in-space
+    restart: never
+    stdin_open: true
+    tty: true

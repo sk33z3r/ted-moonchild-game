@@ -1,0 +1,48 @@
+version: '3.7'
+
+services:
+
+  python:
+    build: .
+    container_name: tmatris_python
+    ports:
+      - "7175:22"
+    restart: unless-stopped
+    networks:
+      blackrook:
+        ipv4_address: 172.100.0.120
+
+  #mysql:
+  #  image: mysql:latest
+  #  container_name: tmatris_database
+  #  restart: unless-stopped
+  #  environment:
+  #    - MYSQL_ROOT_PASSWORD=m00nch1ldr3n
+  #    - MYSQL_DATABASE=moonchild
+  #    - MYSQL_USER=moonchild
+  #    - MYSQL_PASSWORD=m00nch1ld
+  #  networks:
+  #    blackrook:
+  #      ipv4_address: 172.100.0.121
+
+  #phpmyadmin:
+  #  image: phpmyadmin:latest
+  #  container_name: tmatris_phpmyadmin
+  #  depends_on:
+  #    - mysql
+  #  restart: unless-stopped
+  #  ports:
+  #    - 8080:80
+  #  environment:
+  #    - PMA_HOST=mysql
+  #  networks:
+  #    blackrook:
+  #      ipv4_address: 172.100.0.122
+
+networks:
+
+  blackrook:
+    name: blackrook
+    ipam:
+      config:
+        - subnet: 172.100.0.0/24
