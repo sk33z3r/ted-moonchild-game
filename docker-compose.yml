@@ -8,9 +8,40 @@ services:
     ports:
       - "7175:22"
     restart: unless-stopped
+    volumes:
+      - ./:/tmatris
     networks:
       blackrook:
         ipv4_address: 172.100.0.120
+
+  mongo:
+    image: mongo
+    restart: unless-stopped
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - ./db:/data/db:rw
+    networks:
+      blackrook:
+        ipv4_address: 172.100.0.121
+
+  mongo-express:
+    image: mongo-express
+    restart: unless-stopped
+    depends_on:
+      - mongo
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+    networks:
+      blackrook:
+        ipv4_address: 172.100.0.122
 
   #mysql:
   #  image: mysql:latest
