@@ -2,7 +2,7 @@ FROM python:3-alpine
 # upgrade pip
 RUN pip install --upgrade pip
 # add openssh and clean
-RUN apk add --update openssh \
+RUN apk add --update bash openssh \
 && rm  -rf /tmp/* /var/cache/apk/*
 # add entrypoint script
 ADD dockerfiles/docker-entrypoint.sh /usr/local/bin

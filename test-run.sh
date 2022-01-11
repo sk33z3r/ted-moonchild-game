@@ -18,6 +18,10 @@ case $1 in
     remote)
         ssh -p 7175 -o "LogLevel ERROR" -o "StrictHostKeyChecking no" -o "UserKnownHostsFile=/dev/null" -t ted@moonchild.space "$command"
     ;;
+    env)
+        docker build -t tmatris_python .
+        docker run -it --rm --name tamtris_python -v $PWD:/tmatris -w /tmatris tmatris_python bash
+    ;;
     *)
         echo "Invalid input, expecting local or remote"
         exit 1
