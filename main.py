@@ -5,6 +5,8 @@ import time # Import time for intro GFX
 from colorama import Fore, Back, Style  # Used for text coloring
 import random # For random number generation
 import argparse # For passing command line args
+import dictionaries
+import globalVars as vars
 
 # check for command line arguments
 parser = argparse.ArgumentParser()
@@ -26,496 +28,19 @@ if args.nocolor:
 else:
     colors = 1
 
-# engine variables
 PROMPT = Fore.RED + '\m/: ' + Style.NORMAL + Fore.WHITE
+
+# engine variables
 nextAction = 0 # 1 = player, 0 = enemy
-
-# worldItems variables
-WEAPON = 'weapon'
-FX = 'fx'
-ATKBNS = 0
-GROUNDDESC = 'grounddesc'
-SHORTDESC = 'shortdesc'
-LONGDESC = 'longdesc'
-TAKEABLE = 'takeable'
-EDIBLE = 'edible'
-BATTLE = 'battle'
-DESCWORDS = 'descwords'
-
-# worldRooms variables
-DESC = 'desc'
-NORTH = 'north'
-SOUTH = 'south'
-EAST = 'east'
-WEST = 'west'
-UP = 'up'
-DOWN = 'down'
-GROUND = 'ground'
-SHOP = 'shop'
-PLANET = 'planet'
-
-# enemies variables
-ENDESC = 'endesc'
-HP = 'hp'
-MP = 'mp'
-ATTACKMIN = 'attackmin'
-ATTACKMAX = 'attackmax'
-CRITBNS = 0 # TODO Make CRITBNS scale to current planet
-CR = 'challengerating' # TODO implement challenge rating system
-DIALOG = 'dialog'
 
 # Battle system globals
 enemyHP = 'hp'
 enemyMP = 'mp'
 
-# Character battle stat values go here
-PLAYERHP = 100
-PLAYERMP = 25
-FLOYDS = 0
-PLAYERLVL = 1
-PLAYERXP = 0
-CRIT = 1 # TODO make CRIT value based on PLAYERLVL
-
-# Hero Attack variables
-HEROMIN = 'min'
-HEROMAX = 'max'
-MPREQ = 'mpreq'
-MAGDMG = 'magdmg'
-
 # equipment status variables
 # TODO make these default fallback values
 equippedWeapon = 'Fists'
 addedFX = 'noFX'
-
-# challenge rating variable
-XPAWARD = 0
-
-# intro
-INTRO1 = 'intro1'
-INTRO2 = 'intro2'
-INTRO3 = 'intro3'
-INTRO4 = 'intro4'
-INTRO5 = 'intro5'
-
-SCREEN_WIDTH = 170
-
-# worldRooms dictionary
-# TODO convert dictionary to SQLlite3
-'''
-Syntax:
-    '': {
-        DESC: '',
-        NORTH: '',
-        SOUTH: '',
-        EAST: '',
-        WEST: '',
-        UP: '',
-        DOWN: '',
-        PLANET: '',
-        SHOP: [''],
-        GROUND: ['']},
-'''
-
-worldRooms = {
-    'EBGB Stage': {
-        DESC: 'Ted finishes wrapping cables and tearing down the stage.'
-            + '\n\n'
-            + Fore.CYAN + 'TED: ' + Style.BRIGHT + '"I\'m gettin\' too old for this shit."' + Style.NORMAL + Fore.WHITE
-            + '\n\n'
-            + 'The bar is winding down for the night.'
-            + '\n',
-        NORTH: 'EBGB Dance Floor',
-        EAST: 'EBGB Backstage',
-        WEST: 'EBGB Bathrooms',
-        PLANET: 'Zappa',
-        GROUND: ['Empty Bottle', 'Stack of Cables', 'Drums']},
-    'EBGB Dance Floor': {
-        DESC: 'Ted walks out onto the dance floor. There are two drunk hippies making out'
-            + '\n'
-            + 'furiously. Ted tries to ignore them.'
-            + '\n\n'
-            + 'The bartender can be seen wiping down the bar; last call hasn\'t been announced.'
-            + '\n',
-        NORTH: 'EBGB Parking Lot',
-        EAST: 'EBGB Bar',
-        SOUTH: 'EBGB Stage',
-        WEST: 'EBGB Jukebox',
-        PLANET: 'Zappa',
-        GROUND: ['Guitar Pick', 'Broken Drumstick']},
-    'EBGB Backstage': {
-        DESC: 'Ted finds himself trudging through a sea of beer cans, roaches, and used'
-            + '\n'
-            + 'condoms. Lying on top of a case is a grungy white guitar that was used'
-            + '\n'
-            + 'by the cover band.'
-            + '\n\n'
-            + Fore.CYAN + 'TED: ' + Style.BRIGHT + '"Dumbass left his guitar."' + Style.NORMAL + Fore.WHITE
-            + '\n',
-        WEST: 'EBGB Stage',
-        PLANET: 'Zappa',
-        GROUND: ['Squire Strat', 'Used Condom', 'Chaz Note']},
-    'EBGB Bathrooms': {
-        DESC: 'The smell of piss and shit from the hippies at the show tonight is overbearing.'
-            + '\n\n'
-            + Fore.CYAN + 'TED: ' + Style.BRIGHT + '"I swear I\'m going to murder every hippy in the galaxy.'
-            + '\n'
-            + '      Gotta finish this album first."' + Style.NORMAL + Fore.WHITE
-            + '\n\n'
-            + 'The faint odor of cannabis lingers from a stall. Ted kicks the door in to find'
-            + '\n'
-            + 'a startled hippy. Thinking quickly, the hippy offers a lit joint to Ted.'
-            + '\n\n'
-            + Fore.GREEN + 'HIPPY: ' + Style.BRIGHT + '"Wanna hit, dude?"' + Style.NORMAL + Fore.WHITE
-            + '\n',
-        EAST: 'EBGB Stage',
-        PLANET: 'Zappa',
-        GROUND: ['Lit Joint']},
-    'EBGB Bar': {
-        DESC: 'Ted sizes up the bartender. He\'s a large rotund individual from the planet'
-            + '\n'
-            + 'Zappa. Best not to try anything stupid with him.'
-            + '\n\n'
-            + Fore.CYAN + 'BONGO: ' + Style.BRIGHT + '"Whatchoo won\' Ted?"' + Style.NORMAL + Fore.WHITE
-            + '\n\n'
-            + Fore.GREEN + 'TED: ' + Style.BRIGHT + '"Where\'d Chaz and the band go?"' + Style.NORMAL + Fore.WHITE
-            + '\n\n'
-            + Fore.CYAN + 'BONGO: ' + Style.BRIGHT + '"Heh, they hitched a ride with some fancy-pants producer.'
-            + '\n'
-            + '        They don\' need you no more, Ted.'
-            + '\n'
-            + '        You bes\' buy somethin\' or get the hell outta here"' + Style.NORMAL + Fore.WHITE
-            + '\n',
-        NORTH: 'EBGB Parking Lot',
-        WEST: 'EBGB Dance Floor',
-        SHOP: ['Dark Matter Ale'],
-        PLANET: 'Zappa',
-        GROUND: []},
-    'EBGB Jukebox': {
-        DESC: 'Ted needs to listen to some tunes, so he walks over to the ratty Jukebox that\'s'
-            + '\n'
-            + 'probably been here for centuries.'
-            + '\n\n'
-            + 'There are 4 buttons, and a blinking slot with text that reads: ' + Style.BRIGHT + Fore.GREEN + 'INSERT 5 FLOYDS' + Style.NORMAL + Fore.WHITE
-            + '\n',
-        NORTH: 'EBGB Parking Lot',
-        EAST: 'EBGB Dance Floor',
-        PLANET: 'Zappa',
-        GROUND: []},
-    'EBGB Parking Lot': {
-        DESC: 'Ted leaves EBGBs to find his sweet looking Winnibego in the parking lot.'
-            + '\n\n'
-            + 'To the east is a swirling black wormhole. It\'s sucking in small bits of debris'
-            + '\n'
-            + 'from the ground around it.'
-            + '\n',
-        EAST: 'Black Wormhole',
-        NORTH: 'Winnibego',
-        SOUTH: 'EBGB Bar',
-        PLANET: 'Zappa',
-        GROUND: []},
-    'Black Wormhole': {
-        DESC: 'Ted steps into the black wormhole. As he reaches the event'
-            + '\n'
-            + 'horizon he feels his body begin to warp and dissipate.'
-            + '\n\n'
-            + Fore.CYAN + 'TED: ' + Style.BRIGHT + '"FUU-"' + Style.NORMAL + Fore.WHITE
-            + '\n\n'
-            + 'After what seems like eons, Ted\'s body begins to materialize again.'
-            + '\n\n'
-            + Fore.CYAN + 'TED: ' + Style.BRIGHT + '"-UUCK."' + Style.NORMAL + Fore.WHITE
-            + '\n\n'
-            + 'Ted finds himself in a dark alley that looks like it might be on the planet'
-            + '\n'
-            + 'Mactel 6. Lounging before him in a mound of used condoms and empty Dark Matter'
-            + '\n'
-            + 'Ale bottles there\'s a rough looking buzzoid hobo smoking what looks to be a'
-            + '\n'
-            + 'joint made of trash.'
-            + '\n\n'
-            + Fore.GREEN + 'HOBO: ' + Style.BRIGHT + '"What\'ll ya be havin\', stranger?"' + Style.NORMAL + Fore.WHITE
-            + '\n\n'
-            + 'The hobo smirks maniacally and opens his shitty excuse for wings to reveal a'
-            + '\n'
-            + 'smorgasbord of psychedelic drugs.'
-            + '\n',
-        WEST: 'EBGB Parking Lot',
-        SHOP: ['Magic Mushies', 'ACiD', 'Mescalin', 'Amanitas'],
-        PLANET: 'Universe',
-        GROUND: []},
-    'Winnibego': {
-        DESC: 'Ted\'s trusty steed, the ol\' Winnie. It smells of dude and weed in here.'
-            + '\n\n'
-            + 'Ted sees a flashing light on the console that reads: ' + Fore.GREEN + 'IGNITION' + Style.NORMAL + Fore.WHITE
-            + '\n',
-        DOWN: 'EBGB Parking Lot',
-        PLANET: 'Travel',
-        GROUND: []},
-    }
-
-# worldItems dictionary
-# TODO convert dictionary to SQLlite3
-'''
-Syntax
-    '': {
-        GROUNDDESC: '',
-        SHORTDESC: '',
-        LONGDESC: '',
-        TAKEABLE: True,
-        WEAPON: True,
-        FX: True,
-        EDIBLE: True,
-        BATTLE: True,
-        ATKBNS: 0,
-        DESCWORDS: ['']},
-'''
-
-worldItems = {
-    'Fists': {
-        GROUNDDESC: 'Ted\'s raw fists',
-        SHORTDESC: 'his fists',
-        LONGDESC: 'Ted\'s manly fucking fists. They\'ve beaten many faces into the ground.',
-        TAKEABLE: True,
-        WEAPON: True,
-        ATKBNS: 0,
-        DESCWORDS: ['fists']},
-    'noFX': {
-        GROUNDDESC: 'Raw tone',
-        SHORTDESC: 'air',
-        LONGDESC: 'Nothing but tone.',
-        TAKEABLE: True,
-        FX: True,
-        ATKBNS: 0,
-        DESCWORDS: ['nofx']},
-    'Winnibego Keys': {
-        GROUNDDESC: 'Keys to the Winnie',
-        SHORTDESC: 'the keys to the Winnie',
-        LONGDESC: 'The keys to Ted\'s sweet Winnibego',
-        TAKEABLE: True,
-        DESCWORDS: ['keys', 'winnie keys']},
-    'Protection': {
-        GROUNDDESC: 'Protection',
-        SHORTDESC: 'protection',
-        LONGDESC: 'The best protection the galaxy has to offer against the buzzoids.',
-        TAKEABLE: True,
-        BATTLE: True,
-        DESCWORDS: ['protection']},
-    'Squire Strat': {
-        GROUNDDESC: 'Chaz Lightyear\'s Guitar',
-        SHORTDESC: 'the Squire Strat',
-        LONGDESC: 'A beat up strat that used to be white. It gets the job done.',
-        TAKEABLE: True,
-        WEAPON: True,
-        ATKBNS: 1,
-        DESCWORDS: ['chaz\'s guitar', 'chaz guitar', 'strat', 'stratocaster']},
-    'Used Condom': {
-        GROUNDDESC: 'Slimy condom',
-        SHORTDESC: 'the jimmy hat',
-        LONGDESC: 'It\'s stuck to the table. Probably should leave it for the cleaning crew.',
-        TAKEABLE: False,
-        EDIBLE: True,
-        DESCWORDS: ['jimmy hat', 'condom', 'cum sock']},
-    'Chaz Note': {
-        GROUNDDESC: 'Handwritten note',
-        SHORTDESC: 'the note',
-        LONGDESC: 'A note in Chaz\'s sloppy handwriting: ' + Fore.YELLOW + 'Yo Ted, a scout at the show wants us to' + '\n' + 'sign with \'em. We\'re heading to their station after the gig, see you later bro.' + Style.NORMAL + Fore.WHITE,
-        TAKEABLE: True,
-        DESCWORDS: ['note']},
-    'Empty Bottle': {
-        GROUNDDESC: 'Empty bottle',
-        SHORTDESC: 'the empty bottle',
-        LONGDESC: 'An empty bottle of Dark Matter Ale. Ted wishes it was full.',
-        TAKEABLE: False,
-        DESCWORDS: ['bottle', 'empty bottle']},
-    'Stack of Cables': {
-        GROUNDDESC: 'Cables',
-        SHORTDESC: 'the cables',
-        LONGDESC: 'A stack of professionally coiled cables, no thanks to Ted.',
-        TAKEABLE: False,
-        DESCWORDS: ['cables', 'stack of cables', 'cable stack']},
-    'Drums': {
-        GROUNDDESC: 'Drum Kit',
-        SHORTDESC: 'the kit',
-        LONGDESC: 'EBGB\'s house kit. It\'s missing the cymbals.',
-        TAKEABLE: False,
-        DESCWORDS: ['drums', 'kit']},
-    'Dark Matter Ale': {
-        GROUNDDESC: 'Refreshing Dark Ale',
-        SHORTDESC: 'the Dark Matter Ale',
-        LONGDESC: 'A cold refreshing ale brewed in the outer rim of the galaxy. The label claims' + '\n' + 'to have an alcohol content of 2.08x10^15.',
-        TAKEABLE: True,
-        EDIBLE: True,
-        BATTLE: True,
-        DESCWORDS: ['ale', 'bottle of ale', 'dark matter ale', 'dark matter']},
-    'Guitar Pick': {
-        GROUNDDESC: 'Rip Curl\'s pick',
-        SHORTDESC: 'the guitar pick',
-        LONGDESC: 'The pick that Rip Curl threw into the crowd at EBGBs.',
-        TAKEABLE: True,
-        FX: True,
-        ATKBNS: 1,
-        DESCWORDS: ['pick', 'guitar pick']},
-    'Broken Drumstick': {
-        GROUNDDESC: 'Grumm\'s broken stick',
-        SHORTDESC: 'the wood shard',
-        LONGDESC: 'Piece of a broken stick that Grumm tossed into the crowd at EBGBs. Ted wonders' + '\n' + 'where the other half ended up.',
-        TAKEABLE: True,
-        DESCWORDS: ['stick', 'wood shard']},
-    'Lit Joint': {
-        GROUNDDESC: 'Hippy\'s J',
-        SHORTDESC: 'the lit joint',
-        LONGDESC: 'A cherried joint some hippy gave Ted for not beating the shit out of him.',
-        TAKEABLE: True,
-        BATTLE: True,
-        DESCWORDS: ['joint', 'j', 'hippy j', 'jay', 'lit joint', 'lit j']},
-    'Magic Mushies': {
-        GROUNDDESC: 'Magic Mushies',
-        SHORTDESC: 'the shrooms',
-        LONGDESC: 'A bag full of shriveled brown mushrooms. Looks like enough for two people, or one roadie.',
-        TAKEABLE: True,
-        EDIBLE: True,
-        BATTLE: True,
-        DESCWORDS: ['shrooms', 'mushies', 'magic shrooms']},
-    'ACiD': {
-        GROUNDDESC: 'ACiD',
-        SHORTDESC: 'the acid tab',
-        LONGDESC: 'A small, square, white tab of paper. If you don\'t own a spaceship, this is a great alternative.',
-        TAKEABLE: True,
-        EDIBLE: True,
-        BATTLE: True,
-        DESCWORDS: ['acid', 'tab']},
-    'Mescalin': {
-        GROUNDDESC: 'Mescalin',
-        SHORTDESC: 'the peyote',
-        LONGDESC: 'It\'s a tiny peyote plant. Crack this baby open and get ready for a ride!',
-        TAKEABLE: True,
-        EDIBLE: True,
-        BATTLE: True,
-        DESCWORDS: ['mescalin', 'peyote']},
-    'Amanitas': {
-        GROUNDDESC: 'Amanitas',
-        SHORTDESC: 'the red cap',
-        LONGDESC: 'Mushrooms with bright red caps and little white dots. Let\'s hope these aren\'t the poisonus genus...',
-        TAKEABLE: True,
-        EDIBLE: True,
-        BATTLE: True,
-        DESCWORDS: ['amanitas', 'red caps', 'other mushrooms']},
-    'Epiphone SG': {
-        GROUNDDESC: 'Used Epiphone SG',
-        SHORTDESC: 'Epiphone SG',
-        LONGDESC: 'Not quite a Gibson, but it looks fuckin\' sweet.',
-        TAKEABLE: True,
-        WEAPON: True,
-        ATKBNS: 2,
-        DESCWORDS: ['sg', 'epiphone']},
-    'Wormhole Delay': {
-        GROUNDDESC: 'Delay pedal from Wormhole',
-        SHORTDESC: 'Wormhole Delay',
-        LONGDESC: 'Delay FX from another world. Use sparingly.',
-        TAKEABLE: True,
-        FX: True,
-        ATKBNS: 2,
-        DESCWORDS: ['delay', 'delay pedal', 'wormhole']},
-    }
-
-# enemies dictionary
-# TODO convert dictionary to SQLlite3
-'''
-Syntax
-    '': {
-        ENDESC: '',
-        HP: 0,
-        MP: 0,
-        ATTACKMIN: 0,
-        ATTACKMAX: 0,
-        CRITBNS: 0,
-        CR: 0,
-        DIALOG: ['']},
-'''
-
-enemies = {
-    'Buzzoid': {
-        ENDESC: 'A hideous bug like creature that smells of liquor and sewage.'
-            + '\n',
-        HP: 15,
-        MP: 10,
-        ATTACKMIN: 1,
-        ATTACKMAX: 3,
-        CRITBNS: 1,
-        DIALOG: ['It spits in your face!', 'It flaps its pathetic wings with great force!']},
-    'Zappan': {
-        ENDESC: 'Ted isn\'t quite sure what to make of this round object that gargles at him.'
-            + '\n',
-        HP: 20,
-        MP: 15,
-        ATTACKMIN: 2,
-        ATTACKMAX: 5,
-        CRITBNS: 2,
-        DIALOG: ['It throws a dog-doo snow cone!', 'It rubs yellow snow in your eye!']},
-    }
-
-# challenge rating dictionary
-challenge = {
-    '0': { XPAWARD: 50, CRITBNS: 1 },
-    '1': { XPAWARD: 100, CRITBNS: 1 },
-    '2': { XPAWARD: 250, CRITBNS: 1 },
-    '3': { XPAWARD: 500, CRITBNS: 2 },
-    '4': { XPAWARD: 1000, CRITBNS: 2 },
-    '5': { XPAWARD: 1800, CRITBNS: 2 },
-    '6': { XPAWARD: 2300, CRITBNS: 2 },
-    '7': { XPAWARD: 2900, CRITBNS: 3 },
-    '8': { XPAWARD: 3900, CRITBNS: 3 },
-    '9': { XPAWARD: 5000, CRITBNS: 3 },
-    '10': { XPAWARD: 5900, CRITBNS: 3 },
-    '11': { XPAWARD: 7200, CRITBNS: 4 },
-    '12': { XPAWARD: 8400, CRITBNS: 4 },
-    '13': { XPAWARD: 10000, CRITBNS: 4 },
-    '14': { XPAWARD: 11500, CRITBNS: 4 },
-    '15': { XPAWARD: 13000, CRITBNS: 5 },
-    '16': { XPAWARD: 15000, CRITBNS: 5 },
-    '17': { XPAWARD: 18000, CRITBNS: 5 },
-    '18': { XPAWARD: 20000, CRITBNS: 6 },
-    '19': { XPAWARD: 22000, CRITBNS: 6 },
-    '20': { XPAWARD: 25000, CRITBNS: 7 },
-}
-
-# Contains all available hero attacks
-heroAttacks = {
-    'Punch': {
-        HEROMIN: 0,
-        HEROMAX: 3,},
-    'Headbang': {
-        HEROMIN: 2,
-        HEROMAX: 5,},
-    }
-
-# Contains all available hero magic
-'''
-Syntax
-    '' = {
-        MPREQ: 0,
-        MAGDMG: 0,},
-'''
-heroMagic = {
-    'Rising Force': {
-        MPREQ: 2,
-        MAGDMG: 2,},
-    'Purple Rain': {
-        MPREQ: 3,
-        MAGDMG: 3,},
-    }
-
-# intro
-introtext = {
-    INTRO1: 'The year is 4420',
-    INTRO2: 'Mankind has expanded its reach beyond the solar system',
-    INTRO3: 'Many righteous bands tour the galaxy looking for wealth, fame, and loose women,'
-        + '\n'
-        + 'but there is now an evil that lurks in the vast darkness of space.',
-    INTRO4: 'The evil conglomerates of Earth\'s past return to enslave the Gods of Metal'
-        + '\n'
-        + 'by cryogenically freezing and replacing them with their clone-step army.',
-    INTRO5: 'There is only one crew that can put a stop to this madness...',
-    }
 
 def identify_os():
     """Identifies the OS."""
@@ -556,7 +81,7 @@ class combatMode():
     def selectEnemy(self):
         """Randomly selects an enemy"""
         global chosenEnemy
-        allKeys = list(enemies.keys())
+        allKeys = list(dictionaries.enemies.keys())
         chosenEnemy = random.choice(allKeys)
         print(chosenEnemy)
 
@@ -565,28 +90,27 @@ class combatMode():
         clear()
         print('')
         print(Style.DIM + '>>  ' + Style.BRIGHT + Fore.CYAN + 'TED MOONCHILD' + Fore.WHITE + Style.NORMAL)
-        print('    HP: ' + str(PLAYERHP))
-        print('    MP: ' + str(PLAYERMP))
-        print('    WPN: ' + equippedWeapon + ' [+' + str(worldItems[equippedWeapon][ATKBNS]) + ']')
-        print('    FX: ' + addedFX + ' [+' + str(worldItems[addedFX][ATKBNS]) + ']')
+        print('    HP: ' + str(vars.PLAYERHP))
+        print('    MP: ' + str(vars.PLAYERMP))
+        print('    WPN: ' + equippedWeapon + ' [+' + str(dictionaries.worldItems[equippedWeapon][vars.ATKBNS]) + ']')
+        print('    FX: ' + addedFX + ' [+' + str(dictionaries.worldItems[addedFX][vars.ATKBNS]) + ']')
         print('')
         print(Style.DIM + '>>  ' + Style.BRIGHT + Fore.YELLOW + chosenEnemy + Fore.WHITE + Style.NORMAL)
         print('    HP: ' + str(enemyHP))
-        print('    MP: ' + str(enemies[chosenEnemy][MP]))
+        print('    MP: ' + str(dictionaries.enemies[chosenEnemy][vars.MP]))
 
     def story(self):
         """Prints description of enemy, dialog, ascii art."""
         print('')
         print('    [IMAGE of ' + chosenEnemy + ']')
         print('')
-        print('    ' + enemies[chosenEnemy][ENDESC])
+        print('    ' + dictionaries.enemies[chosenEnemy][vars.ENDESC])
         print(Style.DIM + '+--------------------------------------------------------------------------------------------------+' + Style.NORMAL)
         print('')
 
     def battleMenu(self):
         """Prints out the battle system menu"""
         global enemyHP
-        global PLAYERMP
         global nextAction
         print(Style.DIM + '>>  ' + Style.NORMAL + Fore.RED + 'BATTLE MENU:' + Fore.WHITE)
         print('    a = attack')
@@ -601,7 +125,7 @@ class combatMode():
             attackList = []
             print('')
             print(Style.DIM + '>> ' + Style.NORMAL + 'Choose an Attack')
-            for item in list(heroAttacks.keys()):
+            for item in list(dictionaries.heroAttacks.keys()):
                 attackList.append(item)
                 print(Style.DIM + Fore.YELLOW + ' [' + str(i) + '] - ' + Fore.WHITE + Style.NORMAL + item)
                 i += 1
@@ -614,7 +138,7 @@ class combatMode():
                 # Set next action to player
                 nextAction = 1
             else:
-                heroAttackDamage = random.randrange(heroAttacks[chosenAttack][HEROMIN], heroAttacks[chosenAttack][HEROMAX])
+                heroAttackDamage = random.randrange(dictionaries.heroAttacks[chosenAttack][vars.HEROMIN], dictionaries.heroAttacks[chosenAttack][vars.HEROMAX])
                 if debug == 1:
                     print('')
                     print('Hero Attack Calculator')
@@ -628,7 +152,7 @@ class combatMode():
                 else:
                     pass
                 if heroCrit == 5:
-                    heroAttackDamage += int(CRIT)
+                    heroAttackDamage += int(vars.CRIT)
                 else:
                     pass
                 if debug == 1:
@@ -636,12 +160,12 @@ class combatMode():
                 else:
                     pass
                 # Increase hero's attack damage by whatever attack bonus the weapon supplies.
-                heroAttackDamage += worldItems[equippedWeapon][int(ATKBNS)]
+                heroAttackDamage += dictionaries.worldItems[equippedWeapon][int(vars.ATKBNS)]
                 if debug == 1:
                     print(Style.DIM + ' DMG + WPN:      ' + str(heroAttackDamage) + Style.NORMAL + Fore.WHITE)
                 else:
                     pass
-                heroAttackDamage += worldItems[addedFX][int(ATKBNS)]
+                heroAttackDamage += dictionaries.worldItems[addedFX][int(vars.ATKBNS)]
                 if debug == 1:
                     print(Style.DIM + ' DMG + FX:       ' + str(heroAttackDamage) + Style.NORMAL + Fore.WHITE)
                 else:
@@ -673,9 +197,9 @@ class combatMode():
             magicList = []
             print('')
             print(Style.DIM + '>> ' + Style.NORMAL + 'Choose an Ability')
-            for item in list(heroMagic.keys()):
+            for item in list(dictionaries.heroMagic.keys()):
                 magicList.append(item)
-                print(Style.DIM + Fore.YELLOW + ' [' + str(i) + '] - ' + Fore.WHITE + Style.NORMAL + item + Fore.CYAN + ' [MP: ' + str(heroMagic[item][MPREQ]) + ']' + Fore.WHITE)
+                print(Style.DIM + Fore.YELLOW + ' [' + str(i) + '] - ' + Fore.WHITE + Style.NORMAL + item + Fore.CYAN + ' [MP: ' + str(dictionaries.heroMagic[item][vars.MPREQ]) + ']' + Fore.WHITE)
                 i += 1
             print('')
             try:
@@ -686,14 +210,14 @@ class combatMode():
                 # Set next action to player
                 nextAction = 1
             else:
-                if heroMagic[chosenMagic][MPREQ] > int(PLAYERMP):
+                if dictionaries.heroMagic[chosenMagic][vars.MPREQ] > int(vars.PLAYERMP):
                     print('')
                     print('Ted doesn\'t have enough MP!')
                     # Set next action to player
                     nextAction = 1
 
                 else:
-                    heroMagicDamage = heroMagic[chosenMagic][MAGDMG]
+                    dictionaries.heroMagicDamage = dictionaries.heroMagic[chosenMagic][vars.MAGDMG]
                     # magic crit check
                     magicCrit = random.randrange(0,20)
                     if debug == 1:
@@ -703,13 +227,13 @@ class combatMode():
                     else:
                         pass
                     if magicCrit == 10:
-                        heroMagicDamage += heroMagicDamage
-                        enemyHP = enemyHP - heroMagicDamage
-                        print('Ted totally ROCKED ' + chosenMagic + ' for ' + Fore.CYAN + str(heroMagicDamage) + Style.NORMAL + Fore.WHITE + ' damage!!')
+                        dictionaries.heroMagicDamage += dictionaries.heroMagicDamage
+                        enemyHP = enemyHP - dictionaries.heroMagicDamage
+                        print('Ted totally ROCKED ' + chosenMagic + ' for ' + Fore.CYAN + str(dictionaries.heroMagicDamage) + Style.NORMAL + Fore.WHITE + ' damage!!')
                     else:
-                        enemyHP = enemyHP - heroMagicDamage
-                        print('Ted performs ' + chosenMagic + ' for ' + Fore.CYAN + str(heroMagicDamage) + Style.NORMAL + Fore.WHITE + ' damage!')
-                    PLAYERMP = int(PLAYERMP) - heroMagic[chosenMagic][MPREQ]
+                        enemyHP = enemyHP - dictionaries.heroMagicDamage
+                        print('Ted performs ' + chosenMagic + ' for ' + Fore.CYAN + str(dictionaries.heroMagicDamage) + Style.NORMAL + Fore.WHITE + ' damage!')
+                    vars.PLAYERMP = int(vars.PLAYERMP) - dictionaries.heroMagic[chosenMagic][vars.MPREQ]
                     time.sleep(3)
                     # Set next action to enemy
                     nextAction = 0
@@ -733,7 +257,7 @@ class combatMode():
                 # Set next action to player
                 nextAction = 1
             else:
-                if worldItems[chosenItem].get(BATTLE) == True:
+                if dictionaries.worldItems[chosenItem].get(vars.BATTLE) == True:
                     # TODO do something with the item
                     # then drop the item from inventory
                     inventory.remove(chosenItem)
@@ -751,13 +275,13 @@ class combatMode():
                     print('Use Ted\'s attack instead!')
                     # Set next action to player
                     nextAction = 1
-                elif worldItems[chosenItem].get(WEAPON) == True and chosenItem != equippedWeapon:
+                elif dictionaries.worldItems[chosenItem].get(vars.WEAPON) == True and chosenItem != equippedWeapon:
                     print('')
                     print('Equip it first, then use an attack!')
                     time.sleep(3)
                     # Set next action to player
                     nextAction = 1
-                elif worldItems[chosenItem].get(FX) == True and chosenItem != addedFX:
+                elif dictionaries.worldItems[chosenItem].get(vars.FX) == True and chosenItem != addedFX:
                     print('')
                     print('Equip it first, then use an attack!')
                     time.sleep(3)
@@ -779,7 +303,7 @@ class combatMode():
         """Determines if a player is dead"""
         # TODO implement XP award system based on chosenEnemy's challenge rating
         global enemyHP
-        if int(PLAYERHP) <= 0:
+        if int(vars.PLAYERHP) <= 0:
             print(Fore.RED + Style.BRIGHT + 'The ' + chosenEnemy + ' beat the shit out of Ted!!' + Style.NORMAL + Fore.WHITE)
             time.sleep(3)
             return False
@@ -792,13 +316,11 @@ class combatMode():
 
     def fight(self):
         """Actually drives the battle"""
-        global PLAYERHP
-        global PLAYERMP
         global enemyHP
         global nextAction
         # Randomly select an enemy.
         self.selectEnemy()
-        enemyHP = enemies[chosenEnemy][HP]
+        enemyHP = dictionaries.enemies[chosenEnemy][vars.HP]
         nextAction = random.randrange(0, 2)  # Randomly select who attacks first.
         # Changes color to white
         print(Fore.WHITE)
@@ -812,9 +334,9 @@ class combatMode():
                 # Print description of enemy.
                 self.story()
                 # Get's length of attack dialog list.
-                dialogSelection = len(enemies[chosenEnemy][DIALOG])
+                dialogSelection = len(dictionaries.enemies[chosenEnemy][vars.DIALOG])
                 # Randomly chooses damage caused based on min and max defined values.
-                enemyAttack = random.randrange(enemies[chosenEnemy][ATTACKMIN], enemies[chosenEnemy][ATTACKMAX])
+                enemyAttack = random.randrange(dictionaries.enemies[chosenEnemy][vars.ATTACKMIN], dictionaries.enemies[chosenEnemy][vars.ATTACKMAX])
                 if debug == 1:
                     print('Enemy Attack Calculator')
                     print(Style.DIM + ' Base DMG:       ' + str(enemyAttack) + Style.NORMAL + Fore.WHITE)
@@ -827,7 +349,7 @@ class combatMode():
                 else:
                     pass
                 if enemyCrit == 5:
-                    enemyAttack += enemies[chosenEnemy][int(CRITBNS)]
+                    enemyAttack += dictionaries.enemies[chosenEnemy][int(vars.CRITBNS)]
                 else:
                     pass
                 if debug == 1:
@@ -844,9 +366,9 @@ class combatMode():
                 if enemyMiss == 4:
                     print(Fore.CYAN + Style.BRIGHT + 'The ' + chosenEnemy + ' missed like a dangus!' + Style.NORMAL + Fore.WHITE)
                 else:
-                    PLAYERHP = int(PLAYERHP) - enemyAttack
+                    vars.PLAYERHP = int(vars.PLAYERHP) - enemyAttack
                     # Chooses a random attack dialog line.
-                    print(Fore.GREEN + enemies[chosenEnemy][DIALOG][random.randrange(0, dialogSelection)] + Fore.WHITE)
+                    print(Fore.GREEN + dictionaries.enemies[chosenEnemy][vars.DIALOG][random.randrange(0, dialogSelection)] + Fore.WHITE)
                     print('')
 
                     if enemyCrit == 5:
@@ -868,11 +390,6 @@ class combatMode():
 def openSave():
     global location
     global inventory
-    global PLAYERHP
-    global PLAYERMP
-    global PLAYERLVL
-    global PLAYERXP
-    global FLOYDS
     global addedFX
     global equippedWeapon
     if os.path.exists('./save.txt') == True:
@@ -887,16 +404,16 @@ def openSave():
         equippedWeapon = equippedWeapon.replace('\n', '')
         addedFX = f.readline()
         addedFX = addedFX.replace('\n', '')
-        PLAYERHP = f.readline()
-        PLAYERHP = PLAYERHP.replace('\n', '')
-        PLAYERMP = f.readline()
-        PLAYERMP = PLAYERMP.replace('\n', '')
-        PLAYERLVL = f.readline()
-        PLAYERLVL = PLAYERLVL.replace('\n', '')
-        PLAYERXP = f.readline()
-        PLAYERXP = PLAYERXP.replace('\n', '')
-        FLOYDS = f.readline()
-        FLOYDS = FLOYDS.replace('\n', '')
+        vars.PLAYERHP = f.readline()
+        vars.PLAYERHP = vars.PLAYERHP.replace('\n', '')
+        vars.PLAYERMP = f.readline()
+        vars.PLAYERMP = vars.PLAYERMP.replace('\n', '')
+        vars.PLAYERLVL = f.readline()
+        vars.PLAYERLVL = vars.PLAYERLVL.replace('\n', '')
+        vars.PLAYERXP = f.readline()
+        vars.PLAYERXP = vars.PLAYERXP.replace('\n', '')
+        vars.FLOYDS = f.readline()
+        vars.FLOYDS = vars.FLOYDS.replace('\n', '')
         f.close()
         print(Style.BRIGHT + Fore.GREEN + 'Huzzah, we loaded the game!' + Style.NORMAL + Fore.WHITE)
         time.sleep(1)
@@ -909,11 +426,6 @@ def saveState():
     global inventory
     global equippedWeapon
     global addedFX
-    global PLAYERHP
-    global PLAYERMP
-    global PLAYERLVL
-    global PLAYERXP
-    global FLOYDS
     if os.path.exists('./save.txt') == True:
         print(Fore.RED + Style.BRIGHT + 'WARNING: Save Game Exists. Overwrite? (y/n)' + Style.NORMAL + Fore.WHITE)
         check = input(PROMPT)
@@ -938,15 +450,15 @@ def saveState():
     f.write('\n')
     f.write(str(addedFX))
     f.write('\n')
-    f.write(str(PLAYERHP))
+    f.write(str(vars.PLAYERHP))
     f.write('\n')
-    f.write(str(PLAYERMP))
+    f.write(str(vars.PLAYERMP))
     f.write('\n')
-    f.write(str(PLAYERLVL))
+    f.write(str(vars.PLAYERLVL))
     f.write('\n')
-    f.write(str(PLAYERXP))
+    f.write(str(vars.PLAYERXP))
     f.write('\n')
-    f.write(str(FLOYDS))
+    f.write(str(vars.FLOYDS))
     f.write('\n')
     f.close()
     print(s)
@@ -960,25 +472,25 @@ def displayLocation(loc):
     print(('=' * len(loc)))
 
     # Print the room's description (using textwrap.wrap())
-    print((worldRooms[loc][DESC]))
+    print((dictionaries.worldRooms[loc][vars.DESC]))
 
     # Print all the items on the ground.
-    if len(worldRooms[loc][GROUND]) > 0:
+    if len(dictionaries.worldRooms[loc][vars.GROUND]) > 0:
         print(Style.DIM + '--- ITEMS ON GROUND ---' + Style.NORMAL + Fore.WHITE)
-        for item in worldRooms[loc][GROUND]:
-            print(('  ' + worldItems[item][GROUNDDESC]))
+        for item in dictionaries.worldRooms[loc][vars.GROUND]:
+            print(('  ' + dictionaries.worldItems[item][vars.GROUNDDESC]))
 
     # Print all the exits.
     exits = []
-    for direction in (NORTH, SOUTH, EAST, WEST, UP, DOWN):
-        if direction in list(worldRooms[loc].keys()):
+    for direction in (vars.NORTH, vars.SOUTH, vars.EAST, vars.WEST, vars.UP, vars.DOWN):
+        if direction in list(dictionaries.worldRooms[loc].keys()):
             exits.append(direction.title())
     print(Style.DIM + '=======================' + Style.NORMAL + Fore.WHITE)
     print('\n')
     if showFullExits:
-        for direction in (NORTH, SOUTH, EAST, WEST, UP, DOWN):
-            if direction in worldRooms[location]:
-                print(('%s: %s' % (direction.title(), worldRooms[location][direction])))
+        for direction in (vars.NORTH, vars.SOUTH, vars.EAST, vars.WEST, vars.UP, vars.DOWN):
+            if direction in dictionaries.worldRooms[location]:
+                print(('%s: %s' % (direction.title(), dictionaries.worldRooms[location][direction])))
     else:
         print(('Exits: %s' % ' '.join(exits)))
 
@@ -989,7 +501,7 @@ def moveDirection(direction):
 
     combatCheck = random.randrange(0,6)
 
-    if direction in worldRooms[location]:
+    if direction in dictionaries.worldRooms[location]:
         if combatCheck == 5:
             clear()
             print(Fore.RED + Style.BRIGHT)
@@ -1002,10 +514,10 @@ def moveDirection(direction):
             time.sleep(3)
             combat = combatMode()
             combat.fight()
-            location = worldRooms[location][direction]
+            location = dictionaries.worldRooms[location][direction]
             displayLocation(location)
         else:
-            location = worldRooms[location][direction]
+            location = dictionaries.worldRooms[location][direction]
             displayLocation(location)
     else:
         print('Ted can\'t walk through walls.')
@@ -1016,7 +528,7 @@ def getAllDescWords(itemList):
     itemList = list(set(itemList)) # make itemList unique
     descWords = []
     for item in itemList:
-        descWords.extend(worldItems[item][DESCWORDS])
+        descWords.extend(dictionaries.worldItems[item][vars.DESCWORDS])
     return list(set(descWords))
 
 def getAllFirstDescWords(itemList):
@@ -1025,13 +537,13 @@ def getAllFirstDescWords(itemList):
     itemList = list(set(itemList)) # make itemList unique
     descWords = []
     for item in itemList:
-        descWords.append(worldItems[item][DESCWORDS][0])
+        descWords.append(dictionaries.worldItems[item][vars.DESCWORDS][0])
     return list(set(descWords))
 
 def getFirstItemMatchingDesc(desc, itemList):
     itemList = list(set(itemList)) # make itemList unique
     for item in itemList:
-        if desc in worldItems[item][DESCWORDS]:
+        if desc in dictionaries.worldItems[item][vars.DESCWORDS]:
             return item
     return None
 
@@ -1039,7 +551,7 @@ def getAllItemsMatchingDesc(desc, itemList):
     itemList = list(set(itemList)) # make itemList unique
     matchingItems = []
     for item in itemList:
-        if desc in worldItems[item][DESCWORDS]:
+        if desc in dictionaries.worldItems[item][vars.DESCWORDS]:
             matchingItems.append(item)
     return matchingItems
 
@@ -1146,12 +658,12 @@ class TextAdventureCmd(cmd.Cmd):
         cantTake = False
 
         # get the item name that the player's command describes
-        for item in getAllItemsMatchingDesc(itemToTake, worldRooms[location][GROUND]):
-            if worldItems[item].get(TAKEABLE, True) == False:
+        for item in getAllItemsMatchingDesc(itemToTake, dictionaries.worldRooms[location][vars.GROUND]):
+            if dictionaries.worldItems[item].get(vars.TAKEABLE, True) == False:
                 cantTake = True
                 continue # there may be other items named this that Ted can take, so we continue checking
-            print(('Ted grabs %s.' % (worldItems[item][SHORTDESC])))
-            worldRooms[location][GROUND].remove(item) # remove from the ground
+            print(('Ted grabs %s.' % (dictionaries.worldItems[item][vars.SHORTDESC])))
+            dictionaries.worldRooms[location][vars.GROUND].remove(item) # remove from the ground
             inventory.append(item) # add to inventory
             return
 
@@ -1178,9 +690,9 @@ class TextAdventureCmd(cmd.Cmd):
         # get the item name that the player's command describes
         item = getFirstItemMatchingDesc(itemToDrop, inventory)
         if item != None:
-            print(('Ted drops %s.' % (worldItems[item][SHORTDESC])))
+            print(('Ted drops %s.' % (dictionaries.worldItems[item][vars.SHORTDESC])))
             inventory.remove(item) # remove from inventory
-            worldRooms[location][GROUND].append(item) # add to the ground
+            dictionaries.worldRooms[location][vars.GROUND].append(item) # add to the ground
 
 
     def complete_take(self, text, line, begidx, endidx):
@@ -1189,12 +701,12 @@ class TextAdventureCmd(cmd.Cmd):
 
         # if the user has only typed "take" but no item name:
         if not text:
-            return getAllFirstDescWords(worldRooms[location][GROUND])
+            return getAllFirstDescWords(dictionaries.worldRooms[location][vars.GROUND])
 
         # otherwise, get a list of all "description words" for ground items matching the command text so far:
-        for item in list(set(worldRooms[location][GROUND])):
-            for descWord in worldItems[item][DESCWORDS]:
-                if descWord.startswith(text) and worldItems[item].get(TAKEABLE, True):
+        for item in list(set(dictionaries.worldRooms[location][vars.GROUND])):
+            for descWord in dictionaries.worldItems[item][vars.DESCWORDS]:
+                if descWord.startswith(text) and dictionaries.worldItems[item].get(vars.TAKEABLE, True):
                     possibleItems.append(descWord)
 
         return list(set(possibleItems)) # make list unique
@@ -1237,38 +749,38 @@ class TextAdventureCmd(cmd.Cmd):
             return
 
         if lookingAt == 'exits':
-            for direction in (NORTH, SOUTH, EAST, WEST, UP, DOWN):
-                if direction in worldRooms[location]:
-                    print(('%s: %s' % (direction.title(), worldRooms[location][direction])))
+            for direction in (vars.NORTH, vars.SOUTH, vars.EAST, vars.WEST, vars.UP, vars.DOWN):
+                if direction in dictionaries.worldRooms[location]:
+                    print(('%s: %s' % (direction.title(), dictionaries.worldRooms[location][direction])))
             return
 
         if lookingAt in ('north', 'west', 'east', 'south', 'up', 'down', 'n', 'w', 'e', 's', 'u', 'd'):
-            if lookingAt.startswith('n') and NORTH in worldRooms[location]:
-                print((worldRooms[location][NORTH]))
-            elif lookingAt.startswith('w') and WEST in worldRooms[location]:
-                print((worldRooms[location][WEST]))
-            elif lookingAt.startswith('e') and EAST in worldRooms[location]:
-                print((worldRooms[location][EAST]))
-            elif lookingAt.startswith('s') and SOUTH in worldRooms[location]:
-                print((worldRooms[location][SOUTH]))
-            elif lookingAt.startswith('u') and UP in worldRooms[location]:
-                print((worldRooms[location][UP]))
-            elif lookingAt.startswith('d') and DOWN in worldRooms[location]:
-                print((worldRooms[location][DOWN]))
+            if lookingAt.startswith('n') and vars.NORTH in dictionaries.worldRooms[location]:
+                print((dictionaries.worldRooms[location][vars.NORTH]))
+            elif lookingAt.startswith('w') and vars.WEST in dictionaries.worldRooms[location]:
+                print((dictionaries.worldRooms[location][vars.WEST]))
+            elif lookingAt.startswith('e') and vars.EAST in dictionaries.worldRooms[location]:
+                print((dictionaries.worldRooms[location][vars.EAST]))
+            elif lookingAt.startswith('s') and vars.SOUTH in dictionaries.worldRooms[location]:
+                print((dictionaries.worldRooms[location][vars.SOUTH]))
+            elif lookingAt.startswith('u') and vars.UP in dictionaries.worldRooms[location]:
+                print((dictionaries.worldRooms[location][vars.UP]))
+            elif lookingAt.startswith('d') and vars.DOWN in dictionaries.worldRooms[location]:
+                print((dictionaries.worldRooms[location][vars.DOWN]))
             else:
                 print('Ted can\'t walk through walls.')
             return
 
         # see if the item being looked at is on the ground at this location
-        item = getFirstItemMatchingDesc(lookingAt, worldRooms[location][GROUND])
+        item = getFirstItemMatchingDesc(lookingAt, dictionaries.worldRooms[location][vars.GROUND])
         if item != None:
-            print(('\n'.join(textwrap.wrap(worldItems[item][LONGDESC], SCREEN_WIDTH))))
+            print(('\n'.join(textwrap.wrap(dictionaries.worldItems[item][vars.LONGDESC], vars.SCREEN_WIDTH))))
             return
 
         # see if the item being looked at is in the inventory
         item = getFirstItemMatchingDesc(lookingAt, inventory)
         if item != None:
-            print(('\n'.join(textwrap.wrap(worldItems[item][LONGDESC], SCREEN_WIDTH))))
+            print(('\n'.join(textwrap.wrap(dictionaries.worldItems[item][vars.LONGDESC], vars.SCREEN_WIDTH))))
             return
 
         print('Ted scours to room, but he doesn\'t see that.')
@@ -1280,19 +792,19 @@ class TextAdventureCmd(cmd.Cmd):
 
         # get a list of all "description words" for each item in the inventory
         invDescWords = getAllDescWords(inventory)
-        groundDescWords = getAllDescWords(worldRooms[location][GROUND])
-        shopDescWords = getAllDescWords(worldRooms[location].get(SHOP, []))
+        groundDescWords = getAllDescWords(dictionaries.worldRooms[location][vars.GROUND])
+        shopDescWords = getAllDescWords(dictionaries.worldRooms[location].get(vars.SHOP, []))
 
-        for descWord in invDescWords + groundDescWords + shopDescWords + [NORTH, SOUTH, EAST, WEST, UP, DOWN]:
+        for descWord in invDescWords + groundDescWords + shopDescWords + [vars.NORTH, vars.SOUTH, vars.EAST, vars.WEST, vars.UP, vars.DOWN]:
             if line.startswith('look %s' % (descWord)):
                 return [] # command is complete
 
         # if the user has only typed "look" but no item name, show all items on ground, shop and directions:
         if lookingAt == '':
-            possibleItems.extend(getAllFirstDescWords(worldRooms[location][GROUND]))
-            possibleItems.extend(getAllFirstDescWords(worldRooms[location].get(SHOP, [])))
-            for direction in (NORTH, SOUTH, EAST, WEST, UP, DOWN):
-                if direction in worldRooms[location]:
+            possibleItems.extend(getAllFirstDescWords(dictionaries.worldRooms[location][vars.GROUND]))
+            possibleItems.extend(getAllFirstDescWords(dictionaries.worldRooms[location].get(vars.SHOP, [])))
+            for direction in (vars.NORTH, vars.SOUTH, vars.EAST, vars.WEST, vars.UP, vars.DOWN):
+                if direction in dictionaries.worldRooms[location]:
                     possibleItems.append(direction)
             return list(set(possibleItems)) # make list unique
 
@@ -1307,7 +819,7 @@ class TextAdventureCmd(cmd.Cmd):
                 possibleItems.append(descWord)
 
         # check for matching directions
-        for direction in (NORTH, SOUTH, EAST, WEST, UP, DOWN):
+        for direction in (vars.NORTH, vars.SOUTH, vars.EAST, vars.WEST, vars.UP, vars.DOWN):
             if direction.startswith(lookingAt):
                 possibleItems.append(direction)
 
@@ -1321,25 +833,25 @@ class TextAdventureCmd(cmd.Cmd):
 
     def do_list(self, arg):
         """List the items for sale at the current location's shop."""
-        if SHOP not in worldRooms[location]:
+        if vars.SHOP not in dictionaries.worldRooms[location]:
             print('Ain\'t no store here, Ted.')
             return
 
         arg = arg.lower()
 
         print((Style.DIM + '--- STORE ---' + Style.NORMAL + Fore.WHITE))
-        for item in worldRooms[location][SHOP]:
+        for item in dictionaries.worldRooms[location][vars.SHOP]:
             print(('  %s' % (item)))
-            print(('  ' + Style.DIM + '\n  '.join(textwrap.wrap(worldItems[item][LONGDESC], SCREEN_WIDTH)) + Style.NORMAL + Fore.WHITE))
+            print(('  ' + Style.DIM + '\n  '.join(textwrap.wrap(dictionaries.worldItems[item][vars.LONGDESC], vars.SCREEN_WIDTH)) + Style.NORMAL + Fore.WHITE))
             if arg == 'full':
-                print((Style.DIM + '\n'.join(textwrap.wrap(worldItems[item][LONGDESC], SCREEN_WIDTH)) + Style.NORMAL + Fore.WHITE))
+                print((Style.DIM + '\n'.join(textwrap.wrap(dictionaries.worldItems[item][vars.LONGDESC], vars.SCREEN_WIDTH)) + Style.NORMAL + Fore.WHITE))
 
         print((Style.DIM + '=============' + Style.NORMAL + Fore.WHITE))
 
 
     def do_buy(self, arg):
         """"buy <item>" - buy an item at the current location's shop."""
-        if SHOP not in worldRooms[location]:
+        if vars.SHOP not in dictionaries.worldRooms[location]:
             print('Ain\'t shit to buy, Ted.')
             return
 
@@ -1349,12 +861,12 @@ class TextAdventureCmd(cmd.Cmd):
             print(('Gotta be more specific.' + Style.DIM + ' Type "list" to see items' + Style.NORMAL + Fore.WHITE))
             return
 
-        item = getFirstItemMatchingDesc(itemToBuy, worldRooms[location][SHOP])
+        item = getFirstItemMatchingDesc(itemToBuy, dictionaries.worldRooms[location][vars.SHOP])
         if item != None:
             # NOTE - If Ted wanted to implement money, here is where Ted would add
             # code that checks if the player has enough, then deducts the price
             # from their money.
-            print(('Ted just bought %s' % (worldItems[item][SHORTDESC])))
+            print(('Ted just bought %s' % (dictionaries.worldItems[item][vars.SHORTDESC])))
             inventory.append(item)
             return
 
@@ -1362,7 +874,7 @@ class TextAdventureCmd(cmd.Cmd):
 
 
     def complete_buy(self, text, line, begidx, endidx):
-        if SHOP not in worldRooms[location]:
+        if vars.SHOP not in dictionaries.worldRooms[location]:
             return []
 
         itemToBuy = text.lower()
@@ -1370,11 +882,11 @@ class TextAdventureCmd(cmd.Cmd):
 
         # if the user has only typed "buy" but no item name:
         if not itemToBuy:
-            return getAllFirstDescWords(worldRooms[location][SHOP])
+            return getAllFirstDescWords(dictionaries.worldRooms[location][vars.SHOP])
 
         # otherwise, get a list of all "description words" for shop items matching the command text so far:
-        for item in list(set(worldRooms[location][SHOP])):
-            for descWord in worldItems[item][DESCWORDS]:
+        for item in list(set(dictionaries.worldRooms[location][vars.SHOP])):
+            for descWord in dictionaries.worldItems[item][vars.DESCWORDS]:
                 if descWord.startswith(text):
                     possibleItems.append(descWord)
 
@@ -1383,7 +895,7 @@ class TextAdventureCmd(cmd.Cmd):
 
     def do_sell(self, arg):
         """"sell <item>" - sell an item at the current location's shop."""
-        if SHOP not in worldRooms[location]:
+        if vars.SHOP not in dictionaries.worldRooms[location]:
             print('Ain\'t no one to sell it.')
             return
 
@@ -1394,10 +906,10 @@ class TextAdventureCmd(cmd.Cmd):
             return
 
         for item in inventory:
-            if itemToSell in worldItems[item][DESCWORDS]:
+            if itemToSell in dictionaries.worldItems[item][vars.DESCWORDS]:
                 # NOTE - If Ted wanted to implement money, here is where Ted would add
                 # code that gives the player money for selling the item.
-                print(('Ted sold %s' % (worldItems[item][SHORTDESC])))
+                print(('Ted sold %s' % (dictionaries.worldItems[item][vars.SHORTDESC])))
                 inventory.remove(item)
                 return
 
@@ -1405,7 +917,7 @@ class TextAdventureCmd(cmd.Cmd):
 
 
     def complete_sell(self, text, line, begidx, endidx):
-        if SHOP not in worldRooms[location]:
+        if vars.SHOP not in dictionaries.worldRooms[location]:
             return []
 
         itemToSell = text.lower()
@@ -1417,7 +929,7 @@ class TextAdventureCmd(cmd.Cmd):
 
         # otherwise, get a list of all "description words" for inventory items matching the command text so far:
         for item in list(set(inventory)):
-            for descWord in worldItems[item][DESCWORDS]:
+            for descWord in dictionaries.worldItems[item][vars.DESCWORDS]:
                 if descWord.startswith(text):
                     possibleItems.append(descWord)
 
@@ -1435,12 +947,12 @@ class TextAdventureCmd(cmd.Cmd):
         cantEat = False
 
         for item in getAllItemsMatchingDesc(itemToEat, inventory):
-            if worldItems[item].get(EDIBLE, False) == False:
+            if dictionaries.worldItems[item].get(vars.EDIBLE, False) == False:
                 cantEat = True
                 continue # there may be other items named this that Ted can eat, so we continue checking
             # NOTE - If Ted wanted to implement hunger levels, here is where
             # Ted would add code that changes the player's hunger level.
-            print(('Ted eats %s' % (worldItems[item][SHORTDESC])))
+            print(('Ted eats %s' % (dictionaries.worldItems[item][vars.SHORTDESC])))
             inventory.remove(item)
             return
 
@@ -1459,8 +971,8 @@ class TextAdventureCmd(cmd.Cmd):
 
         # otherwise, get a list of all "description words" for edible inventory items matching the command text so far:
         for item in list(set(inventory)):
-            for descWord in worldItems[item][DESCWORDS]:
-                if descWord.startswith(text) and worldItems[item].get(EDIBLE, False):
+            for descWord in dictionaries.worldItems[item][vars.DESCWORDS]:
+                if descWord.startswith(text) and dictionaries.worldItems[item].get(vars.EDIBLE, False):
                     possibleItems.append(descWord)
 
         return list(set(possibleItems)) # make list unique
@@ -1468,12 +980,12 @@ class TextAdventureCmd(cmd.Cmd):
     def do_stats(self, arg):
         """Display player stats, weapon, and accessory"""
         print(Style.DIM + '--- Stats ---' + Style.NORMAL + Fore.WHITE)
-        print('  HP: ' + str(PLAYERHP) + '/ MP: ' + str(PLAYERMP))
-        print('  Hero Level: ' + str(PLAYERLVL))
-        print('  Hero XP: '+ str(PLAYERXP))
-        print('  You have ' + str(FLOYDS) + ' Floyds.')
-        print('  Equipped Weapon: ' + equippedWeapon + ' [+' + str(worldItems[equippedWeapon][ATKBNS]) + ']')
-        print('  Added FX: ' + addedFX + ' [+' + str(worldItems[addedFX][ATKBNS]) + ']')
+        print('  HP: ' + str(vars.PLAYERHP) + '/ MP: ' + str(vars.PLAYERMP))
+        print('  Hero Level: ' + str(vars.PLAYERLVL))
+        print('  Hero XP: '+ str(vars.PLAYERXP))
+        print('  You have ' + str(vars.FLOYDS) + ' Floyds.')
+        print('  Equipped Weapon: ' + equippedWeapon + ' [+' + str(dictionaries.worldItems[equippedWeapon][vars.ATKBNS]) + ']')
+        print('  Added FX: ' + addedFX + ' [+' + str(dictionaries.worldItems[addedFX][vars.ATKBNS]) + ']')
         print(Style.DIM + '=============' + Style.NORMAL + Fore.WHITE)
 
     def do_equip(self, arg):
@@ -1488,10 +1000,10 @@ class TextAdventureCmd(cmd.Cmd):
         cantEquip = False
 
         for item in getAllItemsMatchingDesc(itemToEquip, inventory):
-            if worldItems[item].get(WEAPON, False) == False:
+            if dictionaries.worldItems[item].get(vars.WEAPON, False) == False:
                 cantEquip = True
                 continue # there may be other items named this that Ted can equip, so we continue checking
-            print(('Ted equips %s' % (worldItems[item][SHORTDESC])))
+            print(('Ted equips %s' % (dictionaries.worldItems[item][vars.SHORTDESC])))
             equippedWeapon = item
             return
 
@@ -1512,10 +1024,10 @@ class TextAdventureCmd(cmd.Cmd):
         cantAdd = False
 
         for item in getAllItemsMatchingDesc(itemToAdd, inventory):
-            if worldItems[item].get(FX, False) == False:
+            if dictionaries.worldItems[item].get(vars.FX, False) == False:
                 cantEquip = True
                 continue # there may be other items named this that Ted can equip, so we continue checking
-            print(('Ted adds %s' % (worldItems[item][SHORTDESC])))
+            print(('Ted adds %s' % (dictionaries.worldItems[item][vars.SHORTDESC])))
             addedFX = item
             return
 
@@ -1536,49 +1048,49 @@ class TextAdventureCmd(cmd.Cmd):
 def introAnimation():
     clear()
     time.sleep(1)
-    print(Style.BRIGHT + introtext[INTRO1] + '\n')
+    print(Style.BRIGHT + dictionaries.introtext[vars.INTRO1] + '\n')
     time.sleep(2)
     clear()
-    print(Style.DIM + introtext[INTRO2] + '\n')
+    print(Style.DIM + dictionaries.introtext[vars.INTRO2] + '\n')
     time.sleep(0.1)
     clear()
-    print(Style.NORMAL + introtext[INTRO2] + '\n')
-    print(Style.DIM + introtext[INTRO3] + '\n')
+    print(Style.NORMAL + dictionaries.introtext[vars.INTRO2] + '\n')
+    print(Style.DIM + dictionaries.introtext[vars.INTRO3] + '\n')
     time.sleep(0.1)
     clear()
-    print(Style.BRIGHT + introtext[INTRO2] + '\n')
-    print(Style.NORMAL + introtext[INTRO3] + '\n')
-    print(Style.DIM + introtext[INTRO4] + '\n')
+    print(Style.BRIGHT + dictionaries.introtext[vars.INTRO2] + '\n')
+    print(Style.NORMAL + dictionaries.introtext[vars.INTRO3] + '\n')
+    print(Style.DIM + dictionaries.introtext[vars.INTRO4] + '\n')
     time.sleep(0.1)
     clear()
-    print(Style.NORMAL + introtext[INTRO2] + '\n')
-    print(Style.BRIGHT + introtext[INTRO3] + '\n')
-    print(Style.NORMAL + introtext[INTRO4] + '\n')
-    print(Style.DIM + introtext[INTRO5] + '\n')
+    print(Style.NORMAL + dictionaries.introtext[vars.INTRO2] + '\n')
+    print(Style.BRIGHT + dictionaries.introtext[vars.INTRO3] + '\n')
+    print(Style.NORMAL + dictionaries.introtext[vars.INTRO4] + '\n')
+    print(Style.DIM + dictionaries.introtext[vars.INTRO5] + '\n')
     time.sleep(0.1)
     clear()
-    print(Style.NORMAL + introtext[INTRO2] + '\n')
-    print(Style.NORMAL + introtext[INTRO3] + '\n')
-    print(Style.BRIGHT + introtext[INTRO4] + '\n')
-    print(Style.NORMAL + introtext[INTRO5] + '\n')
+    print(Style.NORMAL + dictionaries.introtext[vars.INTRO2] + '\n')
+    print(Style.NORMAL + dictionaries.introtext[vars.INTRO3] + '\n')
+    print(Style.BRIGHT + dictionaries.introtext[vars.INTRO4] + '\n')
+    print(Style.NORMAL + dictionaries.introtext[vars.INTRO5] + '\n')
     time.sleep(0.1)
     clear()
-    print(Style.NORMAL + introtext[INTRO2] + '\n')
-    print(Style.NORMAL + introtext[INTRO3] + '\n')
-    print(Style.NORMAL + introtext[INTRO4] + '\n')
-    print(Style.BRIGHT + introtext[INTRO5] + '\n')
+    print(Style.NORMAL + dictionaries.introtext[vars.INTRO2] + '\n')
+    print(Style.NORMAL + dictionaries.introtext[vars.INTRO3] + '\n')
+    print(Style.NORMAL + dictionaries.introtext[vars.INTRO4] + '\n')
+    print(Style.BRIGHT + dictionaries.introtext[vars.INTRO5] + '\n')
     time.sleep(0.1)
     clear()
-    print(Style.NORMAL + introtext[INTRO2] + '\n')
-    print(Style.NORMAL + introtext[INTRO3] + '\n')
-    print(Style.NORMAL + introtext[INTRO4] + '\n')
-    print(Style.NORMAL + introtext[INTRO5] + '\n')
+    print(Style.NORMAL + dictionaries.introtext[vars.INTRO2] + '\n')
+    print(Style.NORMAL + dictionaries.introtext[vars.INTRO3] + '\n')
+    print(Style.NORMAL + dictionaries.introtext[vars.INTRO4] + '\n')
+    print(Style.NORMAL + dictionaries.introtext[vars.INTRO5] + '\n')
     time.sleep(0.1)
     clear()
-    print(Style.NORMAL + introtext[INTRO2] + '\n')
-    print(Style.NORMAL + introtext[INTRO3] + '\n')
-    print(Style.NORMAL + introtext[INTRO4] + '\n')
-    print(Style.NORMAL + introtext[INTRO5] + '\n')
+    print(Style.NORMAL + dictionaries.introtext[vars.INTRO2] + '\n')
+    print(Style.NORMAL + dictionaries.introtext[vars.INTRO3] + '\n')
+    print(Style.NORMAL + dictionaries.introtext[vars.INTRO4] + '\n')
+    print(Style.NORMAL + dictionaries.introtext[vars.INTRO5] + '\n')
     time.sleep(13)
     clear()
     print(Fore.YELLOW + Style.NORMAL + asciiGFX.logo1 + Style.NORMAL + Fore.WHITE)
