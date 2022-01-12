@@ -17,6 +17,7 @@ global DEBUG
 global COLORS
 global SCREEN_WIDTH
 global PROMPT
+global SLOT_NAME
 
 # debug check
 if args.debug:
@@ -998,7 +999,7 @@ class TextAdventureCmd(cmd.Cmd):
 
     def do_save(self, arg):
         # Save the current state of the game to file.
-        saveState()
+        saveGame()
 
     def do_combat(self, arg):
         # Enter combat with a random enemy
