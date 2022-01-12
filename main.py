@@ -1,17 +1,19 @@
-import os	#for clearing the terminal
-import sys  # For OS identification
-import asciiGFX  # Import all the ASCII graphics assets
-import time # Import time for intro GFX
-from colorama import Fore, Back, Style  # Used for text coloring
-import random # For random number generation
-import argparse # For passing command line args
-import dictionaries
+import os
+import sys
+import time
+from colorama import Fore, Back, Style
+import random
+import argparse
+import cmd
+import textwrap
 import globalVars as vars
+import database as dbs
 
 # check for command line arguments
 parser = argparse.ArgumentParser()
 parser.add_argument("-d", "--debug", help="Turn on debug messages for various game calculations.", action="store_true")
 parser.add_argument("-nc", "--nocolor", help="Turn off text styles and color.", action="store_true")
+parser.add_argument("-w", "--width", nargs=1, help="Specify console screen width.", type=int)
 args = parser.parse_args()
 
 # debug check
@@ -28,19 +30,35 @@ if args.nocolor:
 else:
     colors = 1
 
-PROMPT = Fore.RED + '\m/: ' + Style.NORMAL + Fore.WHITE
+# set screen width
+if args.width:
+    SCREEN_WIDTH = args.width[0]
+else:
+    SCREEN_WIDTH = 170
 
-# engine variables
-nextAction = 0 # 1 = player, 0 = enemy
+# setup the command prompt
+if colors == 0:
+    PROMPT = '\m/: '
+else:
+    PROMPT = Fore.RED + '\m/: ' + Style.NORMAL + Fore.WHITE
 
-# Battle system globals
-enemyHP = 'hp'
-enemyMP = 'mp'
+def setLocation(name):
+    global location
+    global locationInfo
+    location = name
+    locationInfo = dbs.rooms.find_one( { "NAME": location } )
 
-# equipment status variables
-# TODO make these default fallback values
-equippedWeapon = 'Fists'
-addedFX = 'noFX'
+def setWeapon(name):
+    global equippedWeapon
+    global weaponInfo
+    equippedWeapon = name
+    weaponInfo = dbs.items.find_one( {"NAME": name} )
+
+def setFX(name):
+    global addedFX
+    global fxInfo
+    addedFX = name
+    fxInfo = dbs.items.find_one( {"NAME": name} )
 
 def identify_os():
     """Identifies the OS."""
@@ -64,26 +82,40 @@ and the value in the inventory list will always be a key in the worldItems
 variable.
 """
 # TODO create "New Game" save file and force a load every time a new game is selected
-location = 'EBGB Stage'
+# engine variables
+nextAction = 0 # 1 = player, 0 = enemy
+location = "location"
+locationInfo = "locationInfo"
+equippedWeapon = "equippedWeapon"
+weaponInfo = "weaponInfo"
+addedFX = "addedFX"
+fxInfo = "fxInfo"
 inventory = ['Winnibego Keys', 'Protection']
 showFullExits = True
 
-import cmd, textwrap
-
 # input error message
 def inputError():
-    print(Style.BRIGHT + Fore.RED + 'Damnit, Ted! That\'s not a valid input. Try again!' + Style.NORMAL + Fore.WHITE)
+    if colors == 0:
+        print('Damnit, Ted! That\'s not a valid input. Try again!')
+    else:
+        print(Style.BRIGHT + Fore.RED + 'Damnit, Ted! That\'s not a valid input. Try again!' + Style.NORMAL + Fore.WHITE)
     time.sleep(2)
 
 # COMBAT ENGINE
 class combatMode():
 
     def selectEnemy(self):
-        """Randomly selects an enemy"""
+        # Randomly selects an enemy and sets base stats
+        # TODO implement logic to only select enemies from the current planet
         global chosenEnemy
-        allKeys = list(dictionaries.enemies.keys())
-        chosenEnemy = random.choice(allKeys)
-        print(chosenEnemy)
+        enemyIDList = list(dbs.enemies.find( {}, { "NAME": 1 } ))
+        chosenID = random.choice(enemyIDList)["_id"]
+        chosenEnemy = dbs.enemies.find_one( { "_id": chosenID } )
+        vars.ENEMYHP = chosenEnemy["HP"]
+        vars.ENEMYMP = chosenEnemy["MP"]
+        if debug == 1:
+            print(chosenEnemy)
+            time.sleep(2)
 
     def HUD(self):
         """Prints out the players HUD"""
@@ -92,24 +124,24 @@ class combatMode():
         print(Style.DIM + '>>  ' + Style.BRIGHT + Fore.CYAN + 'TED MOONCHILD' + Fore.WHITE + Style.NORMAL)
         print('    HP: ' + str(vars.PLAYERHP))
         print('    MP: ' + str(vars.PLAYERMP))
-        print('    WPN: ' + equippedWeapon + ' [+' + str(dictionaries.worldItems[equippedWeapon][vars.ATKBNS]) + ']')
-        print('    FX: ' + addedFX + ' [+' + str(dictionaries.worldItems[addedFX][vars.ATKBNS]) + ']')
+        print('    WPN: ' + equippedWeapon + ' [+' + str(weaponInfo["ATKBNS"]) + ']')
+        print('    FX: ' + addedFX + ' [+' + str(fxInfo["ATKBNS"]) + ']')
         print('')
-        print(Style.DIM + '>>  ' + Style.BRIGHT + Fore.YELLOW + chosenEnemy + Fore.WHITE + Style.NORMAL)
-        print('    HP: ' + str(enemyHP))
-        print('    MP: ' + str(dictionaries.enemies[chosenEnemy][vars.MP]))
+        print(Style.DIM + '>>  ' + Style.BRIGHT + Fore.YELLOW + chosenEnemy["NAME"] + Fore.WHITE + Style.NORMAL)
+        print('    HP: ' + str(vars.ENEMYHP))
+        print('    MP: ' + str(vars.ENEMYMP))
 
     def story(self):
-        """Prints description of enemy, dialog, ascii art."""
+        # Prints description of enemy, dialog, ascii art.
         print('')
-        print('    [IMAGE of ' + chosenEnemy + ']')
+        print('    [IMAGE of ' + chosenEnemy["NAME"] + ']')
         print('')
-        print('    ' + dictionaries.enemies[chosenEnemy][vars.ENDESC])
+        print('    ' + chosenEnemy["ENDESC"])
         print(Style.DIM + '+--------------------------------------------------------------------------------------------------+' + Style.NORMAL)
         print('')
 
     def battleMenu(self):
-        """Prints out the battle system menu"""
+        # Prints out the battle system menu
         global enemyHP
         global nextAction
         print(Style.DIM + '>>  ' + Style.NORMAL + Fore.RED + 'BATTLE MENU:' + Fore.WHITE)
@@ -120,25 +152,28 @@ class combatMode():
         battleChoice = input(PROMPT)
         if battleChoice == 'a':
             # Iterate over dictionary keys and print
-            i = 0
+            i = 1
             # Stores a list of all attacks in dict item as they are unordered.
-            attackList = []
+            attackList = dbs.abilities.find( { "TYPE": "physical" } )
+            attackIDList = [ "_index" ]
             print('')
             print(Style.DIM + '>> ' + Style.NORMAL + 'Choose an Attack')
-            for item in list(dictionaries.heroAttacks.keys()):
-                attackList.append(item)
-                print(Style.DIM + Fore.YELLOW + ' [' + str(i) + '] - ' + Fore.WHITE + Style.NORMAL + item)
+            for item in attackList:
+                print(' [' + str(i) + '] - ' + item["NAME"])
+                attackIDList.append(item["_id"])
                 i += 1
             print('')
             try:
-                attackChoice = int(input(PROMPT))
-                chosenAttack = attackList[int(attackChoice)]
+                choice = int(input(PROMPT))
+                chosenAttackInfo = dbs.abilities.find_one( { "_id": attackIDList[choice] } )
+                if debug == 1:
+                    print(chosenAttackInfo)
             except:
                 inputError()
                 # Set next action to player
                 nextAction = 1
             else:
-                heroAttackDamage = random.randrange(dictionaries.heroAttacks[chosenAttack][vars.HEROMIN], dictionaries.heroAttacks[chosenAttack][vars.HEROMAX])
+                heroAttackDamage = random.randrange(chosenAttackInfo["HEROMIN"], chosenAttackInfo["HEROMAX"])
                 if debug == 1:
                     print('')
                     print('Hero Attack Calculator')
@@ -160,17 +195,17 @@ class combatMode():
                 else:
                     pass
                 # Increase hero's attack damage by whatever attack bonus the weapon supplies.
-                heroAttackDamage += dictionaries.worldItems[equippedWeapon][int(vars.ATKBNS)]
+                heroAttackDamage += weaponInfo["ATKBNS"]
                 if debug == 1:
                     print(Style.DIM + ' DMG + WPN:      ' + str(heroAttackDamage) + Style.NORMAL + Fore.WHITE)
                 else:
                     pass
-                heroAttackDamage += dictionaries.worldItems[addedFX][int(vars.ATKBNS)]
+                heroAttackDamage += fxInfo["ATKBNS"]
                 if debug == 1:
                     print(Style.DIM + ' DMG + FX:       ' + str(heroAttackDamage) + Style.NORMAL + Fore.WHITE)
                 else:
                     pass
-                # MISS check
+                # MISS check, 4 = miss
                 playerMiss = random.randrange(0,5)
                 if debug == 1:
                     print('')
@@ -181,11 +216,11 @@ class combatMode():
                 if playerMiss == 4:
                     print(Fore.CYAN + Style.BRIGHT + 'A swing, and a miss!!' + Style.NORMAL + Fore.WHITE)
                 else:
-                    enemyHP = enemyHP - heroAttackDamage
+                    vars.ENEMYHP = vars.ENEMYHP - heroAttackDamage
                     if heroCrit == 5:
-                        print('Ted packs a WOLLOP with his ' + chosenAttack + ' for ' + Fore.GREEN + Style.BRIGHT + str(heroAttackDamage) + Style.NORMAL + Fore.WHITE + ' damage!!')
+                        print('Ted packs a WOLLOP with his ' + chosenAttackInfo["NAME"] + ' for ' + Fore.GREEN + Style.BRIGHT + str(heroAttackDamage) + Style.NORMAL + Fore.WHITE + ' damage!!')
                     else:
-                        print('Ted lands a blow with his ' + chosenAttack + ' for ' + Fore.GREEN + Style.BRIGHT + str(heroAttackDamage) + Style.NORMAL + Fore.WHITE + ' damage!')
+                        print('Ted lands a blow with his ' + chosenAttackInfo["NAME"] + ' for ' + Fore.GREEN + Style.BRIGHT + str(heroAttackDamage) + Style.NORMAL + Fore.WHITE + ' damage!')
                 time.sleep(3)
                 # Set next action to enemy
                 nextAction = 0
@@ -193,32 +228,35 @@ class combatMode():
         elif battleChoice == 'm':
             # TODO implement escape choice
             # Iterate over dictionary keys and print
-            i = 0
-            magicList = []
+            i = 1
+            magicList = dbs.abilities.find( { "TYPE": "magic" } )
+            magicIDList = [ "_index" ]
             print('')
             print(Style.DIM + '>> ' + Style.NORMAL + 'Choose an Ability')
-            for item in list(dictionaries.heroMagic.keys()):
-                magicList.append(item)
-                print(Style.DIM + Fore.YELLOW + ' [' + str(i) + '] - ' + Fore.WHITE + Style.NORMAL + item + Fore.CYAN + ' [MP: ' + str(dictionaries.heroMagic[item][vars.MPREQ]) + ']' + Fore.WHITE)
+            for item in magicList:
+                print(' [' + str(i) + '] - ' + item["NAME"])
+                magicIDList.append(item["_id"])
                 i += 1
             print('')
             try:
-                magicChoice = int(input(PROMPT))
-                chosenMagic = magicList[int(magicChoice)]
+                choice = int(input(PROMPT))
+                chosenMagicInfo = dbs.abilities.find_one( { "_id": magicIDList[choice] } )
+                if debug == 1:
+                    print(chosenMagicInfo)
             except:
                 inputError()
                 # Set next action to player
                 nextAction = 1
             else:
-                if dictionaries.heroMagic[chosenMagic][vars.MPREQ] > int(vars.PLAYERMP):
+                if chosenMagicInfo["MPREQ"] > int(vars.PLAYERMP):
                     print('')
                     print('Ted doesn\'t have enough MP!')
                     # Set next action to player
                     nextAction = 1
 
                 else:
-                    dictionaries.heroMagicDamage = dictionaries.heroMagic[chosenMagic][vars.MAGDMG]
-                    # magic crit check
+                    heroMagicDamage = chosenMagicInfo["MAGDMG"]
+                    # magic crit check, 10 = success
                     magicCrit = random.randrange(0,20)
                     if debug == 1:
                         print('')
@@ -227,70 +265,116 @@ class combatMode():
                     else:
                         pass
                     if magicCrit == 10:
-                        dictionaries.heroMagicDamage += dictionaries.heroMagicDamage
-                        enemyHP = enemyHP - dictionaries.heroMagicDamage
-                        print('Ted totally ROCKED ' + chosenMagic + ' for ' + Fore.CYAN + str(dictionaries.heroMagicDamage) + Style.NORMAL + Fore.WHITE + ' damage!!')
+                        heroMagicDamage += heroMagicDamage
+                        vars.ENEMYHP = vars.ENEMYHP - heroMagicDamage
+                        print('Ted totally ROCKED ' + chosenMagicInfo["NAME"] + ' for ' + Fore.CYAN + str(heroMagicDamage) + Style.NORMAL + Fore.WHITE + ' damage!!')
                     else:
-                        enemyHP = enemyHP - dictionaries.heroMagicDamage
-                        print('Ted performs ' + chosenMagic + ' for ' + Fore.CYAN + str(dictionaries.heroMagicDamage) + Style.NORMAL + Fore.WHITE + ' damage!')
-                    vars.PLAYERMP = int(vars.PLAYERMP) - dictionaries.heroMagic[chosenMagic][vars.MPREQ]
+                        vars.ENEMYHP = vars.ENEMYHP - heroMagicDamage
+                        print('Ted performs ' + chosenMagicInfo["NAME"] + ' for ' + Fore.CYAN + str(heroMagicDamage) + Style.NORMAL + Fore.WHITE + ' damage!')
+                    vars.PLAYERMP = int(vars.PLAYERMP) - chosenMagicInfo["MPREQ"]
                     time.sleep(3)
                     # Set next action to enemy
                     nextAction = 0
 
         elif battleChoice == 'i':
             # Iterate over dictionary keys and print
-            i = 0
-            battleItems = []
+            i = 1
+            battleItems = [ "_index" ]
+
+            if len(inventory) == 0:
+                print('Ted doesn\'t have shit.')
+                return
+
+            # first get a count of each distinct item in the inventory
+            itemCount = {}
+            for item in inventory:
+                if item in list(itemCount.keys()):
+                    itemCount[item] += 1
+                else:
+                    itemCount[item] = 1
+
             print('')
             print(Style.DIM + '>> ' + Style.NORMAL + 'Choose an Item')
-            for item in inventory:
-                battleItems.append(item)
-                print(Style.DIM + Fore.YELLOW + ' [' + str(i) + '] - ' + Fore.WHITE + Style.NORMAL + item)
+            # get a list of inventory items with duplicates removed:
+            for item in set(inventory):
+                # If item is an equipped weapon, display a [e]
+                if item == equippedWeapon:
+                    print((Style.DIM + Fore.YELLOW + ' [' + str(i) + '] - ' + Fore.WHITE + Style.NORMAL + '  ' + item + ' [e]'))
+                    battleItems.append(item)
+                elif item == addedFX:
+                    print((Style.DIM + Fore.YELLOW + ' [' + str(i) + '] - ' + Fore.WHITE + Style.NORMAL + '  ' + item + ' [e]'))
+                    battleItems.append(item)
+                elif itemCount[item] > 1:
+                    print((Style.DIM + Fore.YELLOW + ' [' + str(i) + '] - ' + Fore.WHITE + Style.NORMAL + '  %s (%s)' % (item, itemCount[item])))
+                    battleItems.append(item)
+                else:
+                    print((Style.DIM + Fore.YELLOW + ' [' + str(i) + '] - ' + Fore.WHITE + Style.NORMAL + '  ' + item))
+                    battleItems.append(item)
                 i += 1
             print('')
             try:
-                itemChoice = int(input(PROMPT))
-                chosenItem = battleItems[int(itemChoice)]
+                choice = int(input(PROMPT))
+                chosenItemInfo = dbs.items.find_one( { "NAME": battleItems[choice] } )
+                if debug == 1:
+                    print(chosenItemInfo)
             except:
                 inputError()
                 # Set next action to player
                 nextAction = 1
             else:
-                if dictionaries.worldItems[chosenItem].get(vars.BATTLE) == True:
-                    # TODO do something with the item
-                    # then drop the item from inventory
-                    inventory.remove(chosenItem)
-                    print('')
-                    print('Ted uses ' + chosenItem + '! Too bad item effects aren\'t implemented yet.')
-                    print('The ' + chosenItem + ' is still used up, though ;)')
-                    time.sleep(3)
-                    # Set next action to enemy
-                    nextAction = 0
-                elif chosenItem == addedFX:
+                try:
+                    check = chosenItemInfo["BATTLE"]
+                except KeyError:
+                    pass
+                else:
+                    if chosenItemInfo["BATTLE"] == True:
+                        # TODO do something with the item
+                        # then drop the item from inventory
+                        inventory.remove(chosenItemInfo["NAME"])
+                        print('')
+                        print('Ted uses ' + chosenItemInfo["NAME"] + '! Too bad item effects aren\'t implemented yet.')
+                        print('The ' + chosenItemInfo["NAME"] + ' is still used up, though ;)')
+                        time.sleep(3)
+                        # Set next action to enemy
+                        nextAction = 0
+                try:
+                    check = chosenItemInfo["WEAPON"]
+                except KeyError:
+                    pass
+                else:
+                    if chosenItemInfo["WEAPON"] == True and chosenItemInfo["NAME"] != equippedWeapon:
+                        print('')
+                        print('Equip it first, then use an attack!')
+                        time.sleep(2)
+                        # Set next action to player
+                        nextAction = 1
+                    else:
+                        pass
+                try:
+                    check = chosenItemInfo["FX"]
+                except KeyError:
+                    pass
+                else:
+                    if chosenItemInfo["FX"] == True and chosenItemInfo["NAME"] != addedFX:
+                        print('')
+                        print('Equip it first, then use an attack!')
+                        time.sleep(2)
+                        # Set next action to player
+                        nextAction = 1
+                    else:
+                        pass
+                if chosenItemInfo["NAME"] == addedFX:
                     print('Use Ted\'s attack instead!')
                     # Set next action to player
                     nextAction = 1
-                elif chosenItem == equippedWeapon:
+                elif chosenItemInfo["NAME"] == equippedWeapon:
                     print('Use Ted\'s attack instead!')
-                    # Set next action to player
-                    nextAction = 1
-                elif dictionaries.worldItems[chosenItem].get(vars.WEAPON) == True and chosenItem != equippedWeapon:
-                    print('')
-                    print('Equip it first, then use an attack!')
-                    time.sleep(3)
-                    # Set next action to player
-                    nextAction = 1
-                elif dictionaries.worldItems[chosenItem].get(vars.FX) == True and chosenItem != addedFX:
-                    print('')
-                    print('Equip it first, then use an attack!')
-                    time.sleep(3)
                     # Set next action to player
                     nextAction = 1
                 else:
                     print('')
                     print('Ted, this isn\'t the time!')
-                    time.sleep(3)
+                    time.sleep(2)
                     # Set next action to player
                     nextAction = 1
 
@@ -300,27 +384,24 @@ class combatMode():
             nextAction = 1
 
     def death(self):
-        """Determines if a player is dead"""
+        # Determines if a player is dead
         # TODO implement XP award system based on chosenEnemy's challenge rating
-        global enemyHP
         if int(vars.PLAYERHP) <= 0:
-            print(Fore.RED + Style.BRIGHT + 'The ' + chosenEnemy + ' beat the shit out of Ted!!' + Style.NORMAL + Fore.WHITE)
+            print(Fore.RED + Style.BRIGHT + 'The ' + chosenEnemy["NAME"] + ' beat the shit out of Ted!!' + Style.NORMAL + Fore.WHITE)
             time.sleep(3)
             return False
-        elif enemyHP <= 0:
-            print(Fore.GREEN + Style.BRIGHT + 'Ted beat the fuck out of that ' + chosenEnemy + '!!' + Style.NORMAL + Fore.WHITE)
+        elif vars.ENEMYHP <= 0:
+            print(Fore.GREEN + Style.BRIGHT + 'Ted beat the fuck out of that ' + chosenEnemy["NAME"] + '!!' + Style.NORMAL + Fore.WHITE)
             time.sleep(3)
             return False
         else:
             return True
 
     def fight(self):
-        """Actually drives the battle"""
-        global enemyHP
+        # Actually drives the battle
         global nextAction
         # Randomly select an enemy.
         self.selectEnemy()
-        enemyHP = dictionaries.enemies[chosenEnemy][vars.HP]
         nextAction = random.randrange(0, 2)  # Randomly select who attacks first.
         # Changes color to white
         print(Fore.WHITE)
@@ -334,9 +415,9 @@ class combatMode():
                 # Print description of enemy.
                 self.story()
                 # Get's length of attack dialog list.
-                dialogSelection = len(dictionaries.enemies[chosenEnemy][vars.DIALOG])
+                dialogSelection = len(chosenEnemy["DIALOG"])
                 # Randomly chooses damage caused based on min and max defined values.
-                enemyAttack = random.randrange(dictionaries.enemies[chosenEnemy][vars.ATTACKMIN], dictionaries.enemies[chosenEnemy][vars.ATTACKMAX])
+                enemyAttack = random.randrange(chosenEnemy["ATTACKMIN"], chosenEnemy["ATTACKMAX"])
                 if debug == 1:
                     print('Enemy Attack Calculator')
                     print(Style.DIM + ' Base DMG:       ' + str(enemyAttack) + Style.NORMAL + Fore.WHITE)
@@ -349,7 +430,7 @@ class combatMode():
                 else:
                     pass
                 if enemyCrit == 5:
-                    enemyAttack += dictionaries.enemies[chosenEnemy][int(vars.CRITBNS)]
+                    enemyAttack += chosenEnemy["CRITBNS"]
                 else:
                     pass
                 if debug == 1:
@@ -364,11 +445,11 @@ class combatMode():
                 else:
                     pass
                 if enemyMiss == 4:
-                    print(Fore.CYAN + Style.BRIGHT + 'The ' + chosenEnemy + ' missed like a dangus!' + Style.NORMAL + Fore.WHITE)
+                    print(Fore.CYAN + Style.BRIGHT + 'The ' + chosenEnemy["NAME"] + ' missed like a dangus!' + Style.NORMAL + Fore.WHITE)
                 else:
                     vars.PLAYERHP = int(vars.PLAYERHP) - enemyAttack
                     # Chooses a random attack dialog line.
-                    print(Fore.GREEN + dictionaries.enemies[chosenEnemy][vars.DIALOG][random.randrange(0, dialogSelection)] + Fore.WHITE)
+                    print(Fore.GREEN + chosenEnemy["DIALOG"][random.randrange(0, dialogSelection)] + Fore.WHITE)
                     print('')
 
                     if enemyCrit == 5:
@@ -415,6 +496,9 @@ def openSave():
         vars.FLOYDS = f.readline()
         vars.FLOYDS = vars.FLOYDS.replace('\n', '')
         f.close()
+        setWeapon(equippedWeapon)
+        setFX(addedFX)
+        setLocation(location)
         print(Style.BRIGHT + Fore.GREEN + 'Huzzah, we loaded the game!' + Style.NORMAL + Fore.WHITE)
         time.sleep(1)
     else:
@@ -465,43 +549,45 @@ def saveState():
     time.sleep(1)
 
 def displayLocation(loc):
-    """A helper function for displaying an area's description and exits."""
+    # A helper function for displaying an area's description and exits.
     clear()
+    locInfo = dbs.rooms.find_one( { "NAME": loc } )
     # Print the room name.
     print(loc)
     print(('=' * len(loc)))
 
     # Print the room's description (using textwrap.wrap())
-    print((dictionaries.worldRooms[loc][vars.DESC]))
+    print(locInfo["DESC"])
 
     # Print all the items on the ground.
-    if len(dictionaries.worldRooms[loc][vars.GROUND]) > 0:
+    if len(locInfo["GROUND"]) > 0:
         print(Style.DIM + '--- ITEMS ON GROUND ---' + Style.NORMAL + Fore.WHITE)
-        for item in dictionaries.worldRooms[loc][vars.GROUND]:
-            print(('  ' + dictionaries.worldItems[item][vars.GROUNDDESC]))
+        for item in locInfo["GROUND"]:
+            print(('  ' + dbs.items.find_one( { "NAME": item } )["GROUNDDESC"]))
 
     # Print all the exits.
     exits = []
-    for direction in (vars.NORTH, vars.SOUTH, vars.EAST, vars.WEST, vars.UP, vars.DOWN):
-        if direction in list(dictionaries.worldRooms[loc].keys()):
+    for direction in ("NORTH", "SOUTH", "EAST", "WEST", "UP", "DOWN"):
+        if direction in list(locInfo):
             exits.append(direction.title())
     print(Style.DIM + '=======================' + Style.NORMAL + Fore.WHITE)
     print('\n')
     if showFullExits:
-        for direction in (vars.NORTH, vars.SOUTH, vars.EAST, vars.WEST, vars.UP, vars.DOWN):
-            if direction in dictionaries.worldRooms[location]:
-                print(('%s: %s' % (direction.title(), dictionaries.worldRooms[location][direction])))
+        for direction in ("NORTH", "SOUTH", "EAST", "WEST", "UP", "DOWN"):
+            if direction in locationInfo:
+                print(('%s: %s' % (direction.title(), locationInfo[direction])))
     else:
         print(('Exits: %s' % ' '.join(exits)))
 
 
 def moveDirection(direction):
-    """A helper function that changes the location of the player."""
+    # A helper function that changes the location of the player.
     global location
+    global locationInfo
 
     combatCheck = random.randrange(0,6)
 
-    if direction in dictionaries.worldRooms[location]:
+    if direction in locationInfo:
         if combatCheck == 5:
             clear()
             print(Fore.RED + Style.BRIGHT)
@@ -514,36 +600,35 @@ def moveDirection(direction):
             time.sleep(3)
             combat = combatMode()
             combat.fight()
-            location = dictionaries.worldRooms[location][direction]
+            setLocation(locationInfo[direction])
             displayLocation(location)
         else:
-            location = dictionaries.worldRooms[location][direction]
+            setLocation(locationInfo[direction])
             displayLocation(location)
     else:
         print('Ted can\'t walk through walls.')
 
 
 def getAllDescWords(itemList):
-    """Returns a list of "description words" for each item named in itemList."""
+    # Returns a list of "description words" for each item named in itemList.
     itemList = list(set(itemList)) # make itemList unique
     descWords = []
     for item in itemList:
-        descWords.extend(dictionaries.worldItems[item][vars.DESCWORDS])
+        descWords.extend(dbs.items.find_one( { "NAME": item } )["DESCWORDS"])
     return list(set(descWords))
 
 def getAllFirstDescWords(itemList):
-    """Returns a list of the first "description word" in the list of
-    description words for each item named in itemList."""
+    # Returns a list of the first "description word" in the list of description words for each item named in itemList.
     itemList = list(set(itemList)) # make itemList unique
     descWords = []
     for item in itemList:
-        descWords.append(dictionaries.worldItems[item][vars.DESCWORDS][0])
+        descWords.append(dbs.items.find_one( { "NAME": item } )["DESCWORDS"][0])
     return list(set(descWords))
 
 def getFirstItemMatchingDesc(desc, itemList):
     itemList = list(set(itemList)) # make itemList unique
     for item in itemList:
-        if desc in dictionaries.worldItems[item][vars.DESCWORDS]:
+        if desc in dbs.items.find_one( { "NAME": item } )["DESCWORDS"]:
             return item
     return None
 
@@ -551,10 +636,9 @@ def getAllItemsMatchingDesc(desc, itemList):
     itemList = list(set(itemList)) # make itemList unique
     matchingItems = []
     for item in itemList:
-        if desc in dictionaries.worldItems[item][vars.DESCWORDS]:
+        if desc in dbs.items.find_one( { "NAME": item } )["DESCWORDS"]:
             matchingItems.append(item)
     return matchingItems
-
 
 class TextAdventureCmd(cmd.Cmd):
     prompt = PROMPT
@@ -565,35 +649,35 @@ class TextAdventureCmd(cmd.Cmd):
 
     # A very simple "quit" command to terminate the program:
     def do_quit(self, arg):
-        """Quit the game."""
+        # Quit the game.
         return True # this exits the Cmd application loop in TextAdventureCmd.cmdloop()
 
 # These direction commands have a long (i.e. north) and show (i.e. n) form.
     # Since the code is basically the same, I put it in the moveDirection()
     # function.
     def do_north(self, arg):
-        """Go to the area to the north, if possible."""
-        moveDirection('north')
+        # Go to the area to the north, if possible.
+        moveDirection('NORTH')
 
     def do_south(self, arg):
-        """Go to the area to the south, if possible."""
-        moveDirection('south')
+        # Go to the area to the south, if possible.
+        moveDirection('SOUTH')
 
     def do_east(self, arg):
-        """Go to the area to the east, if possible."""
-        moveDirection('east')
+        # Go to the area to the east, if possible.
+        moveDirection('EAST')
 
     def do_west(self, arg):
-        """Go to the area to the west, if possible."""
-        moveDirection('west')
+        # Go to the area to the west, if possible.
+        moveDirection('WEST')
 
     def do_up(self, arg):
-        """Go to the area upwards, if possible."""
-        moveDirection('up')
+        # Go to the area upwards, if possible.
+        moveDirection('UP')
 
     def do_down(self, arg):
-        """Go to the area downwards, if possible."""
-        moveDirection('down')
+        #Go to the area downwards, if possible.
+        moveDirection('DOWN')
 
     # Since the code is the exact same, we can just copy the
     # methods with shortened names:
@@ -605,7 +689,7 @@ class TextAdventureCmd(cmd.Cmd):
     do_d = do_down
 
     def do_exits(self, arg):
-        """Toggle showing full exit descriptions or brief exit descriptions."""
+        # Toggle showing full exit descriptions or brief exit descriptions.
         global showFullExits
         showFullExits = not showFullExits
         if showFullExits:
@@ -614,7 +698,7 @@ class TextAdventureCmd(cmd.Cmd):
             print('Showing brief exit descriptions.')
 
     def do_inventory(self, arg):
-        """Display a list of the items in Ted\'s possession."""
+        # Display a list of the items in Ted\'s possession.
 
         if len(inventory) == 0:
             print('Ted doesn\'t have shit.')
@@ -646,8 +730,7 @@ class TextAdventureCmd(cmd.Cmd):
 
 
     def do_take(self, arg):
-        """"take <item> - Take an item on the ground."""
-
+        # take <item> - Take an item on the ground.
         # put this value in a more suitably named variable
         itemToTake = arg.lower()
 
@@ -658,12 +741,14 @@ class TextAdventureCmd(cmd.Cmd):
         cantTake = False
 
         # get the item name that the player's command describes
-        for item in getAllItemsMatchingDesc(itemToTake, dictionaries.worldRooms[location][vars.GROUND]):
-            if dictionaries.worldItems[item].get(vars.TAKEABLE, True) == False:
+        for item in getAllItemsMatchingDesc(itemToTake, locationInfo["GROUND"]):
+            itemInfo = dbs.items.find_one( { "NAME": item } )
+            if itemInfo["TAKEABLE"] == False:
                 cantTake = True
                 continue # there may be other items named this that Ted can take, so we continue checking
-            print(('Ted grabs %s.' % (dictionaries.worldItems[item][vars.SHORTDESC])))
-            dictionaries.worldRooms[location][vars.GROUND].remove(item) # remove from the ground
+            print(('Ted grabs %s.' % (itemInfo["SHORTDESC"])))
+            dbs.rooms.update_one( { "NAME": location }, { "$pull": { "GROUND": item } } ) # remove from the ground
+            setLocation(location)
             inventory.append(item) # add to inventory
             return
 
@@ -674,7 +759,7 @@ class TextAdventureCmd(cmd.Cmd):
 
 
     def do_drop(self, arg):
-        """"drop <item>" - Drop an item from Ted\'s inventory onto the ground."""
+        # drop <item>" - Drop an item from Ted\'s inventory onto the ground.
 
         # put this value in a more suitably named variable
         itemToDrop = arg.lower()
@@ -690,10 +775,13 @@ class TextAdventureCmd(cmd.Cmd):
         # get the item name that the player's command describes
         item = getFirstItemMatchingDesc(itemToDrop, inventory)
         if item != None:
-            print(('Ted drops %s.' % (dictionaries.worldItems[item][vars.SHORTDESC])))
+            print(('Ted drops %s.' % (dbs.items.find_one( { "NAME": item } )["SHORTDESC"])))
+            # add item to the ground
+            groundTemp = list(locationInfo["GROUND"])
+            groundTemp.append(item)
+            dbs.rooms.update_one( { "NAME": location }, { "$set": { "GROUND": groundTemp } } )
+            setLocation(location)
             inventory.remove(item) # remove from inventory
-            dictionaries.worldRooms[location][vars.GROUND].append(item) # add to the ground
-
 
     def complete_take(self, text, line, begidx, endidx):
         possibleItems = []
@@ -701,12 +789,12 @@ class TextAdventureCmd(cmd.Cmd):
 
         # if the user has only typed "take" but no item name:
         if not text:
-            return getAllFirstDescWords(dictionaries.worldRooms[location][vars.GROUND])
+            return getAllFirstDescWords(locationInfo["GROUND"])
 
         # otherwise, get a list of all "description words" for ground items matching the command text so far:
-        for item in list(set(dictionaries.worldRooms[location][vars.GROUND])):
-            for descWord in dictionaries.worldItems[item][vars.DESCWORDS]:
-                if descWord.startswith(text) and dictionaries.worldItems[item].get(vars.TAKEABLE, True):
+        for item in list(set(locationInfo["GROUND"])):
+            for descWord in dbs.items.find_one( { "NAME": item } )["DESCWORDS"]:
+                if descWord.startswith(text) and dbs.items.find_one( { "NAME": item } )["TAKEABLE"] == True:
                     possibleItems.append(descWord)
 
         return list(set(possibleItems)) # make list unique
@@ -736,11 +824,11 @@ class TextAdventureCmd(cmd.Cmd):
 
 
     def do_look(self, arg):
-        """Look at an item, direction, or the area:
-        "look" - display the current area's description
-        "look <direction>" - display the description of the area in that direction
-        "look exits" - display the description of all adjacent areas
-        "look <item>" - display the description of an item on the ground or in Ted\'s inventory"""
+        # Look at an item, direction, or the area:
+        # "look" - display the current area's description
+        # "look <direction>" - display the description of the area in that direction
+        # "look exits" - display the description of all adjacent areas
+        # "look <item>" - display the description of an item on the ground or in Ted's inventory
 
         lookingAt = arg.lower()
         if lookingAt == '':
@@ -749,38 +837,38 @@ class TextAdventureCmd(cmd.Cmd):
             return
 
         if lookingAt == 'exits':
-            for direction in (vars.NORTH, vars.SOUTH, vars.EAST, vars.WEST, vars.UP, vars.DOWN):
-                if direction in dictionaries.worldRooms[location]:
-                    print(('%s: %s' % (direction.title(), dictionaries.worldRooms[location][direction])))
+            for direction in ("NORTH", "SOUTH", "EAST", "WEST", "UP", "DOWN"):
+                if direction in locationInfo:
+                    print(('%s: %s' % (direction.title(), locationInfo[direction])))
             return
 
         if lookingAt in ('north', 'west', 'east', 'south', 'up', 'down', 'n', 'w', 'e', 's', 'u', 'd'):
-            if lookingAt.startswith('n') and vars.NORTH in dictionaries.worldRooms[location]:
-                print((dictionaries.worldRooms[location][vars.NORTH]))
-            elif lookingAt.startswith('w') and vars.WEST in dictionaries.worldRooms[location]:
-                print((dictionaries.worldRooms[location][vars.WEST]))
-            elif lookingAt.startswith('e') and vars.EAST in dictionaries.worldRooms[location]:
-                print((dictionaries.worldRooms[location][vars.EAST]))
-            elif lookingAt.startswith('s') and vars.SOUTH in dictionaries.worldRooms[location]:
-                print((dictionaries.worldRooms[location][vars.SOUTH]))
-            elif lookingAt.startswith('u') and vars.UP in dictionaries.worldRooms[location]:
-                print((dictionaries.worldRooms[location][vars.UP]))
-            elif lookingAt.startswith('d') and vars.DOWN in dictionaries.worldRooms[location]:
-                print((dictionaries.worldRooms[location][vars.DOWN]))
+            if lookingAt.startswith('n') and "NORTH" in locationInfo:
+                print((locationInfo["NORTH"]))
+            elif lookingAt.startswith('w') and "WEST" in locationInfo:
+                print((locationInfo["WEST"]))
+            elif lookingAt.startswith('e') and "EAST" in locationInfo:
+                print((locationInfo["EAST"]))
+            elif lookingAt.startswith('s') and "SOUTH" in locationInfo:
+                print((locationInfo["SOUTH"]))
+            elif lookingAt.startswith('u') and "UP" in locationInfo:
+                print((locationInfo["UP"]))
+            elif lookingAt.startswith('d') and "DOWN" in locationInfo:
+                print((locationInfo["DOWN"]))
             else:
                 print('Ted can\'t walk through walls.')
             return
 
         # see if the item being looked at is on the ground at this location
-        item = getFirstItemMatchingDesc(lookingAt, dictionaries.worldRooms[location][vars.GROUND])
+        item = getFirstItemMatchingDesc(lookingAt, locationInfo["GROUND"])
         if item != None:
-            print(('\n'.join(textwrap.wrap(dictionaries.worldItems[item][vars.LONGDESC], vars.SCREEN_WIDTH))))
+            print(('\n'.join(textwrap.wrap(dbs.items.find_one( { "NAME": item } )["LONGDESC"], SCREEN_WIDTH))))
             return
 
         # see if the item being looked at is in the inventory
         item = getFirstItemMatchingDesc(lookingAt, inventory)
         if item != None:
-            print(('\n'.join(textwrap.wrap(dictionaries.worldItems[item][vars.LONGDESC], vars.SCREEN_WIDTH))))
+            print(('\n'.join(textwrap.wrap(dbs.items.find_one( { "NAME": item } )["LONGDESC"], SCREEN_WIDTH))))
             return
 
         print('Ted scours to room, but he doesn\'t see that.')
@@ -792,19 +880,19 @@ class TextAdventureCmd(cmd.Cmd):
 
         # get a list of all "description words" for each item in the inventory
         invDescWords = getAllDescWords(inventory)
-        groundDescWords = getAllDescWords(dictionaries.worldRooms[location][vars.GROUND])
-        shopDescWords = getAllDescWords(dictionaries.worldRooms[location].get(vars.SHOP, []))
+        groundDescWords = getAllDescWords(locationInfo["GROUND"])
+        shopDescWords = getAllDescWords(locationInfo["SHOP"])
 
-        for descWord in invDescWords + groundDescWords + shopDescWords + [vars.NORTH, vars.SOUTH, vars.EAST, vars.WEST, vars.UP, vars.DOWN]:
+        for descWord in invDescWords + groundDescWords + shopDescWords + ["north", "south", "east", "west", "up", "down"]:
             if line.startswith('look %s' % (descWord)):
                 return [] # command is complete
 
         # if the user has only typed "look" but no item name, show all items on ground, shop and directions:
         if lookingAt == '':
-            possibleItems.extend(getAllFirstDescWords(dictionaries.worldRooms[location][vars.GROUND]))
-            possibleItems.extend(getAllFirstDescWords(dictionaries.worldRooms[location].get(vars.SHOP, [])))
-            for direction in (vars.NORTH, vars.SOUTH, vars.EAST, vars.WEST, vars.UP, vars.DOWN):
-                if direction in dictionaries.worldRooms[location]:
+            possibleItems.extend(getAllFirstDescWords(locationInfo["GROUND"]))
+            possibleItems.extend(getAllFirstDescWords(locationInfo["SHOP"]))
+            for direction in ("NORTH", "SOUTH", "EAST", "WEST", "UP", "DOWN"):
+                if direction in locationInfo:
                     possibleItems.append(direction)
             return list(set(possibleItems)) # make list unique
 
@@ -819,7 +907,7 @@ class TextAdventureCmd(cmd.Cmd):
                 possibleItems.append(descWord)
 
         # check for matching directions
-        for direction in (vars.NORTH, vars.SOUTH, vars.EAST, vars.WEST, vars.UP, vars.DOWN):
+        for direction in ("NORTH", "SOUTH", "EAST", "WEST", "UP", "DOWN"):
             if direction.startswith(lookingAt):
                 possibleItems.append(direction)
 
@@ -832,26 +920,27 @@ class TextAdventureCmd(cmd.Cmd):
 
 
     def do_list(self, arg):
-        """List the items for sale at the current location's shop."""
-        if vars.SHOP not in dictionaries.worldRooms[location]:
+        # List the items for sale at the current location's shop.
+        if "SHOP" not in locationInfo:
             print('Ain\'t no store here, Ted.')
             return
 
         arg = arg.lower()
 
         print((Style.DIM + '--- STORE ---' + Style.NORMAL + Fore.WHITE))
-        for item in dictionaries.worldRooms[location][vars.SHOP]:
+        for item in locationInfo["SHOP"]:
+            itemInfo = dbs.items.find_one( { "NAME": item } )
             print(('  %s' % (item)))
-            print(('  ' + Style.DIM + '\n  '.join(textwrap.wrap(dictionaries.worldItems[item][vars.LONGDESC], vars.SCREEN_WIDTH)) + Style.NORMAL + Fore.WHITE))
+            print(('  ' + Style.DIM + '\n  '.join(textwrap.wrap(itemInfo["LONGDESC"], SCREEN_WIDTH)) + Style.NORMAL + Fore.WHITE))
             if arg == 'full':
-                print((Style.DIM + '\n'.join(textwrap.wrap(dictionaries.worldItems[item][vars.LONGDESC], vars.SCREEN_WIDTH)) + Style.NORMAL + Fore.WHITE))
+                print((Style.DIM + '\n'.join(textwrap.wrap(itemInfo["LONGDESC"], SCREEN_WIDTH)) + Style.NORMAL + Fore.WHITE))
 
         print((Style.DIM + '=============' + Style.NORMAL + Fore.WHITE))
 
 
     def do_buy(self, arg):
-        """"buy <item>" - buy an item at the current location's shop."""
-        if vars.SHOP not in dictionaries.worldRooms[location]:
+        # buy <item>" - buy an item at the current location's shop.
+        if "SHOP" not in locationInfo:
             print('Ain\'t shit to buy, Ted.')
             return
 
@@ -861,12 +950,12 @@ class TextAdventureCmd(cmd.Cmd):
             print(('Gotta be more specific.' + Style.DIM + ' Type "list" to see items' + Style.NORMAL + Fore.WHITE))
             return
 
-        item = getFirstItemMatchingDesc(itemToBuy, dictionaries.worldRooms[location][vars.SHOP])
+        item = getFirstItemMatchingDesc(itemToBuy, locationInfo["SHOP"])
         if item != None:
             # NOTE - If Ted wanted to implement money, here is where Ted would add
             # code that checks if the player has enough, then deducts the price
             # from their money.
-            print(('Ted just bought %s' % (dictionaries.worldItems[item][vars.SHORTDESC])))
+            print(('Ted just bought %s' % (dbs.items.find_one( { "NAME": item } )["SHORTDESC"])))
             inventory.append(item)
             return
 
@@ -874,7 +963,7 @@ class TextAdventureCmd(cmd.Cmd):
 
 
     def complete_buy(self, text, line, begidx, endidx):
-        if vars.SHOP not in dictionaries.worldRooms[location]:
+        if "SHOP" not in locationInfo:
             return []
 
         itemToBuy = text.lower()
@@ -882,11 +971,11 @@ class TextAdventureCmd(cmd.Cmd):
 
         # if the user has only typed "buy" but no item name:
         if not itemToBuy:
-            return getAllFirstDescWords(dictionaries.worldRooms[location][vars.SHOP])
+            return getAllFirstDescWords(locationInfo["SHOP"])
 
         # otherwise, get a list of all "description words" for shop items matching the command text so far:
-        for item in list(set(dictionaries.worldRooms[location][vars.SHOP])):
-            for descWord in dictionaries.worldItems[item][vars.DESCWORDS]:
+        for item in list(set(locationInfo["SHOP"])):
+            for descWord in dbs.items.find_one( { "NAME": item } )["DESCWORDS"]:
                 if descWord.startswith(text):
                     possibleItems.append(descWord)
 
@@ -894,8 +983,8 @@ class TextAdventureCmd(cmd.Cmd):
 
 
     def do_sell(self, arg):
-        """"sell <item>" - sell an item at the current location's shop."""
-        if vars.SHOP not in dictionaries.worldRooms[location]:
+        # "sell <item>" - sell an item at the current location's shop.
+        if "SHOP" not in locationInfo:
             print('Ain\'t no one to sell it.')
             return
 
@@ -906,10 +995,11 @@ class TextAdventureCmd(cmd.Cmd):
             return
 
         for item in inventory:
-            if itemToSell in dictionaries.worldItems[item][vars.DESCWORDS]:
+            itemInfo = dbs.items.find_one( { "NAME": item } )
+            if itemToSell in itemInfo["DESCWORDS"]:
                 # NOTE - If Ted wanted to implement money, here is where Ted would add
                 # code that gives the player money for selling the item.
-                print(('Ted sold %s' % (dictionaries.worldItems[item][vars.SHORTDESC])))
+                print(('Ted sold %s' % (itemInfo["SHORTDESC"])))
                 inventory.remove(item)
                 return
 
@@ -917,7 +1007,7 @@ class TextAdventureCmd(cmd.Cmd):
 
 
     def complete_sell(self, text, line, begidx, endidx):
-        if vars.SHOP not in dictionaries.worldRooms[location]:
+        if "SHOP" not in locationInfo:
             return []
 
         itemToSell = text.lower()
@@ -929,7 +1019,7 @@ class TextAdventureCmd(cmd.Cmd):
 
         # otherwise, get a list of all "description words" for inventory items matching the command text so far:
         for item in list(set(inventory)):
-            for descWord in dictionaries.worldItems[item][vars.DESCWORDS]:
+            for descWord in dbs.items.find_one( { "NAME": item } )["DESCWORDS"]:
                 if descWord.startswith(text):
                     possibleItems.append(descWord)
 
@@ -937,7 +1027,7 @@ class TextAdventureCmd(cmd.Cmd):
 
 
     def do_eat(self, arg):
-        """"eat <item>" - eat an item in Ted\'s inventory."""
+        # "eat <item>" - eat an item in Ted\'s inventory."""
         itemToEat = arg.lower()
 
         if itemToEat == '':
@@ -947,12 +1037,13 @@ class TextAdventureCmd(cmd.Cmd):
         cantEat = False
 
         for item in getAllItemsMatchingDesc(itemToEat, inventory):
-            if dictionaries.worldItems[item].get(vars.EDIBLE, False) == False:
+            itemInfo = dbs.items.find_one( { "NAME": item } )
+            try:
+                check = itemInfo["EDIBLE"]
+            except KeyError:
                 cantEat = True
                 continue # there may be other items named this that Ted can eat, so we continue checking
-            # NOTE - If Ted wanted to implement hunger levels, here is where
-            # Ted would add code that changes the player's hunger level.
-            print(('Ted eats %s' % (dictionaries.worldItems[item][vars.SHORTDESC])))
+            print(('Ted eats %s' % (itemInfo["SHORTDESC"])))
             inventory.remove(item)
             return
 
@@ -971,25 +1062,26 @@ class TextAdventureCmd(cmd.Cmd):
 
         # otherwise, get a list of all "description words" for edible inventory items matching the command text so far:
         for item in list(set(inventory)):
-            for descWord in dictionaries.worldItems[item][vars.DESCWORDS]:
-                if descWord.startswith(text) and dictionaries.worldItems[item].get(vars.EDIBLE, False):
+            itemInfo = dbs.items.find_one( { "NAME": item } )
+            for descWord in itemInfo["DESCWORDS"]:
+                if descWord.startswith(text) and itemInfo["EDIBLE"] == False:
                     possibleItems.append(descWord)
 
         return list(set(possibleItems)) # make list unique
 
     def do_stats(self, arg):
-        """Display player stats, weapon, and accessory"""
+        # Display player stats, weapon, and accessory
         print(Style.DIM + '--- Stats ---' + Style.NORMAL + Fore.WHITE)
         print('  HP: ' + str(vars.PLAYERHP) + '/ MP: ' + str(vars.PLAYERMP))
         print('  Hero Level: ' + str(vars.PLAYERLVL))
         print('  Hero XP: '+ str(vars.PLAYERXP))
         print('  You have ' + str(vars.FLOYDS) + ' Floyds.')
-        print('  Equipped Weapon: ' + equippedWeapon + ' [+' + str(dictionaries.worldItems[equippedWeapon][vars.ATKBNS]) + ']')
-        print('  Added FX: ' + addedFX + ' [+' + str(dictionaries.worldItems[addedFX][vars.ATKBNS]) + ']')
+        print('  Equipped Weapon: ' + equippedWeapon + ' [+' + str(weaponInfo["ATKBNS"]) + ']')
+        print('  Added FX: ' + addedFX + ' [+' + str(fxInfo["ATKBNS"]) + ']')
         print(Style.DIM + '=============' + Style.NORMAL + Fore.WHITE)
 
     def do_equip(self, arg):
-        """Equip an item in Ted\'s inventory."""
+        # Equip an item in Ted\'s inventory.
         global equippedWeapon
         itemToEquip = arg.lower()
 
@@ -1000,11 +1092,12 @@ class TextAdventureCmd(cmd.Cmd):
         cantEquip = False
 
         for item in getAllItemsMatchingDesc(itemToEquip, inventory):
-            if dictionaries.worldItems[item].get(vars.WEAPON, False) == False:
+            itemInfo = dbs.items.find_one( { "NAME": item } )
+            if itemInfo["WEAPON"] == False:
                 cantEquip = True
                 continue # there may be other items named this that Ted can equip, so we continue checking
-            print(('Ted equips %s' % (dictionaries.worldItems[item][vars.SHORTDESC])))
-            equippedWeapon = item
+            print(('Ted equips %s' % (itemInfo["SHORTDESC"])))
+            setWeapon(item)
             return
 
         if cantEquip:
@@ -1013,7 +1106,7 @@ class TextAdventureCmd(cmd.Cmd):
             print(('Ted is confused by "%s".' % (itemToEquip)))
 
     def do_addfx(self, arg):
-        """Add and effect to Ted\'s weapon."""
+        # Add and effect to Ted's weapon.
         global addedFX
         itemToAdd = arg.lower()
 
@@ -1024,11 +1117,12 @@ class TextAdventureCmd(cmd.Cmd):
         cantAdd = False
 
         for item in getAllItemsMatchingDesc(itemToAdd, inventory):
-            if dictionaries.worldItems[item].get(vars.FX, False) == False:
+            itemInfo = dbs.items.find_one( { "NAME": item } )
+            if itemInfo["FX"] == False:
                 cantEquip = True
                 continue # there may be other items named this that Ted can equip, so we continue checking
-            print(('Ted adds %s' % (dictionaries.worldItems[item][vars.SHORTDESC])))
-            addedFX = item
+            print(('Ted adds %s' % (itemInfo["SHORTDESC"])))
+            setFX(item)
             return
 
         if cantAdd:
@@ -1037,85 +1131,86 @@ class TextAdventureCmd(cmd.Cmd):
             print(('Ted is confused by "%s".' % (itemToAdd)))
 
     def do_save(self, arg):
-        """Save the current state of the game to file."""
+        # Save the current state of the game to file.
         saveState()
 
     def do_combat(self, arg):
-        """Enter combat with a random enemy"""
+        # Enter combat with a random enemy
         combat = combatMode()
         combat.fight()
 
 def introAnimation():
+    engine = dbs.engine.find_one( { "INTRO1": { "$regex": ".*" } } )
     clear()
     time.sleep(1)
-    print(Style.BRIGHT + dictionaries.introtext[vars.INTRO1] + '\n')
+    print(Style.BRIGHT + engine["INTRO1"] + '\n')
     time.sleep(2)
     clear()
-    print(Style.DIM + dictionaries.introtext[vars.INTRO2] + '\n')
+    print(Style.DIM + engine["INTRO2"] + '\n')
     time.sleep(0.1)
     clear()
-    print(Style.NORMAL + dictionaries.introtext[vars.INTRO2] + '\n')
-    print(Style.DIM + dictionaries.introtext[vars.INTRO3] + '\n')
+    print(Style.NORMAL + engine["INTRO2"] + '\n')
+    print(Style.DIM + engine["INTRO3"] + '\n')
     time.sleep(0.1)
     clear()
-    print(Style.BRIGHT + dictionaries.introtext[vars.INTRO2] + '\n')
-    print(Style.NORMAL + dictionaries.introtext[vars.INTRO3] + '\n')
-    print(Style.DIM + dictionaries.introtext[vars.INTRO4] + '\n')
+    print(Style.BRIGHT + engine["INTRO2"] + '\n')
+    print(Style.NORMAL + engine["INTRO3"] + '\n')
+    print(Style.DIM + engine["INTRO4"] + '\n')
     time.sleep(0.1)
     clear()
-    print(Style.NORMAL + dictionaries.introtext[vars.INTRO2] + '\n')
-    print(Style.BRIGHT + dictionaries.introtext[vars.INTRO3] + '\n')
-    print(Style.NORMAL + dictionaries.introtext[vars.INTRO4] + '\n')
-    print(Style.DIM + dictionaries.introtext[vars.INTRO5] + '\n')
+    print(Style.NORMAL + engine["INTRO2"] + '\n')
+    print(Style.BRIGHT + engine["INTRO3"] + '\n')
+    print(Style.NORMAL + engine["INTRO4"] + '\n')
+    print(Style.DIM + engine["INTRO5"] + '\n')
     time.sleep(0.1)
     clear()
-    print(Style.NORMAL + dictionaries.introtext[vars.INTRO2] + '\n')
-    print(Style.NORMAL + dictionaries.introtext[vars.INTRO3] + '\n')
-    print(Style.BRIGHT + dictionaries.introtext[vars.INTRO4] + '\n')
-    print(Style.NORMAL + dictionaries.introtext[vars.INTRO5] + '\n')
+    print(Style.NORMAL + engine["INTRO2"] + '\n')
+    print(Style.NORMAL + engine["INTRO3"] + '\n')
+    print(Style.BRIGHT + engine["INTRO4"] + '\n')
+    print(Style.NORMAL + engine["INTRO5"] + '\n')
     time.sleep(0.1)
     clear()
-    print(Style.NORMAL + dictionaries.introtext[vars.INTRO2] + '\n')
-    print(Style.NORMAL + dictionaries.introtext[vars.INTRO3] + '\n')
-    print(Style.NORMAL + dictionaries.introtext[vars.INTRO4] + '\n')
-    print(Style.BRIGHT + dictionaries.introtext[vars.INTRO5] + '\n')
+    print(Style.NORMAL + engine["INTRO2"] + '\n')
+    print(Style.NORMAL + engine["INTRO3"] + '\n')
+    print(Style.NORMAL + engine["INTRO4"] + '\n')
+    print(Style.BRIGHT + engine["INTRO5"] + '\n')
     time.sleep(0.1)
     clear()
-    print(Style.NORMAL + dictionaries.introtext[vars.INTRO2] + '\n')
-    print(Style.NORMAL + dictionaries.introtext[vars.INTRO3] + '\n')
-    print(Style.NORMAL + dictionaries.introtext[vars.INTRO4] + '\n')
-    print(Style.NORMAL + dictionaries.introtext[vars.INTRO5] + '\n')
+    print(Style.NORMAL + engine["INTRO2"] + '\n')
+    print(Style.NORMAL + engine["INTRO3"] + '\n')
+    print(Style.NORMAL + engine["INTRO4"] + '\n')
+    print(Style.NORMAL + engine["INTRO5"] + '\n')
     time.sleep(0.1)
     clear()
-    print(Style.NORMAL + dictionaries.introtext[vars.INTRO2] + '\n')
-    print(Style.NORMAL + dictionaries.introtext[vars.INTRO3] + '\n')
-    print(Style.NORMAL + dictionaries.introtext[vars.INTRO4] + '\n')
-    print(Style.NORMAL + dictionaries.introtext[vars.INTRO5] + '\n')
+    print(Style.NORMAL + engine["INTRO2"] + '\n')
+    print(Style.NORMAL + engine["INTRO3"] + '\n')
+    print(Style.NORMAL + engine["INTRO4"] + '\n')
+    print(Style.NORMAL + engine["INTRO5"] + '\n')
     time.sleep(13)
     clear()
-    print(Fore.YELLOW + Style.NORMAL + asciiGFX.logo1 + Style.NORMAL + Fore.WHITE)
-    print(Fore.YELLOW + Style.NORMAL + asciiGFX.logo2 + Style.NORMAL + Fore.WHITE)
-    print(Fore.YELLOW + Style.NORMAL + asciiGFX.logo3 + Style.NORMAL + Fore.WHITE)
+    print(Fore.YELLOW + Style.NORMAL + vars.logo1 + Style.NORMAL + Fore.WHITE)
+    print(Fore.YELLOW + Style.NORMAL + vars.logo2 + Style.NORMAL + Fore.WHITE)
+    print(Fore.YELLOW + Style.NORMAL + vars.logo3 + Style.NORMAL + Fore.WHITE)
     time.sleep(0.5)
     clear()
-    print(Fore.YELLOW + Style.BRIGHT + asciiGFX.logo1 + Style.NORMAL + Fore.WHITE)
-    print(Fore.YELLOW + Style.NORMAL + asciiGFX.logo2 + Style.NORMAL + Fore.WHITE)
-    print(Fore.YELLOW + Style.NORMAL + asciiGFX.logo3 + Style.NORMAL + Fore.WHITE)
+    print(Fore.YELLOW + Style.BRIGHT + vars.logo1 + Style.NORMAL + Fore.WHITE)
+    print(Fore.YELLOW + Style.NORMAL + vars.logo2 + Style.NORMAL + Fore.WHITE)
+    print(Fore.YELLOW + Style.NORMAL + vars.logo3 + Style.NORMAL + Fore.WHITE)
     time.sleep(1)
     clear()
-    print(Fore.YELLOW + Style.NORMAL + asciiGFX.logo1 + Style.NORMAL + Fore.WHITE)
-    print(Fore.YELLOW + Style.BRIGHT + asciiGFX.logo2 + Style.NORMAL + Fore.WHITE)
-    print(Fore.YELLOW + Style.NORMAL + asciiGFX.logo3 + Style.NORMAL + Fore.WHITE)
+    print(Fore.YELLOW + Style.NORMAL + vars.logo1 + Style.NORMAL + Fore.WHITE)
+    print(Fore.YELLOW + Style.BRIGHT + vars.logo2 + Style.NORMAL + Fore.WHITE)
+    print(Fore.YELLOW + Style.NORMAL + vars.logo3 + Style.NORMAL + Fore.WHITE)
     time.sleep(0.5)
     clear()
-    print(Fore.YELLOW + Style.NORMAL + asciiGFX.logo1 + Style.NORMAL + Fore.WHITE)
-    print(Fore.YELLOW + Style.NORMAL + asciiGFX.logo2 + Style.NORMAL + Fore.WHITE)
-    print(Fore.YELLOW + Style.BRIGHT + asciiGFX.logo3 + Style.NORMAL + Fore.WHITE)
+    print(Fore.YELLOW + Style.NORMAL + vars.logo1 + Style.NORMAL + Fore.WHITE)
+    print(Fore.YELLOW + Style.NORMAL + vars.logo2 + Style.NORMAL + Fore.WHITE)
+    print(Fore.YELLOW + Style.BRIGHT + vars.logo3 + Style.NORMAL + Fore.WHITE)
     time.sleep(1)
     clear()
-    print(Fore.YELLOW + Style.NORMAL + asciiGFX.logo1 + Style.NORMAL + Fore.WHITE)
-    print(Fore.YELLOW + Style.NORMAL + asciiGFX.logo2 + Style.NORMAL + Fore.WHITE)
-    print(Fore.YELLOW + Style.NORMAL + asciiGFX.logo3 + Style.NORMAL + Fore.WHITE)
+    print(Fore.YELLOW + Style.NORMAL + vars.logo1 + Style.NORMAL + Fore.WHITE)
+    print(Fore.YELLOW + Style.NORMAL + vars.logo2 + Style.NORMAL + Fore.WHITE)
+    print(Fore.YELLOW + Style.NORMAL + vars.logo3 + Style.NORMAL + Fore.WHITE)
     time.sleep(2)
     clear()
 
@@ -1123,9 +1218,9 @@ if __name__ == '__main__':
 
     print(Back.BLACK + Fore.WHITE)
     clear()
-    print(Fore.YELLOW + Style.NORMAL + asciiGFX.logo1 + Style.NORMAL + Fore.WHITE)
-    print(Fore.YELLOW + Style.NORMAL + asciiGFX.logo2 + Style.NORMAL + Fore.WHITE)
-    print(Fore.YELLOW + Style.NORMAL + asciiGFX.logo3 + Style.NORMAL + Fore.WHITE)
+    print(Fore.YELLOW + Style.NORMAL + vars.logo1 + Style.NORMAL + Fore.WHITE)
+    print(Fore.YELLOW + Style.NORMAL + vars.logo2 + Style.NORMAL + Fore.WHITE)
+    print(Fore.YELLOW + Style.NORMAL + vars.logo3 + Style.NORMAL + Fore.WHITE)
     print()
     print(Style.DIM + '             =======================================')
     print(Style.DIM + '             | ' + Style.NORMAL + 'Press ' + Fore.GREEN + 'n' + Fore.WHITE + ' to fucking ROCK a new story ' + Style.DIM + '|')
@@ -1139,6 +1234,9 @@ if __name__ == '__main__':
         TextAdventureCmd().cmdloop()
     elif holdOn == 'n':
         introAnimation()
+        setWeapon("Fists")
+        setFX("noFX")
+        setLocation("EBGB Stage")
         displayLocation(location)
         TextAdventureCmd().cmdloop()
     else:

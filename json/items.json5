@@ -85,6 +85,7 @@
     "GROUNDDESC": "'Handwritten note'",
     "SHORTDESC": "'the note'",
     "LONGDESC": "'A note in Chaz\\'s sloppy handwriting: ' + Fore.YELLOW + 'Yo Ted, a scout at the show wants us to' + '\\n' + 'sign with \\'em. We\\'re heading to their station after the gig, see you later bro.' + Style.NORMAL + Fore.WHITE",
+    "BWDESC": "'A note in Chaz\\'s sloppy handwriting: Yo Ted, a scout at the show wants us to' + '\\n' + 'sign with \\'em. We\\'re heading to their station after the gig, see you later bro.'",
     "TAKEABLE": true,
     "TYPE": "key",
     "DESCWORDS": [ "note", "chaz note" ]
@@ -216,7 +217,7 @@
     "NAME": "Drums",
     "GROUNDDESC": "'Drum Kit'",
     "SHORTDESC": "'the kit'",
-    "LONGDESC": "'EBGB\\'s house kit. It\'s missing the cymbals.'",
+    "LONGDESC": "'EBGB\\'s house kit. It\\'s missing the cymbals.'",
     "TAKEABLE": false,
     "TYPE": "static",
     "DESCWORDS": [ "drums", "kit" ]

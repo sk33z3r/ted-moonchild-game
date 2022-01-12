@@ -1,5 +1,3 @@
-from colorama import Fore, Back, Style
-import globalVars as vars
 import pymongo
 
 # Setup database connection
