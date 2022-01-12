@@ -1,13 +1,4 @@
-# Character battle stat values go here
-PLAYERHP = 100
-PLAYERMP = 25
-FLOYDS = 0
-PLAYERLVL = 1
-PLAYERXP = 0
-CRIT = 1 # TODO make CRIT value based on PLAYERLVL
-
-# challenge rating variable
-XPAWARD = 0
+from colorama import Fore, Back, Style
 
 # http://www.text-image.com/convert/ascii.html
 # set size to 40 character width
