@@ -1,6 +1,6 @@
 import os, sys, time, random, argparse, cmd, textwrap, json
 from colorama import Fore, Back, Style
-import globalVars as vars
+import art
 import database as dbs
 
 # check for command line arguments
@@ -36,38 +36,17 @@ if colors == 0:
 else:
     PROMPT = Fore.RED + '\m/: ' + Style.NORMAL + Fore.WHITE
 
-def setLocation(name):
-    global location
-    global locationInfo
-    location = name
-    locationInfo = dbs.rooms.find_one( { "NAME": location } )
-
-def setWeapon(name):
-    global equippedWeapon
-    global weaponInfo
-    equippedWeapon = name
-    weaponInfo = dbs.items.find_one( {"NAME": name } )
-
-def setFX(name):
-    global addedFX
-    global fxInfo
-    addedFX = name
-    fxInfo = dbs.items.find_one( {"NAME": name } )
-
+# identify the OS
 def identify_os():
-    """Identifies the OS."""
     system = sys.platform
     if system == "win32":
         return "cls"
-
     else:
         return "clear"
 
-
+# clear the terminal
 def clear():
-    """Clears the terminal."""
     os.system(identify_os())
-
 
 """
 These variables track where the player is and what is in their inventory.
@@ -78,14 +57,8 @@ variable.
 # TODO create "New Game" save file and force a load every time a new game is selected
 # engine variables
 nextAction = 0 # 1 = player, 0 = enemy
-location = "location"
-locationInfo = "locationInfo"
-equippedWeapon = "equippedWeapon"
-weaponInfo = "weaponInfo"
-addedFX = "addedFX"
-fxInfo = "fxInfo"
-inventory = ['Winnibego Keys', 'Protection']
 showFullExits = True
+inventory = ['Winnibego Keys', 'Protection']
 
 # input error message
 def inputError():
@@ -118,8 +91,8 @@ class combatMode():
         print(Style.DIM + '>>  ' + Style.BRIGHT + Fore.CYAN + 'TED MOONCHILD' + Fore.WHITE + Style.NORMAL)
         print('    HP: ' + str(vars.PLAYERHP))
         print('    MP: ' + str(vars.PLAYERMP))
-        print('    WPN: ' + equippedWeapon + ' [+' + str(weaponInfo["ATKBNS"]) + ']')
-        print('    FX: ' + addedFX + ' [+' + str(fxInfo["ATKBNS"]) + ']')
+        print('    WPN: ' + dbs.equippedWeapon + ' [+' + str(dbs.weaponInfo["ATKBNS"]) + ']')
+        print('    FX: ' + dbs.addedFX + ' [+' + str(dbs.fxInfo["ATKBNS"]) + ']')
         print('')
         print(Style.DIM + '>>  ' + Style.BRIGHT + Fore.YELLOW + chosenEnemy["NAME"] + Fore.WHITE + Style.NORMAL)
         print('    HP: ' + str(vars.ENEMYHP))
@@ -189,12 +162,12 @@ class combatMode():
                 else:
                     pass
                 # Increase hero's attack damage by whatever attack bonus the weapon supplies.
-                heroAttackDamage += weaponInfo["ATKBNS"]
+                heroAttackDamage += dbs.weaponInfo["ATKBNS"]
                 if debug == 1:
                     print(Style.DIM + ' DMG + WPN:      ' + str(heroAttackDamage) + Style.NORMAL + Fore.WHITE)
                 else:
                     pass
-                heroAttackDamage += fxInfo["ATKBNS"]
+                heroAttackDamage += dbs.fxInfo["ATKBNS"]
                 if debug == 1:
                     print(Style.DIM + ' DMG + FX:       ' + str(heroAttackDamage) + Style.NORMAL + Fore.WHITE)
                 else:
@@ -292,10 +265,10 @@ class combatMode():
             # get a list of inventory items with duplicates removed:
             for item in set(inventory):
                 # If item is an equipped weapon, display a [e]
-                if item == equippedWeapon:
+                if item == dbs.equippedWeapon:
                     print((Style.DIM + Fore.YELLOW + ' [' + str(i) + '] - ' + Fore.WHITE + Style.NORMAL + '  ' + item + ' [e]'))
                     battleItems.append(item)
-                elif item == addedFX:
+                elif item == dbs.addedFX:
                     print((Style.DIM + Fore.YELLOW + ' [' + str(i) + '] - ' + Fore.WHITE + Style.NORMAL + '  ' + item + ' [e]'))
                     battleItems.append(item)
                 elif itemCount[item] > 1:
@@ -336,7 +309,7 @@ class combatMode():
                 except KeyError:
                     pass
                 else:
-                    if chosenItemInfo["WEAPON"] == True and chosenItemInfo["NAME"] != equippedWeapon:
+                    if chosenItemInfo["WEAPON"] == True and chosenItemInfo["NAME"] != dbs.equippedWeapon:
                         print('')
                         print('Equip it first, then use an attack!')
                         time.sleep(2)
@@ -349,7 +322,7 @@ class combatMode():
                 except KeyError:
                     pass
                 else:
-                    if chosenItemInfo["FX"] == True and chosenItemInfo["NAME"] != addedFX:
+                    if chosenItemInfo["FX"] == True and chosenItemInfo["NAME"] != dbs.addedFX:
                         print('')
                         print('Equip it first, then use an attack!')
                         time.sleep(2)
@@ -357,11 +330,11 @@ class combatMode():
                         nextAction = 1
                     else:
                         pass
-                if chosenItemInfo["NAME"] == addedFX:
+                if chosenItemInfo["NAME"] == dbs.addedFX:
                     print('Use Ted\'s attack instead!')
                     # Set next action to player
                     nextAction = 1
-                elif chosenItemInfo["NAME"] == equippedWeapon:
+                elif chosenItemInfo["NAME"] == dbs.equippedWeapon:
                     print('Use Ted\'s attack instead!')
                     # Set next action to player
                     nextAction = 1
@@ -568,20 +541,18 @@ def displayLocation(loc):
     print('\n')
     if showFullExits:
         for direction in ("NORTH", "SOUTH", "EAST", "WEST", "UP", "DOWN"):
-            if direction in locationInfo:
-                print(('%s: %s' % (direction.title(), locationInfo[direction])))
+            if direction in dbs.locationInfo:
+                print(('%s: %s' % (direction.title(), dbs.locationInfo[direction])))
     else:
         print(('Exits: %s' % ' '.join(exits)))
 
 
 def moveDirection(direction):
     # A helper function that changes the location of the player.
-    global location
-    global locationInfo
 
     combatCheck = random.randrange(0,6)
 
-    if direction in locationInfo:
+    if direction in dbs.locationInfo:
         if combatCheck == 5:
             clear()
             print(Fore.RED + Style.BRIGHT)
@@ -594,11 +565,11 @@ def moveDirection(direction):
             time.sleep(3)
             combat = combatMode()
             combat.fight()
-            setLocation(locationInfo[direction])
-            displayLocation(location)
+            setLocation(dbs.locationInfo[direction])
+            displayLocation(dbs.location)
         else:
-            setLocation(locationInfo[direction])
-            displayLocation(location)
+            setLocation(dbs.locationInfo[direction])
+            displayLocation(dbs.location)
     else:
         print('Ted can\'t walk through walls.')
 
@@ -710,9 +681,9 @@ class TextAdventureCmd(cmd.Cmd):
         print(Style.DIM + '---- INV ----' + Style.NORMAL + Fore.WHITE)
         for item in set(inventory):
             # If item is an equipped weapon, display a [e]
-            if item == equippedWeapon:
+            if item == dbs.equippedWeapon:
                 print(('  ' + item + ' [e]'))
-            elif item == addedFX:
+            elif item == dbs.addedFX:
                 print(('  ' + item + ' [e]'))
             elif itemCount[item] > 1:
                 print(('  %s (%s)' % (item, itemCount[item])))
@@ -735,14 +706,14 @@ class TextAdventureCmd(cmd.Cmd):
         cantTake = False
 
         # get the item name that the player's command describes
-        for item in getAllItemsMatchingDesc(itemToTake, locationInfo["GROUND"]):
+        for item in getAllItemsMatchingDesc(itemToTake, dbs.locationInfo["GROUND"]):
             itemInfo = dbs.items.find_one( { "NAME": item } )
             if itemInfo["TAKEABLE"] == False:
                 cantTake = True
                 continue # there may be other items named this that Ted can take, so we continue checking
             print(('Ted grabs %s.' % (itemInfo["SHORTDESC"])))
-            dbs.rooms.update_one( { "NAME": location }, { "$pull": { "GROUND": item } } ) # remove from the ground
-            setLocation(location)
+            dbs.rooms.update_one( { "NAME": dbs.location }, { "$pull": { "GROUND": item } } ) # remove from the ground
+            setLocation(dbs.location)
             inventory.append(item) # add to inventory
             return
 
@@ -771,10 +742,10 @@ class TextAdventureCmd(cmd.Cmd):
         if item != None:
             print(('Ted drops %s.' % (dbs.items.find_one( { "NAME": item } )["SHORTDESC"])))
             # add item to the ground
-            groundTemp = list(locationInfo["GROUND"])
+            groundTemp = list(dbs.locationInfo["GROUND"])
             groundTemp.append(item)
-            dbs.rooms.update_one( { "NAME": location }, { "$set": { "GROUND": groundTemp } } )
-            setLocation(location)
+            dbs.rooms.update_one( { "NAME": dbs.location }, { "$set": { "GROUND": groundTemp } } )
+            setLocation(dbs.location)
             inventory.remove(item) # remove from inventory
 
     def complete_take(self, text, line, begidx, endidx):
@@ -783,10 +754,10 @@ class TextAdventureCmd(cmd.Cmd):
 
         # if the user has only typed "take" but no item name:
         if not text:
-            return getAllFirstDescWords(locationInfo["GROUND"])
+            return getAllFirstDescWords(dbs.locationInfo["GROUND"])
 
         # otherwise, get a list of all "description words" for ground items matching the command text so far:
-        for item in list(set(locationInfo["GROUND"])):
+        for item in list(set(dbs.locationInfo["GROUND"])):
             for descWord in dbs.items.find_one( { "NAME": item } )["DESCWORDS"]:
                 if descWord.startswith(text) and dbs.items.find_one( { "NAME": item } )["TAKEABLE"] == True:
                     possibleItems.append(descWord)
@@ -827,34 +798,34 @@ class TextAdventureCmd(cmd.Cmd):
         lookingAt = arg.lower()
         if lookingAt == '':
             # "look" will re-print the area description
-            displayLocation(location)
+            displayLocation(dbs.location)
             return
 
         if lookingAt == 'exits':
             for direction in ("NORTH", "SOUTH", "EAST", "WEST", "UP", "DOWN"):
-                if direction in locationInfo:
-                    print(('%s: %s' % (direction.title(), locationInfo[direction])))
+                if direction in dbs.locationInfo:
+                    print(('%s: %s' % (direction.title(), dbs.locationInfo[direction])))
             return
 
         if lookingAt in ('north', 'west', 'east', 'south', 'up', 'down', 'n', 'w', 'e', 's', 'u', 'd'):
-            if lookingAt.startswith('n') and "NORTH" in locationInfo:
-                print((locationInfo["NORTH"]))
-            elif lookingAt.startswith('w') and "WEST" in locationInfo:
-                print((locationInfo["WEST"]))
-            elif lookingAt.startswith('e') and "EAST" in locationInfo:
-                print((locationInfo["EAST"]))
-            elif lookingAt.startswith('s') and "SOUTH" in locationInfo:
-                print((locationInfo["SOUTH"]))
-            elif lookingAt.startswith('u') and "UP" in locationInfo:
-                print((locationInfo["UP"]))
-            elif lookingAt.startswith('d') and "DOWN" in locationInfo:
-                print((locationInfo["DOWN"]))
+            if lookingAt.startswith('n') and "NORTH" in dbs.locationInfo:
+                print((dbs.locationInfo["NORTH"]))
+            elif lookingAt.startswith('w') and "WEST" in dbs.locationInfo:
+                print((dbs.locationInfo["WEST"]))
+            elif lookingAt.startswith('e') and "EAST" in dbs.locationInfo:
+                print((dbs.locationInfo["EAST"]))
+            elif lookingAt.startswith('s') and "SOUTH" in dbs.locationInfo:
+                print((dbs.locationInfo["SOUTH"]))
+            elif lookingAt.startswith('u') and "UP" in dbs.locationInfo:
+                print((dbs.locationInfo["UP"]))
+            elif lookingAt.startswith('d') and "DOWN" in dbs.locationInfo:
+                print((dbs.locationInfo["DOWN"]))
             else:
                 print('Ted can\'t walk through walls.')
             return
 
         # see if the item being looked at is on the ground at this location
-        item = getFirstItemMatchingDesc(lookingAt, locationInfo["GROUND"])
+        item = getFirstItemMatchingDesc(lookingAt, dbs.locationInfo["GROUND"])
         if item != None:
             print(('\n'.join(textwrap.wrap(dbs.items.find_one( { "NAME": item } )["LONGDESC"], SCREEN_WIDTH))))
             return
@@ -874,8 +845,8 @@ class TextAdventureCmd(cmd.Cmd):
 
         # get a list of all "description words" for each item in the inventory
         invDescWords = getAllDescWords(inventory)
-        groundDescWords = getAllDescWords(locationInfo["GROUND"])
-        shopDescWords = getAllDescWords(locationInfo["SHOP"])
+        groundDescWords = getAllDescWords(dbs.locationInfo["GROUND"])
+        shopDescWords = getAllDescWords(dbs.locationInfo["SHOP"])
 
         for descWord in invDescWords + groundDescWords + shopDescWords + ["north", "south", "east", "west", "up", "down"]:
             if line.startswith('look %s' % (descWord)):
@@ -883,10 +854,10 @@ class TextAdventureCmd(cmd.Cmd):
 
         # if the user has only typed "look" but no item name, show all items on ground, shop and directions:
         if lookingAt == '':
-            possibleItems.extend(getAllFirstDescWords(locationInfo["GROUND"]))
-            possibleItems.extend(getAllFirstDescWords(locationInfo["SHOP"]))
+            possibleItems.extend(getAllFirstDescWords(dbs.locationInfo["GROUND"]))
+            possibleItems.extend(getAllFirstDescWords(dbs.locationInfo["SHOP"]))
             for direction in ("NORTH", "SOUTH", "EAST", "WEST", "UP", "DOWN"):
-                if direction in locationInfo:
+                if direction in dbs.locationInfo:
                     possibleItems.append(direction)
             return list(set(possibleItems)) # make list unique
 
@@ -915,14 +886,14 @@ class TextAdventureCmd(cmd.Cmd):
 
     def do_list(self, arg):
         # List the items for sale at the current location's shop.
-        if "SHOP" not in locationInfo:
+        if "SHOP" not in dbs.locationInfo:
             print('Ain\'t no store here, Ted.')
             return
 
         arg = arg.lower()
 
         print((Style.DIM + '--- STORE ---' + Style.NORMAL + Fore.WHITE))
-        for item in locationInfo["SHOP"]:
+        for item in dbs.locationInfo["SHOP"]:
             itemInfo = dbs.items.find_one( { "NAME": item } )
             print(('  %s' % (item)))
             print(('  ' + Style.DIM + '\n  '.join(textwrap.wrap(itemInfo["LONGDESC"], SCREEN_WIDTH)) + Style.NORMAL + Fore.WHITE))
@@ -934,7 +905,7 @@ class TextAdventureCmd(cmd.Cmd):
 
     def do_buy(self, arg):
         # buy <item>" - buy an item at the current location's shop.
-        if "SHOP" not in locationInfo:
+        if "SHOP" not in dbs.locationInfo:
             print('Ain\'t shit to buy, Ted.')
             return
 
@@ -944,7 +915,7 @@ class TextAdventureCmd(cmd.Cmd):
             print(('Gotta be more specific.' + Style.DIM + ' Type "list" to see items' + Style.NORMAL + Fore.WHITE))
             return
 
-        item = getFirstItemMatchingDesc(itemToBuy, locationInfo["SHOP"])
+        item = getFirstItemMatchingDesc(itemToBuy, dbs.locationInfo["SHOP"])
         if item != None:
             # NOTE - If Ted wanted to implement money, here is where Ted would add
             # code that checks if the player has enough, then deducts the price
@@ -957,7 +928,7 @@ class TextAdventureCmd(cmd.Cmd):
 
 
     def complete_buy(self, text, line, begidx, endidx):
-        if "SHOP" not in locationInfo:
+        if "SHOP" not in dbs.locationInfo:
             return []
 
         itemToBuy = text.lower()
@@ -965,10 +936,10 @@ class TextAdventureCmd(cmd.Cmd):
 
         # if the user has only typed "buy" but no item name:
         if not itemToBuy:
-            return getAllFirstDescWords(locationInfo["SHOP"])
+            return getAllFirstDescWords(dbs.locationInfo["SHOP"])
 
         # otherwise, get a list of all "description words" for shop items matching the command text so far:
-        for item in list(set(locationInfo["SHOP"])):
+        for item in list(set(dbs.locationInfo["SHOP"])):
             for descWord in dbs.items.find_one( { "NAME": item } )["DESCWORDS"]:
                 if descWord.startswith(text):
                     possibleItems.append(descWord)
@@ -978,7 +949,7 @@ class TextAdventureCmd(cmd.Cmd):
 
     def do_sell(self, arg):
         # "sell <item>" - sell an item at the current location's shop.
-        if "SHOP" not in locationInfo:
+        if "SHOP" not in dbs.locationInfo:
             print('Ain\'t no one to sell it.')
             return
 
@@ -1001,7 +972,7 @@ class TextAdventureCmd(cmd.Cmd):
 
 
     def complete_sell(self, text, line, begidx, endidx):
-        if "SHOP" not in locationInfo:
+        if "SHOP" not in dbs.locationInfo:
             return []
 
         itemToSell = text.lower()
@@ -1070,13 +1041,12 @@ class TextAdventureCmd(cmd.Cmd):
         print('  Hero Level: ' + str(vars.PLAYERLVL))
         print('  Hero XP: '+ str(vars.PLAYERXP))
         print('  You have ' + str(vars.FLOYDS) + ' Floyds.')
-        print('  Equipped Weapon: ' + equippedWeapon + ' [+' + str(weaponInfo["ATKBNS"]) + ']')
-        print('  Added FX: ' + addedFX + ' [+' + str(fxInfo["ATKBNS"]) + ']')
+        print('  Equipped Weapon: ' + dbs.equippedWeapon + ' [+' + str(dbs.weaponInfo["ATKBNS"]) + ']')
+        print('  Added FX: ' + dbs.addedFX + ' [+' + str(dbs.fxInfo["ATKBNS"]) + ']')
         print(Style.DIM + '=============' + Style.NORMAL + Fore.WHITE)
 
     def do_equip(self, arg):
         # Equip an item in Ted\'s inventory.
-        global equippedWeapon
         itemToEquip = arg.lower()
 
         if itemToEquip == '':
@@ -1101,7 +1071,6 @@ class TextAdventureCmd(cmd.Cmd):
 
     def do_addfx(self, arg):
         # Add and effect to Ted's weapon.
-        global addedFX
         itemToAdd = arg.lower()
 
         if itemToAdd == '':
@@ -1182,29 +1151,29 @@ def introAnimation():
     print(Style.NORMAL + engine["INTRO5"] + '\n')
     time.sleep(13)
     clear()
-    print(Fore.YELLOW + Style.NORMAL + vars.logo1 + Style.NORMAL + Fore.WHITE)
-    print(Fore.YELLOW + Style.NORMAL + vars.logo2 + Style.NORMAL + Fore.WHITE)
-    print(Fore.YELLOW + Style.NORMAL + vars.logo3 + Style.NORMAL + Fore.WHITE)
+    print(Fore.YELLOW + Style.NORMAL + art.logo1 + Style.NORMAL + Fore.WHITE)
+    print(Fore.YELLOW + Style.NORMAL + art.logo2 + Style.NORMAL + Fore.WHITE)
+    print(Fore.YELLOW + Style.NORMAL + art.logo3 + Style.NORMAL + Fore.WHITE)
     time.sleep(0.5)
     clear()
-    print(Fore.YELLOW + Style.BRIGHT + vars.logo1 + Style.NORMAL + Fore.WHITE)
-    print(Fore.YELLOW + Style.NORMAL + vars.logo2 + Style.NORMAL + Fore.WHITE)
-    print(Fore.YELLOW + Style.NORMAL + vars.logo3 + Style.NORMAL + Fore.WHITE)
+    print(Fore.YELLOW + Style.BRIGHT + art.logo1 + Style.NORMAL + Fore.WHITE)
+    print(Fore.YELLOW + Style.NORMAL + art.logo2 + Style.NORMAL + Fore.WHITE)
+    print(Fore.YELLOW + Style.NORMAL + art.logo3 + Style.NORMAL + Fore.WHITE)
     time.sleep(1)
     clear()
-    print(Fore.YELLOW + Style.NORMAL + vars.logo1 + Style.NORMAL + Fore.WHITE)
-    print(Fore.YELLOW + Style.BRIGHT + vars.logo2 + Style.NORMAL + Fore.WHITE)
-    print(Fore.YELLOW + Style.NORMAL + vars.logo3 + Style.NORMAL + Fore.WHITE)
+    print(Fore.YELLOW + Style.NORMAL + art.logo1 + Style.NORMAL + Fore.WHITE)
+    print(Fore.YELLOW + Style.BRIGHT + art.logo2 + Style.NORMAL + Fore.WHITE)
+    print(Fore.YELLOW + Style.NORMAL + art.logo3 + Style.NORMAL + Fore.WHITE)
     time.sleep(0.5)
     clear()
-    print(Fore.YELLOW + Style.NORMAL + vars.logo1 + Style.NORMAL + Fore.WHITE)
-    print(Fore.YELLOW + Style.NORMAL + vars.logo2 + Style.NORMAL + Fore.WHITE)
-    print(Fore.YELLOW + Style.BRIGHT + vars.logo3 + Style.NORMAL + Fore.WHITE)
+    print(Fore.YELLOW + Style.NORMAL + art.logo1 + Style.NORMAL + Fore.WHITE)
+    print(Fore.YELLOW + Style.NORMAL + art.logo2 + Style.NORMAL + Fore.WHITE)
+    print(Fore.YELLOW + Style.BRIGHT + art.logo3 + Style.NORMAL + Fore.WHITE)
     time.sleep(1)
     clear()
-    print(Fore.YELLOW + Style.NORMAL + vars.logo1 + Style.NORMAL + Fore.WHITE)
-    print(Fore.YELLOW + Style.NORMAL + vars.logo2 + Style.NORMAL + Fore.WHITE)
-    print(Fore.YELLOW + Style.NORMAL + vars.logo3 + Style.NORMAL + Fore.WHITE)
+    print(Fore.YELLOW + Style.NORMAL + art.logo1 + Style.NORMAL + Fore.WHITE)
+    print(Fore.YELLOW + Style.NORMAL + art.logo2 + Style.NORMAL + Fore.WHITE)
+    print(Fore.YELLOW + Style.NORMAL + art.logo3 + Style.NORMAL + Fore.WHITE)
     time.sleep(2)
     clear()
 
@@ -1212,9 +1181,9 @@ if __name__ == '__main__':
 
     print(Back.BLACK + Fore.WHITE)
     clear()
-    print(Fore.YELLOW + Style.NORMAL + vars.logo1 + Style.NORMAL + Fore.WHITE)
-    print(Fore.YELLOW + Style.NORMAL + vars.logo2 + Style.NORMAL + Fore.WHITE)
-    print(Fore.YELLOW + Style.NORMAL + vars.logo3 + Style.NORMAL + Fore.WHITE)
+    print(Fore.YELLOW + Style.NORMAL + art.logo1 + Style.NORMAL + Fore.WHITE)
+    print(Fore.YELLOW + Style.NORMAL + art.logo2 + Style.NORMAL + Fore.WHITE)
+    print(Fore.YELLOW + Style.NORMAL + art.logo3 + Style.NORMAL + Fore.WHITE)
     print()
     print(Style.DIM + '             =======================================')
     print(Style.DIM + '             | ' + Style.NORMAL + 'Press ' + Fore.GREEN + 'n' + Fore.WHITE + ' to fucking ROCK a new story ' + Style.DIM + '|')
@@ -1224,15 +1193,12 @@ if __name__ == '__main__':
     holdOn = input(PROMPT)
     if holdOn == 'l':
         openSave()
-        displayLocation(location)
+        displayLocation(dbs.location)
         TextAdventureCmd().cmdloop()
     elif holdOn == 'n':
         introAnimation()
-        dbs.initDB()
-        setWeapon("Fists")
-        setFX("noFX")
-        setLocation("EBGB Stage")
-        displayLocation(location)
+        dbs.newGame()
+        displayLocation(dbs.location)
         TextAdventureCmd().cmdloop()
     else:
         pass
