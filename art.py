@@ -23,3 +23,9 @@ logo3 = """
          |__)/  \ /\ |  \||_ (_   . _   (_ |__) /\ /  |_
          | \ \__//--\|__/||____)  || )  __)|   /--\\\\__|__
 """
+
+def printLogo():
+  print(Fore.YELLOW + Style.NORMAL + logo1 + Style.NORMAL + Fore.WHITE)
+  print(Fore.YELLOW + Style.NORMAL + logo2 + Style.NORMAL + Fore.WHITE)
+  print(Fore.YELLOW + Style.NORMAL + logo3 + Style.NORMAL + Fore.WHITE)
+  print()
