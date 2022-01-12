@@ -18,26 +18,26 @@ for o in os.listdir("./json"):
 # TODO make CRIT value based on PLAYERLVL
 
 # set a new location
-def setLocation(name):
+def setLocation(n):
     global location
     global locationInfo
-    player.update_one( { "SECTION": "location" }, { "$set": { "NAME": name } } )
-    locationInfo = rooms.find_one( { "NAME": name } )
+    player.update_one( { "SECTION": "location" }, { "$set": { "NAME": n } } )
+    locationInfo = rooms.find_one( { "NAME": n } )
     location = locationInfo["NAME"]
 
 # equip a new weapon
-def setWeapon(name):
+def setWeapon(n):
     global equippedWeapon
     global weaponInfo
-    player.update_one( { "SECTION": "equipped" }, { "$set": { "WEAPON": name } } )
+    player.update_one( { "SECTION": "equipped" }, { "$set": { "WEAPON": n } } )
     equippedWeapon = player.find_one( { "SECTION": "equipped" } )["WEAPON"]
     weaponInfo = items.find_one( {"NAME": equippedWeapon } )
 
 # equip a new FX pedal
-def setFX(name):
+def setFX(n):
     global addedFX
     global fxInfo
-    player.update_one( { "SECTION": "equipped" }, { "$set": { "FX": name } } )
+    player.update_one( { "SECTION": "equipped" }, { "$set": { "FX": n } } )
     addedFX = player.find_one( { "SECTION": "equipped" } )["FX"]
     fxInfo = items.find_one( {"NAME": addedFX } )
 
