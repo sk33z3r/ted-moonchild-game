@@ -1,5 +1,6 @@
-import pymongo, json, os
+import pymongo, json, os, shutil, re
 from bson.json_util import dumps
+import engine as eng
 
 # setup saves path
 savesPath = "./save-states"
@@ -16,6 +17,15 @@ for o in os.listdir("./json"):
     collections.append(f)
 
 # TODO make CRIT value based on PLAYERLVL
+
+# define function to remove a save slot
+def deleteSave(n):
+    try:
+        client.drop_database(n)
+    except:
+        print("Database doesn't exist")
+    if os.path.exists(savesPath + "/" + n):
+        shutil.rmtree(savesPath + "/" + n)
 
 # set a new location
 def setLocation(n):
@@ -68,6 +78,8 @@ def define(n):
     items = db['items']
     rooms = db['rooms']
     player = db['player']
+    # set SLOT_NAME variable
+    eng.SLOT_NAME = n
 
 # save current game state to the database
 def saveGame():
@@ -81,39 +93,45 @@ def saveGame():
         else:
             pass
         cursor = col.find({})
-        with open(newFile, 'w') as file:
-            json.dump(json.loads(dumps(cursor)), file)
+        with open(newFile, 'w') as f:
+            json.dump(json.loads(dumps(cursor)), f)
+            f.close()
+        # convert json dump so it can be inserted to mongo later
+        content_new = ""
+        with open(newFile, 'r') as f:
+            content = f.read()
+            content_new = re.sub('(\{"\$oid": )("[A-Za-z0-9]{24}")(\})', r'\2', content, flags = re.M)
+            f.close()
+        with open(newFile, 'w') as f:
+            f.close()
+        with open(newFile, 'w') as f:
+            f.write(content_new)
+            f.close()
 
 # load game state from database
 def loadGame(name):
     global equipment
+    # remove old save db if it exists
+    client.drop_database(name)
+    # setup new save data
     define(name)
-    # remove documents from all collections just in case they exists
-    try:
-        abilities.delete_many({})
-        challenge_ratings.delete_many({})
-        enemies.delete_many({})
-        engine.delete_many({})
-        items.delete_many({})
-        rooms.delete_many({})
-        player.delete_many({})
-    except:
-        print("No documents found.")
-        pass
     # iterate through collections to insert documents
     for n in collections:
         col = db[n]
         # load the json
         initFile = playerPath + '/' + n + '.json'
-        with open(initFile) as file:
-            file_data = json.load(file)
+        with open(initFile) as f:
+            file_data = json.load(f)
+            f.close()
         # use _many or _one based on docs in the json
         if isinstance(file_data, list):
             col.insert_many(file_data)
-            print("inserted init document to " + n)
+            if eng.DEBUG == 1:
+                print("inserted init document to " + n)
         else:
             col.insert_one(file_data)
-            print("inserted init documents to " + n)
+            if eng.DEBUG == 1:
+                print("inserted init documents to " + n)
     equipment = player.find_one( { "SECTION": "equipped" } )
     setWeapon(equipment["WEAPON"])
     setFX(equipment["FX"])
@@ -123,33 +141,27 @@ def loadGame(name):
 # create new database and set initial values
 def newGame(name):
     global equipment
+    # remove old save data
+    deleteSave(name)
+    # setup new save data
     define(name)
-    # remove documents from all collections just in case they exists
-    try:
-        abilities.delete_many({})
-        challenge_ratings.delete_many({})
-        enemies.delete_many({})
-        engine.delete_many({})
-        items.delete_many({})
-        rooms.delete_many({})
-        player.delete_many({})
-    except:
-        print("No documents found.")
-        pass
     # iterate through collections to insert and dump a new save
     for n in collections:
         col = db[n]
         # load the json
         initFile = './json/' + n + '.json'
-        with open(initFile) as file:
-            file_data = json.load(file)
+        with open(initFile) as f:
+            file_data = json.load(f)
+            f.close()
         # use _many or _one based on docs in the json
         if isinstance(file_data, list):
             col.insert_many(file_data)
-            print("inserted init document to " + n)
+            if eng.DEBUG == 1:
+                print("inserted init document to " + n)
         else:
             col.insert_one(file_data)
-            print("inserted init documents to " + n)
+            if eng.DEBUG == 1:
+                print("inserted init documents to " + n)
         # save to a new state file set
         newFile = playerPath + "/" + n + ".json"
         if os.path.exists(newFile):
@@ -157,8 +169,20 @@ def newGame(name):
         else:
             pass
         cursor = col.find({})
-        with open(newFile, 'w') as file:
-            json.dump(json.loads(dumps(cursor)), file)
+        with open(newFile, 'w') as f:
+            json.dump(json.loads(dumps(cursor)), f)
+            f.close()
+        # convert json dump so it can be inserted to mongo later
+        content_new = ""
+        with open(newFile, 'r') as f:
+            content = f.read()
+            content_new = re.sub('(\{"\$oid": )("[A-Za-z0-9]{24}")(\})', r'\2', content, flags = re.M)
+            f.close()
+        with open(newFile, 'w') as f:
+            f.close()
+        with open(newFile, 'w') as f:
+            f.write(content_new)
+            f.close()
     equipment = player.find_one( { "SECTION": "equipped" } )
     setWeapon(equipment["WEAPON"])
     setFX(equipment["FX"])
