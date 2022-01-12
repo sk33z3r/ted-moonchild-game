@@ -5,7 +5,7 @@ client = pymongo.MongoClient("mongodb://root:example@172.100.0.121:27017/")
 db = client['moonchild']
 
 # collection list for later use
-collections = [ "abilities", "challenge_ratings", "enemies", "engine", "items", "rooms", "save_state" ]
+collections = [ "abilities", "challenge_ratings", "enemies", "engine", "items", "rooms" ]
 
 # Define collection variables
 abilities = db['abilities']
@@ -14,7 +14,6 @@ enemies = db['enemies']
 engine = db['engine']
 items = db['items']
 rooms = db['rooms']
-save_state = db['save_state']
 
 # reset all documents to initial state
 def initDB():
@@ -25,7 +24,6 @@ def initDB():
     engine.delete_many({})
     items.delete_many({})
     rooms.delete_many({})
-    save_state.delete_many({})
     # iterate through collections list and insert from json
     for name in collections:
         col = db[name]
