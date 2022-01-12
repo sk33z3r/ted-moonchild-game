@@ -5,4 +5,4 @@ ted-moonchild-macos*
 dockerfiles/ssh_host_rsa_key*
 dockerfiles/ssh_host_dsa_key*
 db/
-save-state/
+save-states/
