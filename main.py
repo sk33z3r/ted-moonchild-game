@@ -1,11 +1,5 @@
-import os
-import sys
-import time
+import os, sys, time, random, argparse, cmd, textwrap, json
 from colorama import Fore, Back, Style
-import random
-import argparse
-import cmd
-import textwrap
 import globalVars as vars
 import database as dbs
 
@@ -52,13 +46,13 @@ def setWeapon(name):
     global equippedWeapon
     global weaponInfo
     equippedWeapon = name
-    weaponInfo = dbs.items.find_one( {"NAME": name} )
+    weaponInfo = dbs.items.find_one( {"NAME": name } )
 
 def setFX(name):
     global addedFX
     global fxInfo
     addedFX = name
-    fxInfo = dbs.items.find_one( {"NAME": name} )
+    fxInfo = dbs.items.find_one( {"NAME": name } )
 
 def identify_os():
     """Identifies the OS."""
@@ -1234,6 +1228,7 @@ if __name__ == '__main__':
         TextAdventureCmd().cmdloop()
     elif holdOn == 'n':
         introAnimation()
+        dbs.initDB()
         setWeapon("Fists")
         setFX("noFX")
         setLocation("EBGB Stage")

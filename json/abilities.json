@@ -1,0 +1,38 @@
+[
+    {
+        "NAME": "Punch",
+        "HEROMIN": 0,
+        "HEROMAX": 3,
+        "TYPE": "physical",
+        "LEVEL": 1
+    },
+    {
+        "NAME": "Headbang",
+        "HEROMIN": 2,
+        "HEROMAX": 5,
+        "TYPE": "physical",
+        "LEVEL": 1
+    },
+    {
+        "NAME": "Rising Force",
+        "MPREQ": 2,
+        "MAGDMG": 2,
+        "TYPE": "magic",
+        "LEVEL": 1
+    },
+    {
+        "NAME": "Purple Rain",
+        "MPREQ": 3,
+        "MAGDMG": 3,
+        "TYPE": "magic",
+        "LEVEL": 1
+    },
+    {
+        "PLAYERHP": 100,
+        "PLAYERMP": 25,
+        "FLOYDS": 0,
+        "PLAYERLVL": 1,
+        "PLAYERXP": 0,
+        "CRIT": 1
+    }
+]
