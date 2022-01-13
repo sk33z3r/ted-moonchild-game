@@ -22,8 +22,6 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
-    volumes:
-      - ./db:/data/db:rw
     networks:
       blackrook:
         ipv4_address: 172.100.0.121
