@@ -51,6 +51,71 @@ def setFX(n):
     addedFX = player.find_one( { "SECTION": "equipped" } )["FX"]
     fxInfo = items.find_one( {"NAME": addedFX } )
 
+def getInventory():
+    global playerInv
+    playerInv = player.find_one( { "SECTION": "inventory" } )
+
+def getStats():
+    global playerStats
+    playerStats = player.find_one( { "SECTION": "stats" } )
+
+def updateGround(item, action):
+    if action == "del":
+        # remove item from ground
+        rooms.update_one( { "NAME": location }, { "$pull": { "GROUND": item } } )
+    elif action == "add":
+        # add item to the ground
+        groundTemp = list(locationInfo["GROUND"])
+        groundTemp.append(item)
+        rooms.update_one( { "NAME": location }, { "$set": { "GROUND": groundTemp } } )
+    else:
+        print("BUG: Someone forgot to specify an action!")
+        return
+    setLocation(location)
+
+def updateInv(item, action):
+    global playerInv
+    getInventory()
+    if action == "del":
+        # remove item
+        i = list(playerInv["ITEMS"])
+        k = list(playerInv["KEY_ITEMS"])
+        if item in i:
+            i.remove(item)
+        elif item in k:
+            k.remove(item)
+        player.update_one( { "SECTION": "inventory" }, { "$set": { "ITEMS": i } } )
+        player.update_one( { "SECTION": "inventory" }, { "$set": { "KEY_ITEMS": k } } )
+    elif action == "add":
+        # add item
+        if items.find_one( { "NAME": item } )["TYPE"] == "key":
+            k = list(playerInv["KEY_ITEMS"])
+            k.append(item)
+            player.update_one( { "SECTION": "inventory" }, { "$set": { "KEY_ITEMS": k } } )
+        else:
+            i = list(playerInv["ITEMS"])
+            i.append(item)
+            player.update_one( { "SECTION": "inventory" }, { "$set": { "ITEMS": i } } )
+    else:
+        print("BUG: Someone forgot to specify an action!")
+    getInventory()
+
+def updateStat(stat, num, action):
+    global playerStats
+    getStats()
+    temp = int(playerStats[stat])
+    if action == "inc":
+        # increase the stat
+        temp += int(num)
+    elif action == "dec":
+        # decrease the stat
+        temp -= int(num)
+    else:
+        print("BUG: Someone forgot to specify an action!")
+        return
+    player.update_one( { "SECTION": "stats" }, { "$set": { stat : temp } } )
+    getStats()
+
 # function to set paths and collections
 def define(n):
     # Define collection variables
