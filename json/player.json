@@ -5,11 +5,11 @@
     },
     {
         "SECTION": "stats",
-        "PLAYERHP": 100,
-        "PLAYERMP": 25,
+        "HP": 100,
+        "MP": 25,
         "FLOYDS": 0,
-        "PLAYERLVL": 1,
-        "PLAYERXP": 0,
+        "LVL": 1,
+        "XP": 0,
         "CRIT": 1
     },
     {
