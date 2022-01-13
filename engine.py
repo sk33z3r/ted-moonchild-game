@@ -267,13 +267,14 @@ class combatMode():
             print(Style.DIM + '>> ' + Style.NORMAL + 'Choose an Item')
             # get a list of inventory items with duplicates removed:
             for item in set(inv):
-                # If item is an equipped weapon, display a [e]
+                # If item is an equipped weapon or FX, display at the end [e]
                 if item == dbs.equippedWeapon:
                     print((Style.DIM + Fore.YELLOW + ' [' + str(i) + '] - ' + Fore.WHITE + Style.NORMAL + '  ' + item + ' [e]'))
                     battleItems.append(item)
                 elif item == dbs.addedFX:
                     print((Style.DIM + Fore.YELLOW + ' [' + str(i) + '] - ' + Fore.WHITE + Style.NORMAL + '  ' + item + ' [e]'))
                     battleItems.append(item)
+                # If item is a duplicate, print once with the quantity in ()
                 elif itemCount[item] > 1:
                     print((Style.DIM + Fore.YELLOW + ' [' + str(i) + '] - ' + Fore.WHITE + Style.NORMAL + '  %s (%s)' % (item, itemCount[item])))
                     battleItems.append(item)
@@ -314,7 +315,7 @@ class combatMode():
                 else:
                     if chosenItemInfo["WEAPON"] == True and chosenItemInfo["NAME"] != dbs.equippedWeapon:
                         print('')
-                        print('Equip it first, then use an attack!')
+                        print('You have to equip it first, then use your attack!')
                         time.sleep(2)
                         # Set next action to player
                         NEXT_ACTION = 1
@@ -327,7 +328,7 @@ class combatMode():
                 else:
                     if chosenItemInfo["FX"] == True and chosenItemInfo["NAME"] != dbs.addedFX:
                         print('')
-                        print('Equip it first, then use an attack!')
+                        print('You have to equip it first, then use your attack!')
                         time.sleep(2)
                         # Set next action to player
                         NEXT_ACTION = 1
@@ -540,6 +541,12 @@ class TextAdventureCmd(cmd.Cmd):
     # A very simple "quit" command to terminate the program:
     def do_quit(self, arg):
         # Quit the game.
+        print("Saving progress to blockchain...")
+        dbs.saveGame()
+        time.sleep(1)
+        dbs.deleteSave(SLOT_NAME, False)
+        print("...game saved!")
+        time.sleep(1)
         return True # this exits the Cmd application loop in TextAdventureCmd.cmdloop()
 
     # These direction commands have a long (i.e. north) and show (i.e. n) form.
