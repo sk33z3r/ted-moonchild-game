@@ -30,7 +30,7 @@
   * `python main.py [-nc|--nocolor]` - Turns off colorama styles.
   * `python main.py [-w|--width] INT` - Specifies the terminal output width
 
-## Combat Turn Logic:
+## Combat Turn Logic
 
 1. Random pick a number 0-5
     * If 4, miss; else move on
@@ -41,10 +41,10 @@
 5. Add `FXBNS` to `DMG`
 6. Deal `DMG` to enemy
 
-## CRIT & XP Table:
+## CRIT & XP Table
 
 ```plaintext
-XP Amount   Lvl	    CRIT
+XP Amount   Lvl     CRIT
 ------------------------
 0           1       +2
 300         2       +2
@@ -68,7 +68,7 @@ XP Amount   Lvl	    CRIT
 355,000     20      +6
 ```
 
-## Challenge Rating System:
+## Challenge Rating System
 
 * The idea is that when entering new creatures to the database, you can assign a challenge rating instead of a creature level. Makes it easier than remembering the XP amounts and less thought involved in the question "How much is this enemy worth?"
 * This will also determine the enemy's `CRITBNS`
