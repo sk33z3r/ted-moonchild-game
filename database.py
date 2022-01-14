@@ -109,7 +109,9 @@ def updateGround(item, action):
             print("New GROUND list:")
             print(groundList)
     else:
-        print("FUNCTION CALL BUG: Someone forgot to specify an action!")
+        print("FUNCTION CALL BUG: Someone forgot to specify an action for updateGround()")
+        time.sleep(1)
+        return
     setLocation(location)
 
 def updateInv(item, action):
@@ -148,11 +150,14 @@ def updateInv(item, action):
                 raise Exception("'" + item + "' is not in Ted's inventory.")
                 return
     else:
-        print("FUNCTION CALL BUG: Someone forgot to specify an action!")
+        print("FUNCTION CALL BUG: Someone forgot to specify an action for updateInv()")
+        time.sleep(1)
+        return
     if eng.DEBUG == 1:
         print("New inventory list:")
         print("Items: " + list(playerInv["ITEMS"]))
         print("Key Items: " + list(playerInv["KEY_ITEMS"]))
+        time.sleep(1)
 
 def updateStat(stat, num, action):
     global playerStats
@@ -165,7 +170,8 @@ def updateStat(stat, num, action):
         # decrease the stat
         temp -= int(num)
     else:
-        print("FUNCTION CALL BUG: Someone forgot to specify an action!")
+        print("FUNCTION CALL BUG: Someone forgot to specify an action for updateStat()")
+        time.sleep(1)
         return
     player.update_one( { "SECTION": "stats" }, { "$set": { stat : temp } } )
     getStats()
@@ -186,6 +192,8 @@ def define(n):
     global playerPath
     # setup new save directory
     playerPath = savesPath + "/" + n
+    if eng.DEBUG == 1:
+        print("Local saves path: " + playerPath)
     if not os.path.exists(playerPath):
         os.makedirs(playerPath)
     else:
@@ -202,7 +210,7 @@ def define(n):
     # set SLOT_NAME variable
     eng.SLOT_NAME = n
     if eng.DEBUG == 1:
-        print("Defined all database paths for the game to '" + n + "'")
+        print("Defined all database paths for '" + n + "'")
 
 # save current game state to the database
 def saveGame():
@@ -252,6 +260,8 @@ def loadGame(name):
         col = db[n]
         # load the json
         initFile = playerPath + '/' + n + '.json'
+        if eng.DEBUG == 1:
+            print("Initialized JSON path: " + initFile)
         with open(initFile) as f:
             file_data = json.load(f)
             f.close()
@@ -264,6 +274,8 @@ def loadGame(name):
             col.insert_one(file_data)
             if eng.DEBUG == 1:
                 print("inserted saved documents to " + n)
+    if eng.DEBUG == 1:
+        print("Setting up player environment...")
     equipment = player.find_one( { "SECTION": "equipped" } )
     setWeapon(equipment["WEAPON"])
     setFX(equipment["FX"])
@@ -285,6 +297,8 @@ def newGame(name):
         col = db[n]
         # load the json
         initFile = './json/' + n + '.json'
+        if eng.DEBUG == 1:
+            print("Old JSON path: " + initFile)
         with open(initFile) as f:
             file_data = json.load(f)
             f.close()
@@ -292,19 +306,19 @@ def newGame(name):
         if isinstance(file_data, list):
             col.insert_many(file_data)
             if eng.DEBUG == 1:
-                print("inserted init document to " + n)
+                print("Inserted init document to '" + n + "'")
         else:
             col.insert_one(file_data)
             if eng.DEBUG == 1:
-                print("inserted init documents to " + n)
+                print("Inserted init documents to '" + n + "'")
         # save to a new state file set
         newFile = playerPath + "/" + n + ".json"
         if eng.DEBUG == 1:
-            print("JSON file path: " + newFile)
+            print("New JSON file path: " + newFile)
         if os.path.exists(newFile):
-            os.remove(newFile)
             if eng.DEBUG == 1:
-                print("Removed old save game files")
+                print("Removing old save game files...")
+            os.remove(newFile)
         else:
             pass
         cursor = col.find({})
@@ -314,20 +328,22 @@ def newGame(name):
         # convert json dump so it can be inserted to mongo later
         content_new = ""
         with open(newFile, 'r') as f:
+            if eng.DEBUG == 1:
+                print("Converting BSON to JSON...")
             content = f.read()
             content_new = re.sub('(\{"\$oid": )("[A-Za-z0-9]{24}")(\})', r'\2', content, flags = re.M)
             f.close()
-            if eng.DEBUG == 1:
-                print("Converted BSON to JSON")
         with open(newFile, 'w') as f:
+            if eng.DEBUG == 1:
+                print("Emptying old file...")
             f.close()
-            if eng.DEBUG == 1:
-                print("Emptied file")
         with open(newFile, 'w') as f:
+            if eng.DEBUG == 1:
+                print("Saving to new JSON to file...")
             f.write(content_new)
             f.close()
-            if eng.DEBUG == 1:
-                print("Save new JSON to file")
+    if eng.DEBUG == 1:
+        print("Setting up player environment...")
     equipment = player.find_one( { "SECTION": "equipped" } )
     setWeapon(equipment["WEAPON"])
     setFX(equipment["FX"])
@@ -335,3 +351,4 @@ def newGame(name):
     setLocation(locationName)
     if eng.DEBUG == 1:
         print("New game created: '" + name + "'")
+        time.sleep(1)
