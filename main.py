@@ -40,11 +40,13 @@ if __name__ == '__main__':
                     if slotChoice == "back":
                         break
                     if slotChoice.isdigit():
+                        if eng.DEBUG == 1:
+                            print("slotChoice # received: " + slotChoice)
+                            print("slotChoice name received: " + slots[int(slotChoice)])
+                            time.sleep(1)
                         try:
                             dbs.loadGame(slots[int(slotChoice)])
-                            print("Loaded save slot " + slots[int(slotChoice)])
                             loaded = "yes"
-                            time.sleep(2)
                         except:
                             print("Save slot doesn't exist!")
                             time.sleep(2)
@@ -53,9 +55,9 @@ if __name__ == '__main__':
                         eng.TextAdventureCmd().cmdloop()
                         title = "closed"
                     elif slotChoice in slots:
+                        if eng.DEBUG == 1:
+                            print("slotChoice received: " + slotChoice)
                         dbs.loadGame(slotChoice)
-                        print("Loaded save slot " + slots[int(slotChoice)])
-                        time.sleep(2)
                         loaded = "yes"
                         eng.displayLocation(dbs.location)
                         eng.TextAdventureCmd().cmdloop()
@@ -78,7 +80,7 @@ if __name__ == '__main__':
                         break
                     dbs.newGame(slotName)
                     loaded = "yes"
-                    eng.introAnimation()
+                    art.introAnimation()
                     eng.displayLocation(dbs.location)
                     eng.TextAdventureCmd().cmdloop()
                     title = "closed"
@@ -116,7 +118,7 @@ if __name__ == '__main__':
                         break
                     dbs.newGame(slotName)
                     loaded = "yes"
-                    eng.introAnimation()
+                    art.introAnimation()
                     eng.displayLocation(dbs.location)
                     eng.TextAdventureCmd().cmdloop()
                     title = "closed"
@@ -135,10 +137,10 @@ if __name__ == '__main__':
                     elif ans == "y" or ans == "yes":
                         print("Okay, overwriting save slot with a new game!")
                         time.sleep(1)
-                        dbs.deleteSave(slotName)
+                        dbs.deleteSave(slotName, True)
                         dbs.newGame(slotName)
                         loaded = "yes"
-                        eng.introAnimation()
+                        art.introAnimation()
                         eng.displayLocation(dbs.location)
                         eng.TextAdventureCmd().cmdloop()
                         title = "closed"

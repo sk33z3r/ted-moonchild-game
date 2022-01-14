@@ -1,4 +1,4 @@
-import pymongo, json, os, shutil, re
+import pymongo, json, os, shutil, re, time
 from bson.json_util import dumps
 import engine as eng
 
@@ -16,6 +16,10 @@ for o in os.listdir("./json"):
     f = o.replace(".json", "")
     collections.append(f)
 
+# define empty variables
+equippedWeapon = None
+addedFX = None
+
 # TODO make CRIT value based on PLAYERLVL
 
 # define function to remove a save slot
@@ -26,7 +30,7 @@ def deleteSave(n, rm):
         print("Database doesn't exist")
         return
     dbList = list(client.list_database_names())
-    if name in dbList:
+    if n in dbList:
         raise Exception("MongoDB Error: '" + n + "' didn't get dropped.")
         return
     if eng.DEBUG == 1:
@@ -55,7 +59,15 @@ def setLocation(n):
 def setWeapon(n):
     global equippedWeapon
     global weaponInfo
+    if equippedWeapon is None:
+        equippedWeapon = "Fists"
+    if equippedWeapon != "Fists":
+        player.update_one( { "SECTION": "inventory" }, { "$pull": { "EQUIPPED": equippedWeapon } } )
+        player.update_one( { "SECTION": "inventory" }, { "$push": { "ITEMS": equippedWeapon } } )
     player.update_one( { "SECTION": "equipped" }, { "$set": { "WEAPON": n } } )
+    if n != "Fists":
+        player.update_one( { "SECTION": "inventory" }, { "$push": { "EQUIPPED": n } } )
+        player.update_one( { "SECTION": "inventory" }, { "$pull": { "ITEMS": n } } )
     equippedWeapon = player.find_one( { "SECTION": "equipped" } )["WEAPON"]
     weaponInfo = items.find_one( {"NAME": equippedWeapon } )
     if eng.DEBUG == 1:
@@ -67,13 +79,25 @@ def setWeapon(n):
 def setFX(n):
     global addedFX
     global fxInfo
+    if addedFX is None:
+        addedFX = "noFX"
+    if addedFX != "noFX":
+        player.update_one( { "SECTION": "inventory" }, { "$pull": { "EQUIPPED": addedFX } } )
+        player.update_one( { "SECTION": "inventory" }, { "$push": { "ITEMS": addedFX } } )
     player.update_one( { "SECTION": "equipped" }, { "$set": { "FX": n } } )
+    if n != "noFX":
+        player.update_one( { "SECTION": "inventory" }, { "$push": { "EQUIPPED": n } } )
+        player.update_one( { "SECTION": "inventory" }, { "$pull": { "ITEMS": n } } )
     addedFX = player.find_one( { "SECTION": "equipped" } )["FX"]
     fxInfo = items.find_one( {"NAME": addedFX } )
     if eng.DEBUG == 1:
         print("New FX name: " + addedFX)
         print(fxInfo)
         time.sleep(1)
+
+def getPrefs():
+    global playerPrefs
+    playerPrefs = player.find_one( { "SECTION": "prefs" } )
 
 def getInventory():
     global playerInv
@@ -110,7 +134,7 @@ def updateGround(item, action):
             print(groundList)
     else:
         print("FUNCTION CALL BUG: Someone forgot to specify an action for updateGround()")
-        time.sleep(1)
+        time.sleep(3)
         return
     setLocation(location)
 
@@ -119,49 +143,46 @@ def updateInv(item, action):
     getInventory()
     if action == "del":
         # remove item
-        i = list(playerInv["ITEMS"])
-        k = list(playerInv["KEY_ITEMS"])
-        if item in i:
-            i.remove(item)
-        elif item in k:
-            k.remove(item)
-        player.update_one( { "SECTION": "inventory" }, { "$set": { "ITEMS": i } } )
-        player.update_one( { "SECTION": "inventory" }, { "$set": { "KEY_ITEMS": k } } )
+        try:
+            player.update_one( { "SECTION": "inventory" }, { "$pull": { "ITEMS": item } } )
+            player.update_one( { "SECTION": "inventory" }, { "$pull": { "KEY_ITEMS": item } } )
+            player.update_one( { "SECTION": "inventory" }, { "$pull": { "EQUIPPED": item } } )
+        except:
+            pass
         getInventory()
-        if item in list(playerInv["ITEMS"]) or item in list(playerInv["KEY_ITEMS"]):
+        if item in list(playerInv["ITEMS"]) or item in list(playerInv["KEY_ITEMS"]) or item in list(playerInv["EQUIPPED"]):
             raise Exception("'" + item + "' is sill in Ted's inventory.")
             return
     elif action == "add":
         # add item
         if items.find_one( { "NAME": item } )["TYPE"] == "key":
-            k = list(playerInv["KEY_ITEMS"])
-            k.append(item)
-            player.update_one( { "SECTION": "inventory" }, { "$set": { "KEY_ITEMS": k } } )
+            player.update_one( { "SECTION": "inventory" }, { "$push": { "KEY_ITEMS": item } } )
             getInventory()
             if item not in list(playerInv["KEY_ITEMS"]):
                 raise Exception("'" + item + "' is not in Ted's inventory.")
                 return
         else:
-            i = list(playerInv["ITEMS"])
-            i.append(item)
-            player.update_one( { "SECTION": "inventory" }, { "$set": { "ITEMS": i } } )
+            player.update_one( { "SECTION": "inventory" }, { "$push": { "ITEMS": item } } )
             getInventory()
             if item not in list(playerInv["ITEMS"]):
                 raise Exception("'" + item + "' is not in Ted's inventory.")
                 return
     else:
         print("FUNCTION CALL BUG: Someone forgot to specify an action for updateInv()")
-        time.sleep(1)
+        time.sleep(3)
         return
     if eng.DEBUG == 1:
         print("New inventory list:")
-        print("Items: " + list(playerInv["ITEMS"]))
-        print("Key Items: " + list(playerInv["KEY_ITEMS"]))
+        print("Items: " + str(playerInv["ITEMS"]))
+        print("Key Items: " + str(playerInv["KEY_ITEMS"]))
+        print("Equipped Items: " + str(playerInv["EQUIPPED"]))
         time.sleep(1)
 
 def updateStat(stat, num, action):
     global playerStats
     getStats()
+    if eng.DEBUG == 1:
+        print("Updating stat '" + stat + "'")
     temp = int(playerStats[stat])
     if action == "inc":
         # increase the stat
@@ -171,12 +192,12 @@ def updateStat(stat, num, action):
         temp -= int(num)
     else:
         print("FUNCTION CALL BUG: Someone forgot to specify an action for updateStat()")
-        time.sleep(1)
+        time.sleep(3)
         return
     player.update_one( { "SECTION": "stats" }, { "$set": { stat : temp } } )
     getStats()
     if eng.DEBUG == 1:
-        print("New value for " + stat + ": " + playerStats[stat])
+        print("New value for " + stat + ": " + str(playerStats[stat]))
 
 # function to set paths and collections
 def define(n):
@@ -190,6 +211,7 @@ def define(n):
     global rooms
     global player
     global playerPath
+    global playerInv
     # setup new save directory
     playerPath = savesPath + "/" + n
     if eng.DEBUG == 1:
@@ -215,6 +237,7 @@ def define(n):
 # save current game state to the database
 def saveGame():
     # iterate through collections to dump the current db state
+    print("Saving game to file...")
     for n in collections:
         col = db[n]
         # save to a new state file set
@@ -247,14 +270,17 @@ def saveGame():
             if eng.DEBUG == 1:
                 print("Saved new JSON to file")
                 time.sleep(1)
+    print("        ...done.")
 
 # load game state from database
 def loadGame(name):
     global equipment
+    global playerInv
     # remove old save db if it exists
     client.drop_database(name)
     # setup new save data
     define(name)
+    print("Loading game '" + name + "'...")
     # iterate through collections to insert documents
     for n in collections:
         col = db[n]
@@ -276,6 +302,8 @@ def loadGame(name):
                 print("inserted saved documents to " + n)
     if eng.DEBUG == 1:
         print("Setting up player environment...")
+    getInventory()
+    getPrefs()
     equipment = player.find_one( { "SECTION": "equipped" } )
     setWeapon(equipment["WEAPON"])
     setFX(equipment["FX"])
@@ -284,6 +312,7 @@ def loadGame(name):
     if eng.DEBUG == 1:
         print("Save game loaded: '" + name + "'")
         time.sleep(1)
+    print("        ...done.")
 
 # create new database and set initial values
 def newGame(name):
@@ -292,6 +321,7 @@ def newGame(name):
     deleteSave(name, True)
     # setup new save data
     define(name)
+    print("Creating new game '" + name + "'...")
     # iterate through collections to insert and dump a new save
     for n in collections:
         col = db[n]
@@ -344,6 +374,8 @@ def newGame(name):
             f.close()
     if eng.DEBUG == 1:
         print("Setting up player environment...")
+    getInventory()
+    getPrefs()
     equipment = player.find_one( { "SECTION": "equipped" } )
     setWeapon(equipment["WEAPON"])
     setFX(equipment["FX"])
@@ -352,3 +384,4 @@ def newGame(name):
     if eng.DEBUG == 1:
         print("New game created: '" + name + "'")
         time.sleep(1)
+    print("        ...done.")

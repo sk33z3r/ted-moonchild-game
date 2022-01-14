@@ -5,8 +5,7 @@
         "SHORTDESC": "his fists",
         "LONGDESC": "'Ted\\'s manly fucking fists. They\\'ve beaten many faces into the ground.'",
         "TAKEABLE": true,
-        "WEAPON": true,
-        "TYPE": "instrument",
+        "TYPE": "weapon",
         "ATKBNS": 0,
         "DESCWORDS": [ "fists" ]
     },
@@ -16,8 +15,7 @@
         "SHORTDESC": "'the Squire Strat'",
         "LONGDESC": "'A beat up strat that used to be white. It gets the job done.'",
         "TAKEABLE": true,
-        "WEAPON": true,
-        "TYPE": "instrument",
+        "TYPE": "weapon",
         "ATKBNS": 1,
         "DESCWORDS": [ "chaz\\'s guitar", "chaz guitar", "strat", "stratocaster" ]
     },
@@ -27,9 +25,8 @@
         "SHORTDESC": "'Epiphone SG'",
         "LONGDESC": "'Not quite a Gibson, but it looks fuckin\\' sweet.'",
         "TAKEABLE": true,
-        "WEAPON": true,
         "ATKBNS": 2,
-        "TYPE": "instrument",
+        "TYPE": "weapon",
         "DESCWORDS": [ "sg", "epiphone" ]
     },
     {
@@ -38,7 +35,6 @@
         "SHORTDESC": "'air'",
         "LONGDESC": "'Nothing but tone.'",
         "TAKEABLE": true,
-        "FX": true,
         "TYPE": "fx",
         "ATKBNS": 0,
         "DESCWORDS": [ "nofx" ]
@@ -49,7 +45,6 @@
         "SHORTDESC": "'the guitar pick'",
         "LONGDESC": "'The pick that Rip Curl threw into the crowd at EBGBs.'",
         "TAKEABLE": true,
-        "FX": true,
         "ATKBNS": 1,
         "TYPE": "fx",
         "DESCWORDS": [ "pick", "guitar pick" ]
@@ -60,7 +55,6 @@
         "SHORTDESC": "'Wormhole Delay'",
         "LONGDESC": "'Delay FX from another world. Use sparingly.'",
         "TAKEABLE": true,
-        "FX": true,
         "ATKBNS": 2,
         "TYPE": "fx",
         "DESCWORDS": [ "delay", "delay pedal", "wormhole" ]
