@@ -1,4 +1,6 @@
-```
+# Ted Moonchild and the Roadies in Space
+
+```plaintext
           (         *       )     )     )          ) (   (   (
   *   )   )\ )    (  `   ( /(  ( /(  ( /(   (   ( /( )\ ))\ ))\ )
 ` )  /(( (()/(    )\))(  )\()) )\()) )\())  )\  )\()|()/(()/(()/(
@@ -21,26 +23,14 @@
 
 * 170 x 47 is base assumed max terminal size
 * Following commands entered into bash will show column and line size for terminal window.
-    * `tput cols`
-    * `tput lines`
-* Debug command line arguments:
-    * `python main.py --debug` - Prints game calculations and results to console output.
-    * `python main.py --nocolor` - Turns off colorama styles.
+  * `tput cols`
+  * `tput lines`
+* Command line arguments:
+  * `python main.py [-d|--debug]` - Prints game calculations and results to console output.
+  * `python main.py [-nc|--nocolor]` - Turns off colorama styles.
+  * `python main.py [-w|--width] INT` - Specifies the terminal output width
 
-## Save File Order:
-
-```
-location
-inventory
-addedFX
-equippedWeapon
-PLAYERHP
-PLAYERMP
-PLAYERLVL
-PLAYERXP
-FLOYDS
-```
-## Combat Turn Logic:
+## Combat Turn Logic
 
 1. Random pick a number 0-5
     * If 4, miss; else move on
@@ -51,10 +41,10 @@ FLOYDS
 5. Add `FXBNS` to `DMG`
 6. Deal `DMG` to enemy
 
-## CRIT & XP Table:
+## CRIT & XP Table
 
-```
-XP Amount   Lvl	    CRIT
+```plaintext
+XP Amount   Lvl     CRIT
 ------------------------
 0           1       +2
 300         2       +2
@@ -78,12 +68,12 @@ XP Amount   Lvl	    CRIT
 355,000     20      +6
 ```
 
-## Challenge Rating System:
+## Challenge Rating System
 
 * The idea is that when entering new creatures to the database, you can assign a challenge rating instead of a creature level. Makes it easier than remembering the XP amounts and less thought involved in the question "How much is this enemy worth?"
 * This will also determine the enemy's `CRITBNS`
 
-```
+```plaintext
 CR      XP Amount   CRITBNS
 ---------------------------
 0       50          +1

@@ -1,0 +1,201 @@
+[
+    {
+        "NAME": "Fists",
+        "GROUNDDESC": "Ted's raw fists",
+        "SHORTDESC": "his fists",
+        "LONGDESC": "Ted's manly fucking fists. They've beaten many faces into the ground.",
+        "TAKEABLE": true,
+        "TYPE": "weapon",
+        "ATKBNS": 0,
+        "DESCWORDS": [ "fists" ]
+    },
+    {
+        "NAME": "Squire Strat",
+        "GROUNDDESC": "Chaz Lightyear's Guitar",
+        "SHORTDESC": "the Squire Strat",
+        "LONGDESC": "A beat up strat that used to be white. It gets the job done.",
+        "TAKEABLE": true,
+        "TYPE": "weapon",
+        "ATKBNS": 1,
+        "DESCWORDS": [ "chaz's guitar", "chaz guitar", "strat", "stratocaster" ]
+    },
+    {
+        "NAME": "Epiphone SG",
+        "GROUNDDESC": "Used Epiphone SG",
+        "SHORTDESC": "Epiphone SG",
+        "LONGDESC": "Not quite a Gibson, but it looks fuckin' sweet.",
+        "TAKEABLE": true,
+        "ATKBNS": 2,
+        "TYPE": "weapon",
+        "DESCWORDS": [ "sg", "epiphone" ]
+    },
+    {
+        "NAME": "noFX",
+        "GROUNDDESC": "Raw tone",
+        "SHORTDESC": "air",
+        "LONGDESC": "Nothing but tone.",
+        "TAKEABLE": true,
+        "TYPE": "fx",
+        "ATKBNS": 0,
+        "DESCWORDS": [ "nofx" ]
+    },
+    {
+        "NAME": "Guitar Pick",
+        "GROUNDDESC": "Rip Curl's pick",
+        "SHORTDESC": "the guitar pick",
+        "LONGDESC": "The pick that Rip Curl threw into the crowd at EBGBs.",
+        "TAKEABLE": true,
+        "ATKBNS": 1,
+        "TYPE": "fx",
+        "DESCWORDS": [ "pick", "guitar pick" ]
+    },
+    {
+        "NAME": "Wormhole Delay",
+        "GROUNDDESC": "Delay pedal from Wormhole",
+        "SHORTDESC": "Wormhole Delay",
+        "LONGDESC": "Delay FX from another world. Use sparingly.",
+        "TAKEABLE": true,
+        "ATKBNS": 2,
+        "TYPE": "fx",
+        "DESCWORDS": [ "delay", "delay pedal", "wormhole" ]
+    },
+    {
+        "NAME": "Winnibego Keys",
+        "GROUNDDESC": "Keys to the Winnie",
+        "SHORTDESC": "the keys to the Winnie",
+        "LONGDESC": "The keys to Ted's sweet Winnibego",
+        "TAKEABLE": true,
+        "TYPE": "key",
+        "DESCWORDS": [ "keys", "winnie keys" ]
+    },
+    {
+        "NAME": "Chaz Note",
+        "GROUNDDESC": "Handwritten note",
+        "SHORTDESC": "the note",
+        "LONGDESC": "A note in Chaz's sloppy handwriting: {FYELLOW}Yo Ted, a scout at the show wants us to\nsign with 'em. We're heading to their station after the gig, see you later bro.{NORMAL}{FWHITE}",
+        "BWDESC": "A note in Chaz's sloppy handwriting: Yo Ted, a scout at the show wants us to\nsign with 'em. We're heading to their station after the gig, see you later bro.",
+        "TAKEABLE": true,
+        "TYPE": "key",
+        "DESCWORDS": [ "note", "chaz note" ]
+    },
+    {
+        "NAME": "Broken Drumstick",
+        "GROUNDDESC": "Grumm's broken stick",
+        "SHORTDESC": "the wood shard",
+        "LONGDESC": "Piece of a broken stick that Grumm tossed into the crowd at EBGBs. Ted wonders\nwhere the other half ended up.",
+        "TAKEABLE": true,
+        "TYPE": "key",
+        "DESCWORDS": [ "stick", "wood shard" ]
+    },
+    {
+        "NAME": "Protection",
+        "GROUNDDESC": "Protection",
+        "SHORTDESC": "protection",
+        "LONGDESC": "The best protection the galaxy has to offer against the buzzoids.",
+        "TAKEABLE": true,
+        "BATTLE": true,
+        "TYPE": "consumable",
+        "DESCWORDS": [ "protection" ]
+    },
+    {
+        "NAME": "Dark Matter Ale",
+        "GROUNDDESC": "Refreshing Dark Ale",
+        "SHORTDESC": "the Dark Matter Ale",
+        "LONGDESC": "A cold refreshing ale brewed in the outer rim of the galaxy. The label claims\nto have an alcohol content of 2.08x10^15.",
+        "TAKEABLE": true,
+        "EDIBLE": true,
+        "BATTLE": true,
+        "TYPE": "consumable",
+        "DESCWORDS": [ "ale", "bottle of ale", "dark matter ale", "dark matter" ]
+    },
+    {
+        "NAME": "Lit Joint",
+        "GROUNDDESC": "Hippy's J",
+        "SHORTDESC": "the lit joint",
+        "LONGDESC": "A cherried joint some hippy gave Ted for not beating the shit out of him.",
+        "TAKEABLE": true,
+        "BATTLE": true,
+        "TYPE": "consumable",
+        "DESCWORDS": [ "joint", "j", "hippy j", "jay", "lit joint", "lit j" ]
+    },
+    {
+        "NAME": "Magic Mushies",
+        "GROUNDDESC": "Magic Mushies",
+        "SHORTDESC": "the shrooms",
+        "LONGDESC": "A bag full of shriveled brown mushrooms. Looks like enough for two people, or one roadie.",
+        "TAKEABLE": true,
+        "EDIBLE": true,
+        "BATTLE": true,
+        "TYPE": "consumable",
+        "DESCWORDS": [ "shrooms", "mushies", "magic shrooms" ]
+    },
+    {
+        "NAME": "ACiD",
+        "GROUNDDESC": "ACiD",
+        "SHORTDESC": "the acid tab",
+        "LONGDESC": "A small, square, white tab of paper. If you don't own a spaceship, this is a great alternative.",
+        "TAKEABLE": true,
+        "EDIBLE": true,
+        "BATTLE": true,
+        "TYPE": "consumable",
+        "DESCWORDS": [ "acid", "tab" ]
+    },
+    {
+        "NAME": "Mescalin",
+        "GROUNDDESC": "Mescalin",
+        "SHORTDESC": "the peyote",
+        "LONGDESC": "It's a tiny peyote plant. Crack this baby open and get ready for a ride!",
+        "TAKEABLE": true,
+        "EDIBLE": true,
+        "BATTLE": true,
+        "TYPE": "consumable",
+        "DESCWORDS": [ "mescalin", "peyote" ]
+    },
+    {
+        "NAME": "Amanitas",
+        "GROUNDDESC": "Amanitas",
+        "SHORTDESC": "the red cap",
+        "LONGDESC": "Mushrooms with bright red caps and little white dots. Let's hope these aren't the poisonus genus...",
+        "TAKEABLE": true,
+        "EDIBLE": true,
+        "BATTLE": true,
+        "TYPE": "consumable",
+        "DESCWORDS": [ "amanitas", "red caps", "other mushrooms" ]
+    },
+    {
+        "NAME": "Used Condom",
+        "GROUNDDESC": "Slimy condom",
+        "SHORTDESC": "the jimmy hat",
+        "LONGDESC": "It's stuck to the table. Probably should leave it for the cleaning crew.",
+        "TAKEABLE": false,
+        "TYPE": "static",
+        "DESCWORDS": [ "jimmy hat", "condom", "cum sock" ]
+    },
+    {
+        "NAME": "Empty Bottle",
+        "GROUNDDESC": "Empty bottle",
+        "SHORTDESC": "the empty bottle",
+        "LONGDESC": "An empty bottle of Dark Matter Ale. Ted wishes it was full.",
+        "TAKEABLE": false,
+        "TYPE": "static",
+        "DESCWORDS": [ "bottle", "empty bottle" ]
+    },
+    {
+        "NAME": "Stack of Cables",
+        "GROUNDDESC": "Cables",
+        "SHORTDESC": "the cables",
+        "LONGDESC": "A stack of professionally coiled cables, no thanks to Ted.",
+        "TAKEABLE": false,
+        "TYPE": "static",
+        "DESCWORDS": [ "cables", "stack of cables", "cable stack" ]
+    },
+    {
+        "NAME": "Drums",
+        "GROUNDDESC": "Drum Kit",
+        "SHORTDESC": "the kit",
+        "LONGDESC": "EBGB's house kit. It's missing the cymbals.",
+        "TAKEABLE": false,
+        "TYPE": "static",
+        "DESCWORDS": [ "drums", "kit" ]
+    }
+]

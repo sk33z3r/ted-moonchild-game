@@ -1,0 +1,32 @@
+[
+    {
+        "SECTION": "location",
+        "NAME": "EBGB Stage"
+    },
+    {
+        "SECTION": "prefs",
+        "EXITS": "full"
+    },
+    {
+        "SECTION": "stats",
+        "HP": 100,
+        "HPMAX": 100,
+        "MP": 25,
+        "MPMAX": 25,
+        "FLOYDS": 0,
+        "LVL": 1,
+        "XP": 0,
+        "CRIT": 1
+    },
+    {
+        "SECTION": "inventory",
+        "ITEMS": [ "Protection" ],
+        "KEY_ITEMS": [ "Winnibego Keys" ],
+        "EQUIPPED": []
+    },
+    {
+        "SECTION": "equipped",
+        "WEAPON": "Fists",
+        "FX": "noFX"
+    }
+]

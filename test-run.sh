@@ -18,6 +18,11 @@ case $1 in
     remote)
         ssh -p 7175 -o "LogLevel ERROR" -o "StrictHostKeyChecking no" -o "UserKnownHostsFile=/dev/null" -t ted@moonchild.space "$command"
     ;;
+    env)
+        ./server-run.sh && sleep 2
+        docker-compose exec python bash
+        docker-compose down
+    ;;
     *)
         echo "Invalid input, expecting local or remote"
         exit 1
