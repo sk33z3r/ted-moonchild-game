@@ -9,4 +9,4 @@ if [ ! -f "dockerfiles/ssh_host_dsa_key" ]; then
 	ssh-keygen -f dockerfiles/ssh_host_dsa_key -N '' -t dsa
 fi
 
-docker-compose up -d --build
+docker-compose up -d --build --force-recreate
