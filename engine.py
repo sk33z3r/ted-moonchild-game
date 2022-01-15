@@ -417,12 +417,26 @@ def displayLocation(loc):
 
     print(locInfo['DESC'].format(**clr.styles))
 
+    g = list(locInfo["GROUND"])
+    g = natsort.natsorted(g)
+
+    # first get a count of each distinct item in the inventory
+    itemCount = {}
+    for item in g:
+        if item in list(itemCount.keys()):
+            itemCount[item] += 1
+        else:
+            itemCount[item] = 1
+
     # Print all the items on the ground.
-    if len(locInfo["GROUND"]) > 0:
+    if len(g) > 0:
         print("{DIM}--- GROUND ITEMS ---{NORMAL}{FWHITE}".format(**clr.styles))
-        for item in locInfo["GROUND"]:
-            print("  {GROUNDDESC}".format(**clr.styles, GROUNDDESC = dbs.items.find_one( { "NAME": item } )["GROUNDDESC"]))
-    print("\n")
+        for item in set(g):
+            if itemCount[item] > 1:
+                print("  {GROUNDDESC} ({COUNT})".format(**clr.styles, GROUNDDESC = dbs.items.find_one( { "NAME": item } )["GROUNDDESC"], COUNT = itemCount[item]))
+            else:
+                print("  {GROUNDDESC}".format(**clr.styles, GROUNDDESC = dbs.items.find_one( { "NAME": item } )["GROUNDDESC"]))
+    print("")
     # Print all the exits.
     exits = []
     for direction in ("NORTH", "SOUTH", "EAST", "WEST", "UP", "DOWN"):
@@ -436,7 +450,7 @@ def displayLocation(loc):
                 print("  " + direction.title() + ": " + dbs.locationInfo[direction])
     else:
         print("{DIM}Exits: {NORMAL}{JOIN}".format(**clr.styles, JOIN = ' '.join(exits)))
-    print("\n")
+    print("")
 
 def moveDirection(direction):
     # A helper function that changes the location of the player.
@@ -570,35 +584,48 @@ class TextAdventureCmd(cmd.Cmd):
             print(dbs.playerInv["KEY_ITEMS"])
             print(dbs.playerInv["EQUIPPED"])
 
-        tempInv()
+        i = list(dbs.playerInv["ITEMS"])
+        k = list(dbs.playerInv["KEY_ITEMS"])
+        e = list(dbs.playerInv["EQUIPPED"])
 
-        if len(inv) == 0:
+        i = natsort.natsorted(i)
+        k = natsort.natsorted(k)
+        e = natsort.natsorted(e)
+
+        if len(i) == 0 and len(k) == 0 and len(e) == 0:
             print("Ted doesn't have shit.")
             return
 
         # first get a count of each distinct item in the inventory
         itemCount = {}
-        for item in inv:
+        for item in i:
             if item in list(itemCount.keys()):
                 itemCount[item] += 1
             else:
                 itemCount[item] = 1
 
-        # get a list of inventory items with duplicates removed:
-        print("{DIM}---- INV ----{NORMAL}{FWHITE}".format(**clr.styles))
-        for item in set(inv):
-            # If item is an equipped weapon, display a [e]
-            if item == dbs.equippedWeapon:
-                print("  {DIM}{ITEM} [e]{NORMAL}".format(**clr.styles, ITEM = item))
-            elif item == dbs.addedFX:
-                print("  {DIM}{ITEM} [e]{NORMAL}".format(**clr.styles, ITEM = item))
-            elif dbs.items.find_one( { "NAME": item } )["TYPE"] == "key":
-                print("  {FYELLOW}{ITEM} [k]{FWHITE}".format(**clr.styles, ITEM = item))
-            elif itemCount[item] > 1:
-                print("  " + item + " (" + str(itemCount[item]) + ")")
-            else:
-                print("  " + item)
-        print("{DIM}============={NORMAL}{FWHITE}".format(**clr.styles))
+        print("{DIM}--------- INV ---------{NORMAL}{FWHITE}".format(**clr.styles))
+
+        if len(i) != 0:
+            for item in set(i):
+                if itemCount[item] > 1:
+                    print("  " + item + " (" + str(itemCount[item]) + ")")
+                else:
+                    print("  " + item)
+            print("")
+
+        if len(e) != 0:
+            print("{DIM}  [EQUIPMENT]{NORMAL}".format(**clr.styles))
+            for item in set(e):
+                print("  {FCYAN}{ITEM}{FWHITE}{NORMAL}".format(**clr.styles, ITEM = item))
+            print("")
+
+        if len(k) != 0:
+            print("{DIM}  [KEY ITEMS]{NORMAL}".format(**clr.styles))
+            for item in set(k):
+                print("  {FYELLOW}{ITEM}{FWHITE}".format(**clr.styles, ITEM = item))
+
+        print("{DIM}======================={NORMAL}{FWHITE}".format(**clr.styles))
 
     do_inv = do_inventory
 

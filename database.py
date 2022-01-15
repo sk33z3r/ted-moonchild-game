@@ -111,11 +111,10 @@ def getStats():
 def updateGround(item, action):
     if action == "del":
         # remove item from ground
-        rooms.update_one( { "NAME": location }, { "$pull": { "GROUND": item } } )
         groundList = list(rooms.find_one( { "NAME": location } )["GROUND"])
         if item in groundList:
-            raise Exception("'" + item + "' still exists on the ground.")
-            return
+            groundList.remove(item)
+            rooms.update_one( { "NAME": location }, { "$set": { "GROUND": groundList } } )
         if eng.DEBUG == 1:
             print("Item to be removed: " + item)
             print("New GROUND list:")
