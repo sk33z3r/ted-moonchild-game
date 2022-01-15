@@ -123,7 +123,7 @@ class combatMode():
         print('')
         print('    [IMAGE of ' + chosenEnemy["NAME"] + ']')
         print('')
-        print('    ' + chosenEnemy["ENDESC"])
+        print('    ' + chosenEnemy["DESC"])
         print(Style.DIM + '+--------------------------------------------------------------------------------------------------+' + Style.NORMAL)
         print('')
 
@@ -464,8 +464,14 @@ def displayLocation(loc):
     print(loc)
     print(('=' * len(loc)))
 
-    # Print the room's description (using textwrap.wrap())
-    print(locInfo["DESC"] + '\n')
+    # Print the room's description (example for DESC as a list)
+    #description = ""
+    #c = 0
+    #while c < len(locInfo["DESC"]):
+    #    print(locInfo["DESC"][c])
+    #    c += 1
+
+    print(locInfo['DESC'])
 
     # Print all the items on the ground.
     if len(locInfo["GROUND"]) > 0:
