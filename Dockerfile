@@ -18,8 +18,10 @@ ADD dockerfiles/play.sh /usr/local/bin/play
 ADD ./*.py /home/ted/
 ADD ./json/ /home/ted/json/
 # set permissions
+RUN mkdir /home/ted/save-states
 RUN chown -R root:root /home/ted
 RUN chmod -R 755 /home/ted
+RUN chmod -R 777 /home/ted/save-states
 # finish up container
 EXPOSE 22
 ENTRYPOINT ["docker-entrypoint.sh"]
