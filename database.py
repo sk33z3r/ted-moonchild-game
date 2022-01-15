@@ -31,16 +31,16 @@ def deleteSave(n, rm):
         return
     dbList = list(client.list_database_names())
     if n in dbList:
-        raise Exception("MongoDB Error: '" + n + "' didn't get dropped.")
+        raise Exception("MongoDB Error: '", n, "' didn't get dropped.")
         return
     if eng.DEBUG == 1:
-        print("Dropped '" + n + "' database from MongoDB.")
+        print("Dropped '", n, "' database from MongoDB.")
         time.sleep(1)
     if rm == True:
-        if os.path.exists(savesPath + "/" + n):
-            shutil.rmtree(savesPath + "/" + n)
-        if not os.path.exists(savesPath + "/" + n) and eng.DEBUG == 1:
-            print("Removed '" + savesPath + "/" + n + "' from filesystem.")
+        if os.path.exists(savesPath, "/", n):
+            shutil.rmtree(savesPath, "/", n)
+        if not os.path.exists(savesPath, "/", n) and eng.DEBUG == 1:
+            print("Removed '", savesPath, "/", n, "' from filesystem.")
             time.sleep(1)
 
 # set a new location
@@ -51,7 +51,7 @@ def setLocation(n):
     locationInfo = rooms.find_one( { "NAME": n } )
     location = locationInfo["NAME"]
     if eng.DEBUG == 1:
-        print("New location name: " + location)
+        print("New location name: ", location)
         print(locationInfo)
         time.sleep(1)
 
@@ -71,7 +71,7 @@ def setWeapon(n):
     equippedWeapon = player.find_one( { "SECTION": "equipped" } )["WEAPON"]
     weaponInfo = items.find_one( {"NAME": equippedWeapon } )
     if eng.DEBUG == 1:
-        print("New weapon name: " + equippedWeapon)
+        print("New weapon name: ", equippedWeapon)
         print(weaponInfo)
         time.sleep(1)
 
@@ -91,7 +91,7 @@ def setFX(n):
     addedFX = player.find_one( { "SECTION": "equipped" } )["FX"]
     fxInfo = items.find_one( {"NAME": addedFX } )
     if eng.DEBUG == 1:
-        print("New FX name: " + addedFX)
+        print("New FX name: ", addedFX)
         print(fxInfo)
         time.sleep(1)
 
@@ -113,10 +113,10 @@ def updateGround(item, action):
         rooms.update_one( { "NAME": location }, { "$pull": { "GROUND": item } } )
         groundList = list(rooms.find_one( { "NAME": location } )["GROUND"])
         if item in groundList:
-            raise Exception("'" + item + "' still exists on the ground.")
+            raise Exception("'", item, "' still exists on the ground.")
             return
         if eng.DEBUG == 1:
-            print("Item to be removed: " + item)
+            print("Item to be removed: ", item)
             print("New GROUND list:")
             print(groundList)
     elif action == "add":
@@ -126,10 +126,10 @@ def updateGround(item, action):
         rooms.update_one( { "NAME": location }, { "$set": { "GROUND": groundTemp } } )
         groundList = list(rooms.find_one( { "NAME": location } )["GROUND"])
         if item not in groundList:
-            raise Exception("'" + item + "' doesn't exist on the ground.")
+            raise Exception("'", item, "' doesn't exist on the ground.")
             return
         if eng.DEBUG == 1:
-            print("Item to be added: " + item)
+            print("Item to be added: ", item)
             print("New GROUND list:")
             print(groundList)
     else:
@@ -151,7 +151,7 @@ def updateInv(item, action):
             pass
         getInventory()
         if item in list(playerInv["ITEMS"]) or item in list(playerInv["KEY_ITEMS"]) or item in list(playerInv["EQUIPPED"]):
-            raise Exception("'" + item + "' is sill in Ted's inventory.")
+            raise Exception("'", item, "' is sill in Ted's inventory.")
             return
     elif action == "add":
         # add item
@@ -159,13 +159,13 @@ def updateInv(item, action):
             player.update_one( { "SECTION": "inventory" }, { "$push": { "KEY_ITEMS": item } } )
             getInventory()
             if item not in list(playerInv["KEY_ITEMS"]):
-                raise Exception("'" + item + "' is not in Ted's inventory.")
+                raise Exception("'", item, "' is not in Ted's inventory.")
                 return
         else:
             player.update_one( { "SECTION": "inventory" }, { "$push": { "ITEMS": item } } )
             getInventory()
             if item not in list(playerInv["ITEMS"]):
-                raise Exception("'" + item + "' is not in Ted's inventory.")
+                raise Exception("'", item, "' is not in Ted's inventory.")
                 return
     else:
         print("FUNCTION CALL BUG: Someone forgot to specify an action for updateInv()")
@@ -173,16 +173,16 @@ def updateInv(item, action):
         return
     if eng.DEBUG == 1:
         print("New inventory list:")
-        print("Items: " + str(playerInv["ITEMS"]))
-        print("Key Items: " + str(playerInv["KEY_ITEMS"]))
-        print("Equipped Items: " + str(playerInv["EQUIPPED"]))
+        print("Items: ", str(playerInv["ITEMS"]))
+        print("Key Items: ", str(playerInv["KEY_ITEMS"]))
+        print("Equipped Items: ", str(playerInv["EQUIPPED"]))
         time.sleep(1)
 
 def updateStat(stat, num, action):
     global playerStats
     getStats()
     if eng.DEBUG == 1:
-        print("Updating stat '" + stat + "'")
+        print("Updating stat '", stat, "'")
     temp = int(playerStats[stat])
     if action == "inc":
         # increase the stat
@@ -197,7 +197,7 @@ def updateStat(stat, num, action):
     player.update_one( { "SECTION": "stats" }, { "$set": { stat : temp } } )
     getStats()
     if eng.DEBUG == 1:
-        print("New value for " + stat + ": " + str(playerStats[stat]))
+        print("New value for ", stat, ": ", str(playerStats[stat]))
 
 # function to set paths and collections
 def define(n):
@@ -206,16 +206,15 @@ def define(n):
     global abilities
     global challenge_ratings
     global enemies
-    global engine
     global items
     global rooms
     global player
     global playerPath
     global playerInv
     # setup new save directory
-    playerPath = savesPath + "/" + n
+    playerPath = savesPath, "/", n
     if eng.DEBUG == 1:
-        print("Local saves path: " + playerPath)
+        print("Local saves path: ", playerPath)
     if not os.path.exists(playerPath):
         os.makedirs(playerPath)
     else:
@@ -225,14 +224,13 @@ def define(n):
     abilities = db['abilities']
     challenge_ratings = db['challenge_ratings']
     enemies = db['enemies']
-    engine = db['engine']
     items = db['items']
     rooms = db['rooms']
     player = db['player']
     # set SLOT_NAME variable
     eng.SLOT_NAME = n
     if eng.DEBUG == 1:
-        print("Defined all database paths for '" + n + "'")
+        print("Defined all database paths for '", n, "'")
 
 # save current game state to the database
 def saveGame():
@@ -241,9 +239,9 @@ def saveGame():
     for n in collections:
         col = db[n]
         # save to a new state file set
-        newFile = playerPath + "/" + n + ".json"
+        newFile = playerPath, "/", n, ".json"
         if eng.DEBUG == 1:
-            print("JSON file path: " + newFile)
+            print("JSON file path: ", newFile)
         if os.path.exists(newFile):
             os.remove(newFile)
         else:
@@ -280,14 +278,14 @@ def loadGame(name):
     client.drop_database(name)
     # setup new save data
     define(name)
-    print("Loading game '" + name + "'...")
+    print("Loading game '", name, "'...")
     # iterate through collections to insert documents
     for n in collections:
         col = db[n]
         # load the json
-        initFile = playerPath + '/' + n + '.json'
+        initFile = playerPath, '/', n, '.json'
         if eng.DEBUG == 1:
-            print("Initialized JSON path: " + initFile)
+            print("Initialized JSON path: ", initFile)
         with open(initFile) as f:
             file_data = json.load(f)
             f.close()
@@ -295,11 +293,11 @@ def loadGame(name):
         if isinstance(file_data, list):
             col.insert_many(file_data)
             if eng.DEBUG == 1:
-                print("inserted saved document to " + n)
+                print("inserted saved document to ", n)
         else:
             col.insert_one(file_data)
             if eng.DEBUG == 1:
-                print("inserted saved documents to " + n)
+                print("inserted saved documents to ", n)
     if eng.DEBUG == 1:
         print("Setting up player environment...")
     getInventory()
@@ -310,7 +308,7 @@ def loadGame(name):
     locationName = player.find_one( { "SECTION": "location" } )["NAME"]
     setLocation(locationName)
     if eng.DEBUG == 1:
-        print("Save game loaded: '" + name + "'")
+        print("Save game loaded: '", name, "'")
         time.sleep(1)
     print("        ...done.")
 
@@ -321,14 +319,14 @@ def newGame(name):
     deleteSave(name, True)
     # setup new save data
     define(name)
-    print("Creating new game '" + name + "'...")
+    print("Creating new game '", name, "'...")
     # iterate through collections to insert and dump a new save
     for n in collections:
         col = db[n]
         # load the json
-        initFile = './json/' + n + '.json'
+        initFile = './json/', n, '.json'
         if eng.DEBUG == 1:
-            print("Old JSON path: " + initFile)
+            print("Old JSON path: ", initFile)
         with open(initFile) as f:
             file_data = json.load(f)
             f.close()
@@ -336,15 +334,15 @@ def newGame(name):
         if isinstance(file_data, list):
             col.insert_many(file_data)
             if eng.DEBUG == 1:
-                print("Inserted init document to '" + n + "'")
+                print("Inserted init document to '", n, "'")
         else:
             col.insert_one(file_data)
             if eng.DEBUG == 1:
-                print("Inserted init documents to '" + n + "'")
+                print("Inserted init documents to '", n, "'")
         # save to a new state file set
-        newFile = playerPath + "/" + n + ".json"
+        newFile = playerPath, "/", n, ".json"
         if eng.DEBUG == 1:
-            print("New JSON file path: " + newFile)
+            print("New JSON file path: ", newFile)
         if os.path.exists(newFile):
             if eng.DEBUG == 1:
                 print("Removing old save game files...")
@@ -382,6 +380,6 @@ def newGame(name):
     locationName = player.find_one( { "SECTION": "location" } )["NAME"]
     setLocation(locationName)
     if eng.DEBUG == 1:
-        print("New game created: '" + name + "'")
+        print("New game created: '", name, "'")
         time.sleep(1)
     print("        ...done.")

@@ -1,39 +1,41 @@
 import os, natsort, time
-from colorama import Fore, Back, Style
 import art
 import database as dbs
 import engine as eng
 
+if eng.COLORS == 0:
+    import blackwhite as clr
+elif eng.COLORS == 1:
+    import colors as clr
+
 if __name__ == '__main__':
 
-    print(Back.BLACK + Fore.WHITE)
+    print("{BBLACK}{FWHITE}".format(**clr.styles))
     title = "open"
     while title == "open":
         eng.clear()
         art.printLogo()
-        print(Style.DIM + '             =======================================')
-        print(Style.DIM + '             | ' + Style.NORMAL + 'Press ' + Fore.GREEN + 'n' + Fore.WHITE + ' to fucking ROCK a new story' + Style.DIM + ' |')
-        print(Style.DIM + '             | ' + Style.NORMAL + 'Press ' + Fore.CYAN + 'l' + Fore.WHITE + ' to load your shitty save' + Style.DIM + '    |')
-        print(Style.DIM + '             =======================================' + Style.NORMAL)
-        print('')
+        print("{DIM}             =======================================".format(**clr.styles))
+        print("{DIM}             | {NORMAL}Press {FGREEN}n{FWHITE} to fucking ROCK a new story{DIM} |".format(**clr.styles))
+        print("{DIM}             | {NORMAL}Press {FCYAN}l{FWHITE} to load your shitty save{DIM}    |".format(**clr.styles))
+        print("{DIM}             ======================================={NORMAL}\n".format(**clr.styles))
         holdOn = input(eng.PROMPT)
         if holdOn == 'l':
             loaded = "no"
             while loaded == "no":
                 eng.clear()
                 art.printLogo()
-                print(Style.DIM + '             =======================================')
-                print(Style.DIM + '             |        ' + Style.NORMAL + 'Enter a save slot or' + Style.DIM + '         |')
-                print(Style.DIM + '             |   ' + Style.NORMAL + Fore.CYAN + 'back' + Fore.WHITE + ' to return to the main menu' + Style.DIM + '   |')
-                print(Style.DIM + '             =======================================' + Style.NORMAL)
-                print('')
+                print("{DIM}             =======================================".format(**clr.styles))
+                print("{DIM}             |        {NORMAL}Enter a save slot or{DIM}         |".format(**clr.styles))
+                print("{DIM}             |   {NORMAL}{FCYAN}back{FWHITE} to return to the main menu{DIM}   |".format(**clr.styles))
+                print("{DIM}             ======================================={NORMAL}\n".format(**clr.styles))
                 slots = [ "_index" ]
                 i = 1
                 for s in natsort.natsorted(os.listdir("./save-states")):
-                    print('  [' + str(i) + '] - ' + s)
+                    print(  [str(i)] - s)
                     slots.append(s)
                     i += 1
-                print('')
+                print()
                 slots.sort()
                 if len(slots) > 1:
                     slotChoice = input(eng.PROMPT)
@@ -41,8 +43,8 @@ if __name__ == '__main__':
                         break
                     if slotChoice.isdigit():
                         if eng.DEBUG == 1:
-                            print("slotChoice # received: " + slotChoice)
-                            print("slotChoice name received: " + slots[int(slotChoice)])
+                            print("slotChoice # received: ", slotChoice)
+                            print("slotChoice name received: ", slots[int(slotChoice)])
                             time.sleep(1)
                         try:
                             dbs.loadGame(slots[int(slotChoice)])
@@ -56,7 +58,7 @@ if __name__ == '__main__':
                         title = "closed"
                     elif slotChoice in slots:
                         if eng.DEBUG == 1:
-                            print("slotChoice received: " + slotChoice)
+                            print("slotChoice received: ", slotChoice)
                         dbs.loadGame(slotChoice)
                         loaded = "yes"
                         eng.displayLocation(dbs.location)
@@ -69,12 +71,11 @@ if __name__ == '__main__':
                 else:
                     eng.clear()
                     art.printLogo()
-                    print(Style.DIM + '             =======================================')
-                    print(Style.DIM + '             |        ' + Style.NORMAL + 'No save slots exist!' + Style.DIM + '         |')
-                    print(Style.DIM + '             |    ' + Style.NORMAL + 'Enter a new save slot name or' + Style.DIM + '    |')
-                    print(Style.DIM + '             |   ' + Style.NORMAL + Fore.CYAN + 'back' + Fore.WHITE + ' to return to the main menu' + Style.DIM + '   |')
-                    print(Style.DIM + '             =======================================' + Style.NORMAL)
-                    print('')
+                    print("{DIM}             =======================================".format(**clr.styles))
+                    print("{DIM}             |        {NORMAL}No save slots exist!{DIM}         |".format(**clr.styles))
+                    print("{DIM}             |    {NORMAL}Enter a new save slot name or{DIM}    |".format(**clr.styles))
+                    print("{DIM}             |   {NORMAL}{FCYAN}back{FWHITE} to return to the main menu{DIM}   |".format(**clr.styles))
+                    print("{DIM}             ======================================={NORMAL}\n".format(**clr.styles))
                     slotName = input(eng.PROMPT)
                     if slotName == "back":
                         break
@@ -89,11 +90,10 @@ if __name__ == '__main__':
             while loaded == "no":
                 eng.clear()
                 art.printLogo()
-                print(Style.DIM + '             =======================================')
-                print(Style.DIM + '             |    ' + Style.NORMAL + 'Enter a new save slot name or' + Style.DIM + '    |')
-                print(Style.DIM + '             |   ' + Style.NORMAL + Fore.CYAN + 'back' + Fore.WHITE + ' to return to the main menu' + Style.DIM + '   |')
-                print(Style.DIM + '             =======================================' + Style.NORMAL)
-                print('')
+                print("{DIM}             =======================================".format(**clr.styles))
+                print("{DIM}             |    {NORMAL}Enter a new save slot name or{DIM}    |".format(**clr.styles))
+                print("{DIM}             |   {NORMAL}{FCYAN}back{FWHITE} to return to the main menu{DIM}   |".format(**clr.styles))
+                print("{DIM}             ======================================={NORMAL}\n".format(**clr.styles))
                 slotName = input(eng.PROMPT)
                 slots = []
                 for s in os.listdir("./save-states"):
@@ -105,14 +105,13 @@ if __name__ == '__main__':
                     if len(slots) >= 3:
                         eng.clear()
                         art.printLogo()
-                        print(Style.DIM + '    =========================================================')
-                        print(Style.DIM + '    |           ' + Style.NORMAL + 'You already have 3 slots saved!' + Style.DIM + '             |')
-                        print(Style.DIM + '    | ' + Style.NORMAL + 'Create a new save with an existing name to overwrite!' + Style.DIM + ' |')
-                        print(Style.DIM + '    =========================================================' + Style.NORMAL)
-                        print('')
+                        print("{DIM}    =========================================================".format(**clr.styles))
+                        print("{DIM}    |           {NORMAL}You already have 3 slots saved!{DIM}             |".format(**clr.styles))
+                        print("{DIM}    | {NORMAL}Create a new save with an existing name to overwrite!{DIM} |".format(**clr.styles))
+                        print("{DIM}    ========================================================={NORMAL}\n".format(**clr.styles))
                         print("Save Slots Found:")
                         for s in slots:
-                            print("  " + s)
+                            print("  "s)
                         time.sleep(3)
                         print("Returning to the title screen.")
                         break
@@ -125,10 +124,9 @@ if __name__ == '__main__':
                 else:
                     eng.clear()
                     art.printLogo()
-                    print(Style.DIM + '         =================================================')
-                    print(Style.DIM + '         | ' + Style.NORMAL + 'Save slot already exists! Overwrite? (yes/no)' + Style.DIM + ' |')
-                    print(Style.DIM + '         =================================================' + Style.NORMAL)
-                    print('')
+                    print("{DIM}         =================================================".format(**clr.styles))
+                    print("{DIM}         | {NORMAL}Save slot already exists! Overwrite? (yes/no){DIM} |".format(**clr.styles))
+                    print("{DIM}         ================================================={NORMAL}\n".format(**clr.styles))
                     ans = input(eng.PROMPT)
                     if ans == "n" or ans == "no":
                         print("Not Overwriting.")
@@ -150,8 +148,7 @@ if __name__ == '__main__':
             continue
     eng.clear()
     art.printLogo()
-    print(Style.DIM + '             =======================================')
-    print(Style.DIM + '             |        ' + Style.NORMAL + 'Thanks for rockin\'! ' + Style.DIM + '         |')
-    print(Style.DIM + '             =======================================' + Style.NORMAL)
-    print('')
+    print("{DIM}             =======================================".format(**clr.styles))
+    print("{DIM}             |        {NORMAL}Thanks for rockin'! {DIM}         |".format(**clr.styles))
+    print("{DIM}             ======================================={NORMAL}\n".format(**clr.styles))
     exit()
