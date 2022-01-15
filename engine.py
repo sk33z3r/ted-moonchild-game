@@ -291,41 +291,26 @@ class combatMode():
                     check = chosenItemInfo["BATTLE"]
                 except KeyError:
                     pass
-                else:
-                    if chosenItemInfo["BATTLE"] == True:
-                        # TODO do something with the item
-                        # then drop the item from inventory
-                        dbs.updateInv(chosenItemInfo["NAME"], "del")
-                        print("\nTed uses " + chosenItemInfo["NAME"] + "! Too bad item effects aren't implemented yet.")
-                        print("The " + chosenItemInfo["NAME"] + " is still used up, though ;)")
-                        time.sleep(3)
-                        # Set next action to enemy
-                        NEXT_ACTION = 0
-                try:
-                    check = chosenItemInfo["WEAPON"]
-                except KeyError:
-                    pass
-                else:
-                    if chosenItemInfo["WEAPON"] == True and chosenItemInfo["NAME"] != dbs.equippedWeapon:
-                        print("\nYou have to equip it first, then use your attack!")
-                        time.sleep(2)
-                        # Set next action to player
-                        NEXT_ACTION = 1
-                    else:
-                        pass
-                try:
-                    check = chosenItemInfo["FX"]
-                except KeyError:
-                    pass
-                else:
-                    if chosenItemInfo["FX"] == True and chosenItemInfo["NAME"] != dbs.addedFX:
-                        print("\nYou have to equip it first, then use your attack!")
-                        time.sleep(2)
-                        # Set next action to player
-                        NEXT_ACTION = 1
-                    else:
-                        pass
-                if chosenItemInfo["NAME"] == dbs.addedFX:
+                if chosenItemInfo["BATTLE"] == True:
+                    # TODO do something with the item
+                    # then drop the item from inventory
+                    dbs.updateInv(chosenItemInfo["NAME"], "del")
+                    print("\nTed uses " + chosenItemInfo["NAME"] + "! Too bad item effects aren't implemented yet.")
+                    print("The " + chosenItemInfo["NAME"] + " is still used up, though ;)")
+                    time.sleep(3)
+                    # Set next action to enemy
+                    NEXT_ACTION = 0
+                elif chosenItemInfo["WEAPON"] == True and chosenItemInfo["NAME"] != dbs.equippedWeapon:
+                    print("\nYou have to equip it first, then use your attack!")
+                    time.sleep(2)
+                    # Set next action to player
+                    NEXT_ACTION = 1
+                elif chosenItemInfo["FX"] == True and chosenItemInfo["NAME"] != dbs.addedFX:
+                    print("\nYou have to equip it first, then use your attack!")
+                    time.sleep(2)
+                    # Set next action to player
+                    NEXT_ACTION = 1
+                elif chosenItemInfo["NAME"] == dbs.addedFX:
                     print("Use Ted's attack instead!")
                     # Set next action to player
                     NEXT_ACTION = 1
