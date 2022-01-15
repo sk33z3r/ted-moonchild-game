@@ -1,4 +1,4 @@
-import os, sys, time, random, argparse, cmd, textwrap, json
+import os, sys, time, random, argparse, cmd, textwrap, json, natsort
 import art
 import database as dbs
 
@@ -77,6 +77,7 @@ def tempInv():
     for i in dbs.playerInv["EQUIPPED"]:
         inv.append(dbs.playerInv["EQUIPPED"][n])
         n += 1
+    inv = natsort.natsorted(inv)
     if DEBUG == 1:
         print("Temp Inventory List")
         print(inv)
@@ -323,7 +324,6 @@ class combatMode():
                     time.sleep(2)
                     # Set next action to player
                     NEXT_ACTION = 1
-
         else:
             inputError()
             # Set next action to player
