@@ -131,7 +131,7 @@ class combatMode():
             attackIDList = [ "_index" ]
             print("\n{DIM}>> {NORMAL}Choose an Attack".format(**clr.styles))
             for item in attackList:
-                print(" [" + str(i) + "] - " + item["NAME"])
+                print("   [" + str(i) + "] - " + item["NAME"])
                 attackIDList.append(item["_id"])
                 i += 1
             print()
@@ -202,7 +202,7 @@ class combatMode():
             magicIDList = [ "_index" ]
             print("\n{DIM}>> {NORMAL}Choose an Ability".format(**clr.styles))
             for item in magicList:
-                print(" [" + str(i) + "] - " + item["NAME"])
+                print("   [" + str(i) + "] - " + item["NAME"])
                 magicIDList.append(item["_id"])
                 i += 1
             print()
