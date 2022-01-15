@@ -144,16 +144,22 @@ def updateInv(item, action):
     getInventory()
     if action == "del":
         # remove item
-        try:
-            player.update_one( { "SECTION": "inventory" }, { "$pull": { "ITEMS": item } } )
-            player.update_one( { "SECTION": "inventory" }, { "$pull": { "KEY_ITEMS": item } } )
-            player.update_one( { "SECTION": "inventory" }, { "$pull": { "EQUIPPED": item } } )
-        except:
-            pass
-        getInventory()
-        if item in list(playerInv["ITEMS"]) or item in list(playerInv["KEY_ITEMS"]) or item in list(playerInv["EQUIPPED"]):
-            raise Exception("'" + item + "' is sill in Ted's inventory.")
+        i = list(playerInv["ITEMS"])
+        k = list(playerInv["KEY_ITEMS"])
+        e = list(playerInv["EQUIPPED"])
+        if item in i:
+            i.remove(item)
+            player.update_one( { "SECTION": "inventory" }, { "$set": { "ITEMS": i } } )
+        elif item in k:
+            k.remove(item)
+            player.update_one( { "SECTION": "inventory" }, { "$set": { "KEY_ITEMS": k } } )
+        elif item in e:
+            e.remove(item)
+            player.update_one( { "SECTION": "inventory" }, { "$set": { "EQUIPPED": e } } )
+        else:
+            raise NameError("Cannot find item in any list.")
             return
+        getInventory()
     elif action == "add":
         # add item
         if items.find_one( { "NAME": item } )["TYPE"] == "key":
