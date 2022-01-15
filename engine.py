@@ -138,7 +138,7 @@ class combatMode():
             attackIDList = [ "_index" ]
             print("\n{DIM}>> {NORMAL}Choose an Attack".format(**clr.styles))
             for item in attackList:
-                print(" [", str(i), "] - ", item["NAME"])
+                print(" [" + str(i) + "] - " + item["NAME"])
                 attackIDList.append(item["_id"])
                 i += 1
             print()
@@ -209,7 +209,7 @@ class combatMode():
             magicIDList = [ "_index" ]
             print("\n{DIM}>> {NORMAL}Choose an Ability".format(**clr.styles))
             for item in magicList:
-                print(" [", str(i), "] - ", item["NAME"])
+                print(" [" + str(i) + "] - " + item["NAME"])
                 magicIDList.append(item["_id"])
                 i += 1
             print()
@@ -232,7 +232,7 @@ class combatMode():
                     # magic crit check, 10 = success
                     magicCrit = random.randrange(0,20)
                     if DEBUG == 1:
-                        print("\nMagic Crit Check: ", str(magicCrit), "\n")
+                        print("\nMagic Crit Check: " + str(magicCrit) + "\n")
                     else:
                         pass
                     if magicCrit == 10:
@@ -265,13 +265,12 @@ class combatMode():
                 else:
                     itemCount[item] = 1
 
-            print()
-            print({DIM}>> {NORMAL}Choose an Item)
+            print("\n{DIM}>> {NORMAL}Choose an Item".format(**clr.styles))
             # get a list of inventory items with duplicates removed:
             for item in set(inv):
                 # If item is a duplicate, print once with the quantity in ()
                 if itemCount[item] > 1:
-                    print("{DIM}{FYELLOW} [{I}] - {FWHITE}{NORMAL}  {ITEM} ({COUNT})".format(**clr.styles, I = str(i), ITEM = item, COUNT = itemCount[item]))
+                    print("{DIM}{FYELLOW} [{I}] - {FWHITE}{NORMAL}  {ITEM} ({COUNT})".format(**clr.styles, I = str(i), ITEM = item, COUNT = str(itemCount[item])))
                     battleItems.append(item)
                 else:
                     print("{DIM}{FYELLOW} [{I}] - {FWHITE}{NORMAL}  {ITEM}".format(**clr.styles, I = str(i), ITEM = item))
@@ -297,8 +296,8 @@ class combatMode():
                         # TODO do something with the item
                         # then drop the item from inventory
                         dbs.updateInv(chosenItemInfo["NAME"], "del")
-                        print("\nTed uses ", chosenItemInfo["NAME"], "! Too bad item effects aren't implemented yet.")
-                        print("The ", chosenItemInfo["NAME"], " is still used up, though ;)")
+                        print("\nTed uses " + chosenItemInfo["NAME"] + "! Too bad item effects aren't implemented yet.")
+                        print("The " + chosenItemInfo["NAME"] + " is still used up, though ;)")
                         time.sleep(3)
                         # Set next action to enemy
                         NEXT_ACTION = 0
@@ -403,7 +402,7 @@ class combatMode():
                     pass
                 enemyMiss = random.randrange(0, 5)
                 if DEBUG == 1:
-                    print("\nMiss Check: ", str(enemyMiss), " (4 = true)\n")
+                    print("\nMiss Check: " + str(enemyMiss) + " (4 = true)\n")
                 else:
                     pass
                 if enemyMiss == 4:
@@ -437,7 +436,7 @@ def displayLocation(loc):
     locInfo = dbs.rooms.find_one( { "NAME": loc } )
     # Print the room name.
     print(loc)
-    print((=' * len(loc)))
+    print(('=' * len(loc)))
 
     print(locInfo['DESC'].format(**clr.styles))
 
@@ -445,7 +444,7 @@ def displayLocation(loc):
     if len(locInfo["GROUND"]) > 0:
         print("{DIM}--- GROUND ITEMS ---{NORMAL}{FWHITE}".format(**clr.styles))
         for item in locInfo["GROUND"]:
-            print("  {GROUNDDESC}".format(**styles, GROUNDDESC = dbs.items.find_one( { "NAME": item } )["GROUNDDESC"]))
+            print("  {GROUNDDESC}".format(**clr.styles, GROUNDDESC = dbs.items.find_one( { "NAME": item } )["GROUNDDESC"]))
     print("\n")
     # Print all the exits.
     exits = []
@@ -457,7 +456,7 @@ def displayLocation(loc):
         print("{DIM}--- NEARBY EXITS ---{NORMAL}".format(**clr.styles))
         for direction in ("NORTH", "SOUTH", "EAST", "WEST", "UP", "DOWN"):
             if direction in dbs.locationInfo:
-                print("  ", direction.title(), ": ", dbs.locationInfo[direction])
+                print("  " + direction.title() + ": " + dbs.locationInfo[direction])
     else:
         print("{DIM}Exits: {NORMAL}{JOIN}".format(**clr.styles, JOIN = ' '.join(exits)))
     print("\n")
@@ -540,27 +539,27 @@ class TextAdventureCmd(cmd.Cmd):
     # function.
     def do_north(self, arg):
         # Go to the area to the north, if possible.
-        moveDirection(NORTH)
+        moveDirection("NORTH")
 
     def do_south(self, arg):
         # Go to the area to the south, if possible.
-        moveDirection(SOUTH)
+        moveDirection("SOUTH")
 
     def do_east(self, arg):
         # Go to the area to the east, if possible.
-        moveDirection(EAST)
+        moveDirection("EAST")
 
     def do_west(self, arg):
         # Go to the area to the west, if possible.
-        moveDirection(WEST)
+        moveDirection("WEST")
 
     def do_up(self, arg):
         # Go to the area upwards, if possible.
-        moveDirection(UP)
+        moveDirection("UP")
 
     def do_down(self, arg):
         #Go to the area downwards, if possible.
-        moveDirection(DOWN)
+        moveDirection("DOWN")
 
     # Since the code is the exact same, we can just copy the
     # methods with shortened names:
@@ -613,15 +612,15 @@ class TextAdventureCmd(cmd.Cmd):
         for item in set(inv):
             # If item is an equipped weapon, display a [e]
             if item == dbs.equippedWeapon:
-                print("  ", item, " [e]")
+                print("  " + item + " [e]")
             elif item == dbs.addedFX:
-                print("  ", item, " [e]")
+                print("  " + item + " [e]")
             elif dbs.items.find_one( { "NAME": item } )["TYPE"] == "key":
                 print("  {FYELLOW}{ITEM}{FWHITE}".format(**clr.styles, ITEM = item))
             elif itemCount[item] > 1:
-                print("  ", item, " (", itemCount[item], ")")
+                print("  " + item + " (" + str(itemCount[item]) + ")")
             else:
-                print("  ", item)
+                print("  " + item)
         print("{DIM}============={NORMAL}{FWHITE}".format(**clr.styles))
 
     do_inv = do_inventory
@@ -644,13 +643,13 @@ class TextAdventureCmd(cmd.Cmd):
             if itemInfo["TAKEABLE"] == False:
                 cantTake = True
                 continue # there may be other items named this that Ted can take, so we continue checking
-            print("Ted grabs ", itemInfo["SHORTDESC"], ".")
+            print("Ted grabs " + itemInfo["SHORTDESC"] + ".")
             dbs.updateGround(item, "del") # remove from ground
             dbs.updateInv(item, "add") # add to inventory
             return
 
         if cantTake:
-            print("Ted doesn't want to grab\"", itemToTake, "\".")
+            print("Ted doesn't want to grab\"" + itemToTake + "\".")
         else:
             print("Ted doesn't see that.")
 
@@ -670,7 +669,7 @@ class TextAdventureCmd(cmd.Cmd):
 
         # find out if the player doesn't have that item
         if itemToDrop not in invDescWords:
-            print("Ted can't drop \"", itemToDrop, "\". Maybe it's equipped or a key item?")
+            print("Ted can't drop \"" + itemToDrop + "\". Maybe it's equipped or a key item?")
             return
 
         # get the item name that the player's command describes
@@ -678,7 +677,7 @@ class TextAdventureCmd(cmd.Cmd):
         if item != None:
             dbs.updateGround(item, "add") # add to ground
             dbs.updateInv(item, "del") # remove from inventory
-            print("Ted drops ", dbs.items.find_one( { "NAME": item } )["SHORTDESC"], ".")
+            print("Ted drops " + dbs.items.find_one( { "NAME": item } )["SHORTDESC"] + ".")
 
     def complete_take(self, text, line, begidx, endidx):
         possibleItems = []
@@ -737,21 +736,21 @@ class TextAdventureCmd(cmd.Cmd):
         if lookingAt == 'exits':
             for direction in ("NORTH", "SOUTH", "EAST", "WEST", "UP", "DOWN"):
                 if direction in dbs.locationInfo:
-                    print(direction.title(), ": ", dbs.locationInfo[direction])
+                    print(direction.title() + ": " + dbs.locationInfo[direction])
             return
 
         if lookingAt in ('north', 'west', 'east', 'south', 'up', 'down', 'n', 'w', 'e', 's', 'u', 'd'):
-            if lookingAt.startswith(n) and "NORTH" in dbs.locationInfo:
+            if lookingAt.startswith("n") and "NORTH" in dbs.locationInfo:
                 print(dbs.locationInfo["NORTH"])
-            elif lookingAt.startswith(w) and "WEST" in dbs.locationInfo:
+            elif lookingAt.startswith("w") and "WEST" in dbs.locationInfo:
                 print(dbs.locationInfo["WEST"])
-            elif lookingAt.startswith(e) and "EAST" in dbs.locationInfo:
+            elif lookingAt.startswith("e") and "EAST" in dbs.locationInfo:
                 print(dbs.locationInfo["EAST"])
-            elif lookingAt.startswith(s) and "SOUTH" in dbs.locationInfo:
+            elif lookingAt.startswith("s") and "SOUTH" in dbs.locationInfo:
                 print(dbs.locationInfo["SOUTH"])
-            elif lookingAt.startswith(u) and "UP" in dbs.locationInfo:
+            elif lookingAt.startswith("u") and "UP" in dbs.locationInfo:
                 print(dbs.locationInfo["UP"])
-            elif lookingAt.startswith(d) and "DOWN" in dbs.locationInfo:
+            elif lookingAt.startswith("d") and "DOWN" in dbs.locationInfo:
                 print(dbs.locationInfo["DOWN"])
             else:
                 print("Ted can't walk through walls.")
@@ -829,10 +828,10 @@ class TextAdventureCmd(cmd.Cmd):
         print("{DIM}--- STORE ---{NORMAL}{FWHITE}".format(**clr.styles))
         for item in dbs.locationInfo["SHOP"]:
             itemInfo = dbs.items.find_one( { "NAME": item } )
-            print("  ", item)
-            print("{DIM}".format(**clr.styles), '  \n  '.join(textwrap.wrap(itemInfo["LONGDESC"].format(**clr.styles), SCREEN_WIDTH)), "{NORMAL}{FWHITE}".format(**clr.styles))
+            print("  " + item)
+            print("{DIM}".format(**clr.styles), '  \n  '.join(textwrap.wrap(itemInfo["LONGDESC"].format(**clr.styles), SCREEN_WIDTH)) + "{NORMAL}{FWHITE}".format(**clr.styles))
             if arg == 'full':
-                print("{DIM}".format(**clr.styles), '\n'.join(textwrap.wrap(itemInfo["LONGDESC"].format(**clr.styles), SCREEN_WIDTH)), "{NORMAL}{FWHITE}".format(**clr.styles))
+                print("{DIM}".format(**clr.styles), '\n'.join(textwrap.wrap(itemInfo["LONGDESC"].format(**clr.styles), SCREEN_WIDTH)) + "{NORMAL}{FWHITE}".format(**clr.styles))
 
         print("{DIM}============={NORMAL}{FWHITE}".format(**clr.styles))
 
@@ -853,11 +852,11 @@ class TextAdventureCmd(cmd.Cmd):
             # NOTE - If Ted wanted to implement money, here is where Ted would add
             # code that checks if the player has enough, then deducts the price
             # from their money.
-            print("Ted just bought ", dbs.items.find_one( { "NAME": item } )["SHORTDESC"])
+            print("Ted just bought " + dbs.items.find_one( { "NAME": item } )["SHORTDESC"])
             dbs.updateInv(item, "add")
             return
 
-        print("They don't have any \"", itemToBuy, ".\" Try again, Ted.")
+        print("They don't have any \"" + itemToBuy + ".\" Try again, Ted.")
 
     def complete_buy(self, text, line, begidx, endidx):
         if "SHOP" not in dbs.locationInfo:
@@ -897,11 +896,11 @@ class TextAdventureCmd(cmd.Cmd):
             if itemToSell in itemInfo["DESCWORDS"]:
                 # NOTE - If Ted wanted to implement money, here is where Ted would add
                 # code that gives the player money for selling the item.
-                print("Ted sold ", itemInfo["SHORTDESC"])
+                print("Ted sold " + itemInfo["SHORTDESC"])
                 dbs.updateInv(item, "del")
                 return
 
-        print("You don't have \"", itemToSell, "\", Ted.")
+        print("You don't have \"" + itemToSell + "\", Ted.")
 
     def complete_sell(self, text, line, begidx, endidx):
         dbs.getInventory()
@@ -943,14 +942,14 @@ class TextAdventureCmd(cmd.Cmd):
             except KeyError:
                 cantEat = True
                 continue # there may be other items named this that Ted can eat, so we continue checking
-            print("Ted eats ", itemInfo["SHORTDESC"])
+            print("Ted eats " + itemInfo["SHORTDESC"])
             dbs.updateInv(item, "del")
             return
 
         if cantEat:
             print("Ted doesn't want to eat that...")
         else:
-            print("Ted is confused by \"", itemToEat, "\"")
+            print("Ted is confused by \"" + itemToEat + "\"")
 
     def complete_eat(self, text, line, begidx, endidx):
         dbs.getInventory()
@@ -974,14 +973,14 @@ class TextAdventureCmd(cmd.Cmd):
     def do_stats(self, arg):
         # Display player stats, weapon, and accessory
         print("{DIM}--- Stats ---{NORMAL}{FWHITE}".format(**clr.styles))
-        print("  HP: ", str(dbs.playerStats["HP"]), "/", str(dbs.playerStats["HPMAX"]))
-        print("  MP: ", str(dbs.playerStats["MP"]), "/", str(dbs.playerStats["MPMAX"]))
-        print("  Hero Level: ", str(dbs.playerStats["LVL"]))
-        print("  Hero XP: ", str(dbs.playerStats["XP"]))
-        print("  You have ", str(dbs.playerStats["FLOYDS"]), " Floyds.")
-        print("  Equipped Weapon: ", dbs.equippedWeapon, " [", str(dbs.weaponInfo["ATKBNS"]), "]")
-        print("  Added FX: ", dbs.addedFX, " [", str(dbs.fxInfo["ATKBNS"]), "]")
-        print("{DIM}============={NORMAL}{FWHITE}")
+        print("  HP: " + str(dbs.playerStats["HP"]) + "/" + str(dbs.playerStats["HPMAX"]))
+        print("  MP: " + str(dbs.playerStats["MP"]) + "/" + str(dbs.playerStats["MPMAX"]))
+        print("  Hero Level: " + str(dbs.playerStats["LVL"]))
+        print("  Hero XP: " + str(dbs.playerStats["XP"]))
+        print("  You have " + str(dbs.playerStats["FLOYDS"]) + " Floyds.")
+        print("  Equipped Weapon: " + dbs.equippedWeapon + " [+" + str(dbs.weaponInfo["ATKBNS"]) + "]")
+        print("  Added FX: " + dbs.addedFX + " [+" + str(dbs.fxInfo["ATKBNS"]) + "]")
+        print("{DIM}============={NORMAL}{FWHITE}".format(**clr.styles))
 
     # TODO add un-equip functions for weapon and fx
 
@@ -1002,14 +1001,14 @@ class TextAdventureCmd(cmd.Cmd):
             if itemInfo["TYPE"] != "weapon":
                 cantEquip = True
                 continue # there may be other items named this that Ted can equip, so we continue checking
-            print("Ted equips ", itemInfo["SHORTDESC"])
+            print("Ted equips " + itemInfo["SHORTDESC"])
             dbs.setWeapon(item)
             return
 
         if cantEquip:
             print("Ted can't equip that...")
         else:
-            print("Ted is confused by \"", itemToEquip, "\"")
+            print("Ted is confused by \"" + itemToEquip + "\"")
 
     def do_unequip(self, arg):
         dbs.getInventory()
@@ -1028,14 +1027,14 @@ class TextAdventureCmd(cmd.Cmd):
             if itemInfo["TYPE"] != "weapon":
                 cantEquip = True
                 continue # there may be other items named this that Ted can equip, so we continue checking
-            print("Ted unequips ", itemInfo["SHORTDESC"])
+            print("Ted unequips " + itemInfo["SHORTDESC"])
             dbs.setWeapon("Fists")
             return
 
         if cantEquip:
             print("Ted can't unequip that...")
         else:
-            print("Ted is confused by \"", itemToUnequip, "\"")
+            print("Ted is confused by \"" + itemToUnequip + "\"")
 
     def do_addfx(self, arg):
         dbs.getInventory()
@@ -1054,14 +1053,14 @@ class TextAdventureCmd(cmd.Cmd):
             if itemInfo["TYPE"] != "fx":
                 cantEquip = True
                 continue # there may be other items named this that Ted can equip, so we continue checking
-            print("Ted adds ", itemInfo["SHORTDESC"])
+            print("Ted adds " + itemInfo["SHORTDESC"])
             dbs.setFX(item)
             return
 
         if cantAdd:
             print("That's not an effect...")
         else:
-            print("Ted is confused by \"", itemToAdd, "\"")
+            print("Ted is confused by \"" + itemToAdd + "\"")
 
     def do_delfx(self, arg):
         dbs.getInventory()
@@ -1080,14 +1079,14 @@ class TextAdventureCmd(cmd.Cmd):
             if itemInfo["TYPE"] != "fx":
                 cantEquip = True
                 continue # there may be other items named this that Ted can equip, so we continue checking
-            print("Ted unequips ", itemInfo["SHORTDESC"])
+            print("Ted unequips " + itemInfo["SHORTDESC"])
             dbs.setFX("noFX")
             return
 
         if cantEquip:
             print("Ted can't unequip that...")
         else:
-            print("Ted is confused by \"", itemToUnequip, "\"")
+            print("Ted is confused by \"" + itemToUnequip + "\"")
 
     def do_save(self, arg):
         # Save the current state of the game to file.

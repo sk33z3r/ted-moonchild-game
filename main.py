@@ -32,7 +32,7 @@ if __name__ == '__main__':
                 slots = [ "_index" ]
                 i = 1
                 for s in natsort.natsorted(os.listdir("./save-states")):
-                    print(  [str(i)] - s)
+                    print("  [" + str(i) + "] - " + s)
                     slots.append(s)
                     i += 1
                 print()
@@ -43,8 +43,8 @@ if __name__ == '__main__':
                         break
                     if slotChoice.isdigit():
                         if eng.DEBUG == 1:
-                            print("slotChoice # received: ", slotChoice)
-                            print("slotChoice name received: ", slots[int(slotChoice)])
+                            print("slotChoice # received: " + slotChoice)
+                            print("slotChoice name received: " + slots[int(slotChoice)])
                             time.sleep(1)
                         try:
                             dbs.loadGame(slots[int(slotChoice)])
@@ -58,7 +58,7 @@ if __name__ == '__main__':
                         title = "closed"
                     elif slotChoice in slots:
                         if eng.DEBUG == 1:
-                            print("slotChoice received: ", slotChoice)
+                            print("slotChoice received: " + slotChoice)
                         dbs.loadGame(slotChoice)
                         loaded = "yes"
                         eng.displayLocation(dbs.location)
@@ -111,7 +111,7 @@ if __name__ == '__main__':
                         print("{DIM}    ========================================================={NORMAL}\n".format(**clr.styles))
                         print("Save Slots Found:")
                         for s in slots:
-                            print("  "s)
+                            print("  " + s)
                         time.sleep(3)
                         print("Returning to the title screen.")
                         break
