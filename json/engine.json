@@ -1,9 +1,9 @@
 [
     {
-        "INTRO1": "'The year is 4420'",
-        "INTRO2": "'Mankind has expanded its reach beyond the solar system'",
-        "INTRO3": "'Many righteous bands tour the galaxy looking for wealth, fame, and loose women,' + '\\n' + 'but there is now an evil that lurks in the vast darkness of space.'",
-        "INTRO4": "'The evil conglomerates of Earth\\'s past return to enslave the Gods of Metal' + '\\n' + 'by cryogenically freezing and replacing them with their clone-step army.'",
-        "INTRO5": "'There is only one crew that can put a stop to this madness...'"
+        "INTRO1": "The year is 4420",
+        "INTRO2": "Mankind has expanded its reach beyond the solar system",
+        "INTRO3": "Many righteous bands tour the galaxy looking for wealth, fame, and loose women,\nbut there is now an evil that lurks in the vast darkness of space.",
+        "INTRO4": "The evil conglomerates of Earth's past return to enslave the Gods of Metal\nby cryogenically freezing and replacing them with their clone-step army.",
+        "INTRO5": "There is only one crew that can put a stop to this madness..."
     }
 ]

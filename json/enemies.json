@@ -1,7 +1,7 @@
 [
     {
         "NAME": "Buzzoid",
-        "DESC": "'A hideous bug like creature that smells of liquor and sewage.' + '\\n'",
+        "DESC": "A hideous bug like creature that smells of liquor and sewage.",
         "HP": 15,
         "MP": 10,
         "ATTACKMIN": 1,
@@ -12,7 +12,7 @@
     },
     {
         "NAME": "Zappan",
-        "DESC": "'Ted isn\\'t quite sure what to make of this round object that gargles at him.' + '\\n'",
+        "DESC": "Ted isn't quite sure what to make of this round object that gargles at him.",
         "HP": 20,
         "MP": 15,
         "ATTACKMIN": 2,

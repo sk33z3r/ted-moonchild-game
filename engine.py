@@ -18,6 +18,23 @@ global SCREEN_WIDTH
 global PROMPT
 global SLOT_NAME
 
+# define styles
+styles = {
+    "DIM": Style.DIM,
+    "BRIGHT": Style.BRIGHT,
+    "NORMAL": Style.NORMAL,
+    "FBLACK": Fore.BLACK,
+    "BRED": Back.RED,
+    "FWHITE": Fore.WHITE,
+    "FYELLOW": Fore.YELLOW,
+    "FGREEN": Fore.GREEN,
+    "FCYAN": Fore.CYAN,
+    "BBLACK": Back.BLACK,
+    "BRED": Back.RED,
+    "BYELLOW": Back.YELLOW,
+    "BWHITE": Back.WHITE
+}
+
 # debug check
 if args.debug:
     print("Debug mode engaged.")
@@ -123,7 +140,7 @@ class combatMode():
         print('')
         print('    [IMAGE of ' + chosenEnemy["NAME"] + ']')
         print('')
-        print('    ' + chosenEnemy["DESC"])
+        print('    ' + chosenEnemy["DESC"] + '\n')
         print(Style.DIM + '+--------------------------------------------------------------------------------------------------+' + Style.NORMAL)
         print('')
 
@@ -464,20 +481,13 @@ def displayLocation(loc):
     print(loc)
     print(('=' * len(loc)))
 
-    # Print the room's description (example for DESC as a list)
-    #description = ""
-    #c = 0
-    #while c < len(locInfo["DESC"]):
-    #    print(locInfo["DESC"][c])
-    #    c += 1
-
-    print(locInfo['DESC'])
+    print(locInfo['DESC'].format(**styles))
 
     # Print all the items on the ground.
     if len(locInfo["GROUND"]) > 0:
         print(Style.DIM + '--- GROUND ITEMS ---' + Style.NORMAL + Fore.WHITE)
         for item in locInfo["GROUND"]:
-            print(('  ' + dbs.items.find_one( { "NAME": item } )["GROUNDDESC"]))
+            print(('  ' + dbs.items.find_one( { "NAME": item } )["GROUNDDESC"].format(**styles)))
     print('')
     # Print all the exits.
     exits = []
@@ -792,7 +802,7 @@ class TextAdventureCmd(cmd.Cmd):
         # see if the item being looked at is on the ground at this location
         item = getFirstItemMatchingDesc(lookingAt, dbs.locationInfo["GROUND"])
         if item != None:
-            print(('\n'.join(textwrap.wrap(dbs.items.find_one( { "NAME": item } )["LONGDESC"], SCREEN_WIDTH))))
+            print(('\n'.join(textwrap.wrap(dbs.items.find_one( { "NAME": item } )["LONGDESC"].format(**styles), SCREEN_WIDTH))))
             return
 
         # see if the item being looked at is in the inventory
@@ -800,7 +810,7 @@ class TextAdventureCmd(cmd.Cmd):
 
         item = getFirstItemMatchingDesc(lookingAt, inv)
         if item != None:
-            print(('\n'.join(textwrap.wrap(dbs.items.find_one( { "NAME": item } )["LONGDESC"], SCREEN_WIDTH))))
+            print(('\n'.join(textwrap.wrap(dbs.items.find_one( { "NAME": item } )["LONGDESC"].format(**styles), SCREEN_WIDTH))))
             return
 
         print('Ted scours to room, but he doesn\'t see that.')
@@ -862,9 +872,9 @@ class TextAdventureCmd(cmd.Cmd):
         for item in dbs.locationInfo["SHOP"]:
             itemInfo = dbs.items.find_one( { "NAME": item } )
             print(('  %s' % (item)))
-            print(('  ' + Style.DIM + '\n  '.join(textwrap.wrap(itemInfo["LONGDESC"], SCREEN_WIDTH)) + Style.NORMAL + Fore.WHITE))
+            print(('  ' + Style.DIM + '\n  '.join(textwrap.wrap(itemInfo["LONGDESC"].format(**styles), SCREEN_WIDTH)) + Style.NORMAL + Fore.WHITE))
             if arg == 'full':
-                print((Style.DIM + '\n'.join(textwrap.wrap(itemInfo["LONGDESC"], SCREEN_WIDTH)) + Style.NORMAL + Fore.WHITE))
+                print((Style.DIM + '\n'.join(textwrap.wrap(itemInfo["LONGDESC"].format(**styles), SCREEN_WIDTH)) + Style.NORMAL + Fore.WHITE))
 
         print((Style.DIM + '=============' + Style.NORMAL + Fore.WHITE))
 
