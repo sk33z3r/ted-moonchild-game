@@ -15,12 +15,13 @@ RUN pip install -r /requirements.txt
 RUN echo -e "m00nch1ld\nm00nch1ld" | adduser ted
 # add the python files for the game
 ADD dockerfiles/play.sh /usr/local/bin/play
-ADD *.py /home/ted/
+ADD ./*.py /home/ted/
+ADD ./json/ /home/ted/json/
 # set permissions
 RUN chown -R root:root /home/ted
 RUN chmod -R 755 /home/ted
 # finish up container
 EXPOSE 22
 ENTRYPOINT ["docker-entrypoint.sh"]
-WORKDIR /tmatris
+WORKDIR /home/ted/
 CMD ["/usr/sbin/sshd","-D"]
