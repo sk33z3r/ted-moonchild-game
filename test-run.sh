@@ -19,8 +19,9 @@ case $1 in
         ssh -p 7175 -o "LogLevel ERROR" -o "StrictHostKeyChecking no" -o "UserKnownHostsFile=/dev/null" -t ted@moonchild.space "$command"
     ;;
     env)
-        ./server-run.sh && sleep 2
-        docker-compose exec python bash
+        docker-compose up -d mongo
+        docker build -t tmatris-python .
+        docker run -it --rm --name python -p 7175:22 --net tmatris --ip 172.200.0.120 -v $PWD:/home/ted tmatris-python bash
         docker-compose down
     ;;
     *)
