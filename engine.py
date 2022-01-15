@@ -1,4 +1,4 @@
-import os, sys, time, random, argparse, cmd, textwrap, json, natsort
+import os, sys, time, random, argparse, cmd, json, natsort
 import art
 import database as dbs
 
@@ -6,14 +6,12 @@ import database as dbs
 parser = argparse.ArgumentParser()
 parser.add_argument("-d", "--debug", help="Turn on debug messages for various game calculations.", action="store_true")
 parser.add_argument("-nc", "--nocolor", help="Turn off text styles and color.", action="store_true")
-parser.add_argument("-w", "--width", nargs=1, help="Specify console screen width.", type=int)
 args = parser.parse_args()
 
 # engine variables
 NEXT_ACTION = 0 # 1 = player, 0 = enemy
 global DEBUG
 global COLORS
-global SCREEN_WIDTH
 global PROMPT
 global SLOT_NAME
 
@@ -32,12 +30,6 @@ if args.nocolor:
 else:
     import colors as clr
     COLORS = 1
-
-# set screen width
-if args.width:
-    SCREEN_WIDTH = args.width[0]
-else:
-    SCREEN_WIDTH = 170
 
 # setup the command prompt
 RAW_PROMPT = "{FRED}\m/: {NORMAL}{FWHITE}"
@@ -744,7 +736,7 @@ class TextAdventureCmd(cmd.Cmd):
         # see if the item being looked at is on the ground at this location
         item = getFirstItemMatchingDesc(lookingAt, dbs.locationInfo["GROUND"])
         if item != None:
-            print('\n'.join(textwrap.wrap(dbs.items.find_one( { "NAME": item } )["LONGDESC"].format(**clr.styles), SCREEN_WIDTH)))
+            print('\n'.join(dbs.items.find_one( { "NAME": item } )["LONGDESC"].format(**clr.styles)))
             return
 
         # see if the item being looked at is in the inventory
@@ -752,7 +744,7 @@ class TextAdventureCmd(cmd.Cmd):
 
         item = getFirstItemMatchingDesc(lookingAt, inv)
         if item != None:
-            print('\n'.join(textwrap.wrap(dbs.items.find_one( { "NAME": item } )["LONGDESC"].format(**clr.styles), SCREEN_WIDTH)))
+            print('\n'.join(dbs.items.find_one( { "NAME": item } )["LONGDESC"].format(**clr.styles)))
             return
 
         print("Ted scours to room, but he doesn't see that.")
@@ -814,9 +806,9 @@ class TextAdventureCmd(cmd.Cmd):
         for item in dbs.locationInfo["SHOP"]:
             itemInfo = dbs.items.find_one( { "NAME": item } )
             print("  " + item)
-            print("{DIM}".format(**clr.styles), '  \n  '.join(textwrap.wrap(itemInfo["LONGDESC"].format(**clr.styles), SCREEN_WIDTH)) + "{NORMAL}{FWHITE}".format(**clr.styles))
+            print("{DIM}".format(**clr.styles), '  \n  '.join(itemInfo["LONGDESC"].format(**clr.styles)) + "{NORMAL}{FWHITE}".format(**clr.styles))
             if arg == 'full':
-                print("{DIM}".format(**clr.styles), '\n'.join(textwrap.wrap(itemInfo["LONGDESC"].format(**clr.styles), SCREEN_WIDTH)) + "{NORMAL}{FWHITE}".format(**clr.styles))
+                print("{DIM}".format(**clr.styles), '\n'.join(itemInfo["LONGDESC"].format(**clr.styles)) + "{NORMAL}{FWHITE}".format(**clr.styles))
 
         print("{DIM}============={NORMAL}{FWHITE}".format(**clr.styles))
 
