@@ -8,3 +8,27 @@ services:
     restart: never
     stdin_open: true
     tty: true
+    depends_on:
+      - mongo
+    networks:
+      tmatris:
+        ipv4_address: 172.200.0.120
+
+  mongo:
+    image: mongo
+    container_name: mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: kjZbFF5jMQL2sPS4vyRYgbW#CEt#2cDA
+    networks:
+      tmatris:
+        ipv4_address: 172.200.0.121
+
+networks:
+
+  tmatris:
+    name: tmatris
+    ipam:
+      config:
+        - subnet: 172.200.0.0/24

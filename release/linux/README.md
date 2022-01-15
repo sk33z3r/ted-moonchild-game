@@ -1,31 +1,9 @@
 # Ted Moonchild and the Roadies in Space
 
-## Ways to play on Linux
+## Docker
 
-### Docker
+The easiest way to play is to run the game with `docker-compose`. If you don't have it on your system, you can [get it here](https://docs.docker.com/compose/install/).
 
-If you have `docker-compose` installed on your system:
-
-```
+```shell
 $ ./run-game.sh
-```
-
-If you only want to use the `docker run` command:
-
-```
-$ ./run-game.sh docker
-```
-
-### Python
-
-If you don't want to mess with Docker and already have a Python environment installed, first install the modules:
-
-```
-$ pip install colorama
-```
-
-Then you can run the game:
-
-```
-$ python main.py
 ```

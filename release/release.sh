@@ -6,10 +6,12 @@ case $1 in
         echo "Cleaning up old builds..."
         if [ -f ../ted-moonchild-linux* ]; then rm ../ted-moonchild-linux*; fi
         cp ../*.py linux/
+        cp -r ../json linux/
+        cp ../dockerfiles/requirements.txt linux/
         cd linux
         tar zcvf ../../ted-moonchild-linux_$(git rev-parse --short HEAD).tar.gz *
         echo "Cleaning up files..."
-        rm *.py
+        rm -r *.py json/
         cd ..
         echo "md5checksum: $(md5sum ../ted-moonchild-linux* | awk '{print $1}')"
         echo "Build complete!"
