@@ -8,7 +8,7 @@ if not os.path.exists(savesPath):
     os.makedirs(savesPath)
 
 # Setup database connection
-client = pymongo.MongoClient("mongodb://root:example@172.100.0.121:27017/")
+client = pymongo.MongoClient("mongodb://root:kjZbFF5jMQL2sPS4vyRYgbW#CEt#2cDA@172.200.0.121:27017/")
 
 # get and store the collection list
 collections = []
