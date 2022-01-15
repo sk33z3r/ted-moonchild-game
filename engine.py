@@ -612,11 +612,11 @@ class TextAdventureCmd(cmd.Cmd):
         for item in set(inv):
             # If item is an equipped weapon, display a [e]
             if item == dbs.equippedWeapon:
-                print("  " + item + " [e]")
+                print("  {DIM}{ITEM} [e]{NORMAL}".format(**clr.styles, ITEM = item))
             elif item == dbs.addedFX:
-                print("  " + item + " [e]")
+                print("  {DIM}{ITEM} [e]{NORMAL}".format(**clr.styles, ITEM = item))
             elif dbs.items.find_one( { "NAME": item } )["TYPE"] == "key":
-                print("  {FYELLOW}{ITEM}{FWHITE}".format(**clr.styles, ITEM = item))
+                print("  {FYELLOW}{ITEM} [k]{FWHITE}".format(**clr.styles, ITEM = item))
             elif itemCount[item] > 1:
                 print("  " + item + " (" + str(itemCount[item]) + ")")
             else:
