@@ -81,6 +81,7 @@ class combatMode():
         # Randomly selects an enemy and sets base stats
         # TODO implement logic to only select enemies from the current planet
         global chosenEnemy
+        global ratingInfo
         global ENEMYHP
         global ENEMYMP
         enemyIDList = list(dbs.enemies.find( {}, { "NAME": 1 } ))
@@ -220,6 +221,7 @@ class combatMode():
             else:
                 if chosenMagicInfo["MPREQ"] > dbs.playerStats["MP"]:
                     print("\nTed doesn't have enough MP!")
+                    time.sleep(2)
                     # Set next action to player
                     NEXT_ACTION = 1
                 else:
@@ -342,11 +344,11 @@ class combatMode():
             time.sleep(1)
             # calculate FLOYD reward
             floydAward = random.randrange(ratingInfo["FLOYDS"][0], ratingInfo["FLOYDS"][1])
-            updateStat("FLOYDS", floydAward, "inc")
+            dbs.updateStat("FLOYDS", floydAward, "inc")
             print("{FGREEN}{DIM}Ted found {F} FLOYDS!".format(**clr.styles, F = str(floydAward)))
             time.sleep(1)
             # apply XP gain
-            updateStat("XP", ratingInfo["XPAWARD"], "inc")
+            dbs.updateStat("XP", ratingInfo["XPAWARD"], "inc")
             print("{FYELLOW}Ted has been awarded {XP} XP!{NORMAL}{FWHITE}".format(**clr.styles, XP = str(ratingInfo["XPAWARD"])))
             time.sleep(1)
             # random item drop
@@ -360,14 +362,14 @@ class combatMode():
                 if DEBUG == 1:
                     print("Item drop chance missed.")
             # check player level up
-            playerXP = dbs.playerStat["XP"]
-            nextLVL = dbs.playerStat["LVL"] + 1
+            playerXP = dbs.playerStats["XP"]
+            nextLVL = dbs.playerStats["LVL"] + 1
             if playerXP >= dbs.levels.find_one( { "LEVEL": nextLVL } )["XPREQ"]:
-                updateStat("LVL", nextLVL, "set")
-                updateStat("HPMAX", dbs.levelStats["HPMAX"], "set")
-                updateStat("HP", dbs.levelStats["HPMAX"], "set")
-                updateStat("MPMAX", dbs.levelStats["MPMAX"], "set")
-                updateStat("MP", dbs.levelStats["MPMAX"], "set")
+                dbs.updateStat("LVL", nextLVL, "set")
+                dbs.updateStat("HPMAX", dbs.levelStats["HPMAX"], "set")
+                dbs.updateStat("HP", dbs.levelStats["HPMAX"], "set")
+                dbs.updateStat("MPMAX", dbs.levelStats["MPMAX"], "set")
+                dbs.updateStat("MP", dbs.levelStats["MPMAX"], "set")
                 print("{BRIGHT}{FYELLOW}Ted has reached level {LVL}!!{NORMAL}{FWHITE}".format(**clr.styles, LVL = str(dbs.playerStats["LVL"])))
                 do_stats()
             else:
