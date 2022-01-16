@@ -133,7 +133,8 @@ class combatMode():
         print("{DIM}>>  {NORMAL}{FRED}BATTLE MENU:{FWHITE}".format(**clr.styles))
         print("    a = attack")
         print("    m = magic")
-        print("    i = item\n")
+        print("    i = item")
+        print("    e = escape\n")
         battleChoice = input(PROMPT)
         if battleChoice == 'a':
             # Iterate over dictionary keys and print
@@ -207,7 +208,6 @@ class combatMode():
                 NEXT_ACTION = 0
 
         elif battleChoice == 'm':
-            # TODO implement escape choice
             # Iterate over dictionary keys and print
             i = 1
             magicList = dbs.abilities.find( { "TYPE": "magic" } )
@@ -329,6 +329,27 @@ class combatMode():
                     time.sleep(2)
                     # Set next action to player
                     NEXT_ACTION = 1
+
+        elif battleChoice == "e":
+            if random.randint(0, 9) >= 5:
+                print("{BRIGHT}{FGREEN}Ted got the fuck out of there, quick!{FWHITE}{NORMAL}".format(**clr.styles))
+                time.sleep(1)
+                if random.randint(0, 99) >= 75:
+                    lost = random.randint(5, 50)
+                    # Make sure the value doesn't go negative
+                    if dbs.playerStats["FLOYDS"] <= lost:
+                        lost = dbs.playerStats["FLOYDS"]
+                        dbs.updateStat("FLOYDS", 0, "set")
+                    else:
+                        dbs.updateStat("FLOYDS", lost, "dec")
+                    print("{BRIGHT}{FRED}Damn, Ted dropped some money! Lost {N} FLOYDS\nYou know have {C} FLOYDS in your pocket.{NORMAL}{FWHITE}".format(**clr.styles, N = lost, C = dbs.playerStats["FLOYDS"]))
+                    time.sleep(2)
+                NEXT_ACTION = 2
+            else:
+                print("{FRED}{BRIGHT}Ted tripped and fell, he couldn't escape!!{FWHITE}{NORMAL}".format(**clr.styles))
+                time.sleep(2)
+                NEXT_ACTION = 0
+
         else:
             inputError()
             # Set next action to player
@@ -457,6 +478,9 @@ class combatMode():
                 self.story()
                 # Print menu
                 self.battleMenu()
+            elif NEXT_ACTION == 2:
+                # Exit battle
+                break
 
 def displayLocation(loc):
     # A helper function for displaying an area's description and exits.
@@ -1033,15 +1057,15 @@ class TextAdventureCmd(cmd.Cmd):
         # Display player stats, weapon, and accessory
         nextLVL = dbs.levelStats["LEVEL"] + 1
         nextLVLStats = dbs.levels.find_one( { "LEVEL": nextLVL } )
-        print("{DIM}--- Stats ---{NORMAL}{FWHITE}".format(**clr.styles))
+        print("{DIM}-------- STATS --------{NORMAL}{FWHITE}".format(**clr.styles))
         print("  HP: " + str(dbs.playerStats["HP"]) + "/" + str(dbs.playerStats["HPMAX"]))
         print("  MP: " + str(dbs.playerStats["MP"]) + "/" + str(dbs.playerStats["MPMAX"]))
         print("  {FYELLOW}Hero Level: ".format(**clr.styles) + str(dbs.playerStats["LVL"]))
         print("  Hero XP: {XP}/{NEXT}".format(**clr.styles, XP = str(dbs.playerStats["XP"]), NEXT = str(nextLVLStats["XPREQ"])))
-        print("  {FGREEN}You have ".format(**clr.styles) + str(dbs.playerStats["FLOYDS"]) + " Floyds.")
+        print("  {FGREEN}You have ".format(**clr.styles) + str(dbs.playerStats["FLOYDS"]) + " FLOYDS.")
         print("  {FWHITE}Equipped Weapon: ".format(**clr.styles) + dbs.equippedWeapon + " [+" + str(dbs.weaponInfo["ATKBNS"]) + "]")
         print("  Added FX: " + dbs.addedFX + " [+" + str(dbs.fxInfo["ATKBNS"]) + "]")
-        print("{DIM}============={NORMAL}{FWHITE}".format(**clr.styles))
+        print("{DIM}======================={NORMAL}{FWHITE}".format(**clr.styles))
 
     def do_equip(self, arg):
         dbs.getInventory()
