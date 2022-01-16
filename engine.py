@@ -119,16 +119,20 @@ class combatMode():
         if DEBUG == 1:
             print(planet)
             print(enemyIDList)
-        # choose an enemy name at random from the list
-        randEnemy = random.choice(enemyIDList)
-        chosenEnemy = dbs.enemies.find_one( { "NAME": randEnemy } )
-        ratingInfo = dbs.challenge_ratings.find_one( { "RATING": chosenEnemy["CR"] } )
-        ENEMYHP = chosenEnemy["HP"]
-        ENEMYMP = chosenEnemy["MP"]
-        if DEBUG == 1:
-            print(chosenEnemy)
-            print(ratingInfo)
-            time.sleep(2)
+        if enemyIDList != []:
+            # choose an enemy name at random from the list
+            randEnemy = random.choice(enemyIDList)
+            chosenEnemy = dbs.enemies.find_one( { "NAME": randEnemy } )
+            ratingInfo = dbs.challenge_ratings.find_one( { "RATING": chosenEnemy["CR"] } )
+            ENEMYHP = chosenEnemy["HP"]
+            ENEMYMP = chosenEnemy["MP"]
+            if DEBUG == 1:
+                print(chosenEnemy)
+                print(ratingInfo)
+                time.sleep(2)
+            return True
+        else:
+            return False
 
     def HUD(self):
         # Prints out the players HUD
@@ -143,7 +147,7 @@ class combatMode():
         print("    HP: {HP}".format(**clr.styles, HP = str(ENEMYHP)))
         print("    MP: {MP}".format(**clr.styles, MP = str(ENEMYMP)))
 
-    def story(self):
+    def enemy(self):
         # Prints description of enemy, dialog, ascii art.
         print("\n    [IMAGE of {NAME}]\n".format(**clr.styles, NAME = chosenEnemy["NAME"]))
         print("    {DESC}".format(**clr.styles, DESC = chosenEnemy["DESC"]))
@@ -439,7 +443,19 @@ class combatMode():
         # Actually drives the battle
         global NEXT_ACTION
         # Randomly select an enemy.
-        self.selectEnemy()
+        if self.selectEnemy() == False:
+            if DEBUG == 1:
+                print("No enemies on current planet.")
+            return False
+        clear()
+        print("{FRED}{BRIGHT}".format(**clr.styles))
+        print("    An enemy has challenged Ted!\n")
+        print("{DIM}{FBLACK}{BYELLOW}                                    ".format(**clr.styles))
+        print("    ////////////////////////////    ")
+        print("    //  {BRIGHT}ENTERING COMBAT MODE{DIM}  //    ".format(**clr.styles))
+        print("    ////////////////////////////    ")
+        print("                                    {BBLACK}{NORMAL}{FWHITE}".format(**clr.styles))
+        time.sleep(3)
         NEXT_ACTION = random.randrange(0, 2)  # Randomly select who attacks first.
         # Changes color to white
         print("{FWHITE}".format(**clr.styles))
@@ -451,7 +467,7 @@ class combatMode():
                 # Print battle HUD.
                 self.HUD()
                 # Print description of enemy.
-                self.story()
+                self.enemy()
                 # Get's length of attack dialog list.
                 dialogSelection = len(chosenEnemy["DIALOG"])
                 # Randomly chooses damage caused based on min and max defined values.
@@ -499,7 +515,7 @@ class combatMode():
                 # Print battle HUD.
                 self.HUD()
                 # Print description of enemy.
-                self.story()
+                self.enemy()
                 # Print menu
                 self.battleMenu()
             elif NEXT_ACTION == 2:
@@ -556,21 +572,11 @@ def displayLocation(loc):
 def moveDirection(direction):
     # A helper function that changes the location of the player.
 
-    combatCheck = random.randrange(0,6)
+    combatCheck = random.randrange(1, 50)
 
     if direction in dbs.locationInfo:
-        if combatCheck == 5:
-            clear()
-            print("{FRED}{BRIGHT}".format(**clr.styles))
-            print("    An enemy has challenged Ted!\n")
-            print("{DIM}{FBLACK}{BYELLOW}                                    ".format(**clr.styles))
-            print("    ////////////////////////////    ")
-            print("    //  {BRIGHT}ENTERING COMBAT MODE{DIM}  //    ".format(**clr.styles))
-            print("    ////////////////////////////    ")
-            print("                                    {BBLACK}{NORMAL}{FWHITE}".format(**clr.styles))
-            time.sleep(3)
-            combat = combatMode()
-            combat.fight()
+        if combatCheck > 25:
+            combatMode().fight()
             dbs.setLocation(dbs.locationInfo[direction])
             displayLocation(dbs.location)
         else:
@@ -1156,5 +1162,4 @@ class TextAdventureCmd(cmd.Cmd):
 
     def do_combat(self, arg):
         # Enter combat with a random enemy
-        combat = combatMode()
-        combat.fight()
+        combatMode().fight()
