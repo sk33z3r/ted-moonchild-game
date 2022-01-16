@@ -8,6 +8,18 @@ if eng.COLORS == 0:
 elif eng.COLORS == 1:
     import colors as clr
 
+def startGame(where):
+    if where == "new":
+        if eng.DEBUG == 0:
+            print("Watch the intro animation? (yes/no)")
+            skip = input(eng.PROMPT)
+            if skip == "yes" or skip == "y":
+                art.introAnimation()
+            else:
+                pass
+    eng.displayLocation(dbs.location)
+    eng.TextAdventureCmd().cmdloop()
+
 if __name__ == '__main__':
 
     print("{BBLACK}{FWHITE}".format(**clr.styles))
@@ -53,16 +65,14 @@ if __name__ == '__main__':
                             print("Save slot doesn't exist!")
                             time.sleep(2)
                             continue
-                        eng.displayLocation(dbs.location)
-                        eng.TextAdventureCmd().cmdloop()
+                        startGame("load")
                         title = "closed"
                     elif slotChoice in slots:
                         if eng.DEBUG == 1:
                             print("slotChoice received: " + slotChoice)
                         dbs.loadGame(slotChoice)
                         loaded = "yes"
-                        eng.displayLocation(dbs.location)
-                        eng.TextAdventureCmd().cmdloop()
+                        startGame("load")
                         title = "closed"
                     else:
                         print("Save slot doesn't exist!")
@@ -81,9 +91,7 @@ if __name__ == '__main__':
                         break
                     dbs.newGame(slotName)
                     loaded = "yes"
-                    art.introAnimation()
-                    eng.displayLocation(dbs.location)
-                    eng.TextAdventureCmd().cmdloop()
+                    startGame("new")
                     title = "closed"
         elif holdOn == 'n':
             loaded = "no"
@@ -117,9 +125,7 @@ if __name__ == '__main__':
                         break
                     dbs.newGame(slotName)
                     loaded = "yes"
-                    art.introAnimation()
-                    eng.displayLocation(dbs.location)
-                    eng.TextAdventureCmd().cmdloop()
+                    startGame("new")
                     title = "closed"
                 else:
                     eng.clear()
@@ -138,9 +144,7 @@ if __name__ == '__main__':
                         dbs.deleteSave(slotName, True)
                         dbs.newGame(slotName)
                         loaded = "yes"
-                        art.introAnimation()
-                        eng.displayLocation(dbs.location)
-                        eng.TextAdventureCmd().cmdloop()
+                        startGame("new")
                         title = "closed"
         elif holdOn == "quit" or holdOn == "exit":
             break
