@@ -1,6 +1,4 @@
 import os, sys, time, random, argparse, cmd, json, natsort
-import art
-import database as dbs
 
 # check for command line arguments
 parser = argparse.ArgumentParser()
@@ -34,6 +32,9 @@ else:
 # setup the command prompt
 RAW_PROMPT = "{FRED}\m/: {NORMAL}{FWHITE}"
 PROMPT = RAW_PROMPT.format(**clr.styles)
+
+import art
+import database as dbs
 
 # identify the OS
 def identify_os():
@@ -73,6 +74,32 @@ def tempInv():
     if DEBUG == 1:
         print("Temp Inventory List")
         print(inv)
+
+def getEffectString(item):
+    global effectString
+    global itemInfo
+    itemInfo = dbs.items.find_one( {"NAME": item } )
+    check = ""
+    try:
+        check = itemInfo["EFFECT"]
+    except KeyError:
+        pass
+    if check == "def":
+        effectString = "[DEF+]"
+    elif check == "atk":
+        effectString = "[ATK+]"
+    elif check == "mag":
+        effectString = "[MAG+]"
+    elif itemInfo["TYPE"] == "consumable":
+        # setup vars
+        s = itemInfo["EFFECT"][0]
+        n = itemInfo["EFFECT"][1]
+        o = itemInfo["EFFECT"][2]
+        effectString = "[" + s + " " + o + str(n) + "]"
+    elif itemInfo["TYPE"] == "weapon" or itemInfo["TYPE"] == "fx":
+        effectString = "[+" + str(itemInfo["ATKBNS"]) + "]"
+    else:
+        effectString = ""
 
 # COMBAT ENGINE
 class combatMode():
@@ -142,7 +169,7 @@ class combatMode():
             # Stores a list of all attacks in dict item as they are unordered.
             attackList = dbs.abilities.find( { "TYPE": "physical" } )
             attackIDList = [ "_index" ]
-            print("\n{DIM}>> {NORMAL}Choose an Attack".format(**clr.styles))
+            print("\n{DIM}>> {NORMAL}CHOOSE ATTACK:".format(**clr.styles))
             for item in attackList:
                 print("   [" + str(i) + "] - " + item["NAME"])
                 attackIDList.append(item["_id"])
@@ -212,7 +239,7 @@ class combatMode():
             i = 1
             magicList = dbs.abilities.find( { "TYPE": "magic" } )
             magicIDList = [ "_index" ]
-            print("\n{DIM}>> {NORMAL}Choose an Ability".format(**clr.styles))
+            print("\n{DIM}>> {NORMAL}CHOOSE ABILITY:".format(**clr.styles))
             for item in magicList:
                 print("   [" + str(i) + "] - " + item["NAME"])
                 magicIDList.append(item["_id"])
@@ -271,15 +298,16 @@ class combatMode():
                 else:
                     itemCount[item] = 1
 
-            print("\n{DIM}>> {NORMAL}Choose an Item".format(**clr.styles))
+            print("\n{DIM}>> {NORMAL}CHOOSE ITEM:".format(**clr.styles))
             # get a list of inventory items with duplicates removed:
             for item in set(inv):
+                getEffectString(item)
                 # If item is a duplicate, print once with the quantity in ()
                 if itemCount[item] > 1:
-                    print("{DIM}{FYELLOW}   [{I}] - {FWHITE}{NORMAL}{ITEM} ({COUNT})".format(**clr.styles, I = str(i), ITEM = item, COUNT = str(itemCount[item])))
+                    print("{DIM}{FYELLOW}   [{I}] - {FWHITE}{NORMAL}{ITEM} ({COUNT}) {DIM}{FCYAN}{TEXT}{FWHITE}{NORMAL}".format(**clr.styles, I = str(i), ITEM = item, COUNT = str(itemCount[item]), TEXT = effectString))
                     battleItems.append(item)
                 else:
-                    print("{DIM}{FYELLOW}   [{I}] - {FWHITE}{NORMAL}{ITEM}".format(**clr.styles, I = str(i), ITEM = item))
+                    print("{DIM}{FYELLOW}   [{I}] - {FWHITE}{NORMAL}{ITEM} {DIM}{FCYAN}{TEXT}{FWHITE}{NORMAL}".format(**clr.styles, I = str(i), ITEM = item, TEXT = effectString))
                     battleItems.append(item)
                 i += 1
             print()
@@ -358,12 +386,11 @@ class combatMode():
         dbs.getStats()
         if dbs.playerStats["HP"] <= 0:
             print("{FRED}{BRIGHT}The {NAME} beat the shit out of Ted!!{NORMAL}{FWHITE}".format(**clr.styles, NAME = chosenEnemy["NAME"]))
-            print("{FRED}{BRIGHT}Game Over, man. Game Over!{NORMAL}{FWHITE}".format(**clr.styles))
             time.sleep(2)
             clear()
             art.printLogo()
             print("{DIM}             =======================================".format(**clr.styles))
-            print("{DIM}             |        {NORMAL}Thanks for rockin'! {DIM}         |".format(**clr.styles))
+            print("{DIM}             |          {BRIGHT}{FRED}GAME OVER, MAN!{DIM}{FWHITE}            |".format(**clr.styles))
             print("{DIM}             ======================================={NORMAL}\n".format(**clr.styles))
             exit()
         elif ENEMYHP <= 0:
@@ -505,7 +532,7 @@ def displayLocation(loc):
 
     # Print all the items on the ground.
     if len(g) > 0:
-        print("{DIM}--- GROUND ITEMS ---{NORMAL}{FWHITE}".format(**clr.styles))
+        print("{DIM}---  GROUND  ITEMS  ---{NORMAL}{FWHITE}".format(**clr.styles))
         for item in set(g):
             if itemCount[item] > 1:
                 print("  {GROUNDDESC} ({COUNT})".format(**clr.styles, GROUNDDESC = dbs.items.find_one( { "NAME": item } )["GROUNDDESC"], COUNT = itemCount[item]))
@@ -519,7 +546,7 @@ def displayLocation(loc):
             exits.append(direction.title())
 
     if dbs.playerPrefs["EXITS"] == "full":
-        print("{DIM}--- NEARBY EXITS ---{NORMAL}".format(**clr.styles))
+        print("{DIM}---  NEARBY  EXITS  ---{NORMAL}".format(**clr.styles))
         for direction in ("NORTH", "SOUTH", "EAST", "WEST", "UP", "DOWN"):
             if direction in dbs.locationInfo:
                 print("  " + direction.title() + ": " + dbs.locationInfo[direction])
@@ -683,16 +710,18 @@ class TextAdventureCmd(cmd.Cmd):
 
         if len(i) != 0:
             for item in set(i):
+                getEffectString(item)
+                # print the info
                 if itemCount[item] > 1:
-                    print("  " + item + " (" + str(itemCount[item]) + ")")
+                    print("  " + item + " (" + str(itemCount[item]) + ") {DIM}{FCYAN}{TEXT}{FWHITE}{NORMAL}".format(**clr.styles, TEXT = effectString))
                 else:
-                    print("  " + item)
+                    print("  " + item + " {DIM}{FCYAN}{TEXT}{FWHITE}{NORMAL}".format(**clr.styles, TEXT = effectString))
             print("")
 
         if len(e) != 0:
             print("{DIM}  [EQUIPMENT]{NORMAL}".format(**clr.styles))
             for item in set(e):
-                print("  {FCYAN}{ITEM}{FWHITE}{NORMAL}".format(**clr.styles, ITEM = item))
+                print("  {FCYAN}{ITEM} {DIM}[+{N}]{FWHITE}{NORMAL}".format(**clr.styles, ITEM = item, N = str(dbs.items.find_one( {"NAME": item } )["ATKBNS"])))
             print("")
 
         if len(k) != 0:
@@ -906,9 +935,9 @@ class TextAdventureCmd(cmd.Cmd):
 
         print("{DIM}--- STORE ---{NORMAL}{FWHITE}\n".format(**clr.styles))
         for item in dbs.locationInfo["SHOP"]:
-            itemInfo = dbs.items.find_one( { "NAME": item } )
+            getEffectString(item)
             print("  " + item)
-            print("{DIM}{FGREEN}  [FLOYDS: {C}] {FYELLOW}[{STAT} +{N}]{FWHITE}".format(**clr.styles, C = str(itemInfo["VALUE"]), STAT = itemInfo["EFFECT"][0], N = str(itemInfo["EFFECT"][1])))
+            print("{DIM}{FGREEN}  [FLOYDS: {C}] {FYELLOW}{TEXT}{FWHITE}".format(**clr.styles, C = str(itemInfo["VALUE"]), TEXT = effectString))
             print("  {INFO}{NORMAL}\n".format(**clr.styles, INFO = itemInfo["LONGDESC"]))
 
         print("{DIM}============={NORMAL}{FWHITE}".format(**clr.styles))
