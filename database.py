@@ -106,7 +106,9 @@ def getInventory():
 
 def getStats():
     global playerStats
+    global levelStats
     playerStats = player.find_one( { "SECTION": "stats" } )
+    levelStats = levels.find_one( { "LEVEL": playerStats["LVL"] } )
 
 def updateGround(item, action):
     if action == "del":
@@ -193,14 +195,17 @@ def updateStat(stat, num, action):
     if action == "inc":
         # increase the stat
         temp += int(num)
+        player.update_one( { "SECTION": "stats" }, { "$set": { stat : temp } } )
     elif action == "dec":
         # decrease the stat
         temp -= int(num)
+        player.update_one( { "SECTION": "stats" }, { "$set": { stat : temp } } )
+    elif action == "set":
+        player.update_one( { "SECTION": "stats" }, { "$set": { stat : temp } } )
     else:
         print("FUNCTION CALL BUG: Someone forgot to specify an action for updateStat()")
         time.sleep(3)
         return
-    player.update_one( { "SECTION": "stats" }, { "$set": { stat : temp } } )
     getStats()
     if eng.DEBUG == 1:
         print("New value for " + stat + ": " + str(playerStats[stat]))
@@ -215,6 +220,7 @@ def define(n):
     global items
     global rooms
     global player
+    global levels
     global playerPath
     global playerInv
     # setup new save directory
@@ -233,6 +239,7 @@ def define(n):
     items = db['items']
     rooms = db['rooms']
     player = db['player']
+    levels = db["levels"]
     # set SLOT_NAME variable
     eng.SLOT_NAME = n
     if eng.DEBUG == 1:

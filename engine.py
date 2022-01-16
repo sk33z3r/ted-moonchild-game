@@ -86,10 +86,12 @@ class combatMode():
         enemyIDList = list(dbs.enemies.find( {}, { "NAME": 1 } ))
         chosenID = random.choice(enemyIDList)["_id"]
         chosenEnemy = dbs.enemies.find_one( { "_id": chosenID } )
+        ratingInfo = dbs.challenge_ratings.find_one( { "RATING": chosenEnemy["CR"] } )
         ENEMYHP = chosenEnemy["HP"]
         ENEMYMP = chosenEnemy["MP"]
         if DEBUG == 1:
             print(chosenEnemy)
+            print(ratingInfo)
             time.sleep(2)
 
     def HUD(self):
@@ -158,7 +160,7 @@ class combatMode():
                 else:
                     pass
                 if heroCrit == 5:
-                    heroAttackDamage += dbs.playerStats["CRIT"]
+                    heroAttackDamage += dbs.levelStats["CRITBNS"]
                 else:
                     pass
                 if DEBUG == 1:
@@ -323,14 +325,54 @@ class combatMode():
 
     def death(self):
         # Determines if a player is dead
-        # TODO implement XP award system based on chosenEnemy's challenge rating
         dbs.getStats()
         if dbs.playerStats["HP"] <= 0:
             print("{FRED}{BRIGHT}The {NAME} beat the shit out of Ted!!{NORMAL}{FWHITE}".format(**clr.styles, NAME = chosenEnemy["NAME"]))
-            time.sleep(3)
-            return False
+            print("{FRED}{BRIGHT}Game Over, man. Game Over!{NORMAL}{FWHITE}".format(**clr.styles))
+            time.sleep(2)
+            clear()
+            art.printLogo()
+            print("{DIM}             =======================================".format(**clr.styles))
+            print("{DIM}             |        {NORMAL}Thanks for rockin'! {DIM}         |".format(**clr.styles))
+            print("{DIM}             ======================================={NORMAL}\n".format(**clr.styles))
+            exit()
         elif ENEMYHP <= 0:
+            clear()
             print("{FGREEN}{BRIGHT}Ted beat the fuck out of that {NAME}!!{NORMAL}{FWHITE}".format(**clr.styles, NAME = chosenEnemy["NAME"]))
+            time.sleep(1)
+            # calculate FLOYD reward
+            floydAward = random.randrange(ratingInfo["FLOYDS"][0], ratingInfo["FLOYDS"][1])
+            updateStat("FLOYDS", floydAward, "inc")
+            print("{FGREEN}{DIM}Ted found {F} FLOYDS!".format(**clr.styles, F = str(floydAward)))
+            time.sleep(1)
+            # apply XP gain
+            updateStat("XP", ratingInfo["XPAWARD"], "inc")
+            print("{FYELLOW}Ted has been awarded {XP} XP!{NORMAL}{FWHITE}".format(**clr.styles, XP = str(ratingInfo["XPAWARD"])))
+            time.sleep(1)
+            # random item drop
+            if random.randrange(0, 5) == 5:
+                drop = random.choice(chosenEnemy["ITEMS"])
+                if DEBUG == 1:
+                    print("Item drop chance success. Item awarded: {ITEM}".format(**clr.styles, ITEM = drop))
+                updateInv(drop, "add")
+                print("{FCYAN}{DIM}Ted found {ITEM}!{NORMAL}{FWHITE}".format(**clr.styles, ITEM = dbs.items.find_one( { "NAME": drop } )["GROUNDDESC"]))
+            else:
+                if DEBUG == 1:
+                    print("Item drop chance missed.")
+            # check player level up
+            playerXP = dbs.playerStat["XP"]
+            nextLVL = dbs.playerStat["LVL"] + 1
+            if playerXP >= dbs.levels.find_one( { "LEVEL": nextLVL } )["XPREQ"]:
+                updateStat("LVL", nextLVL, "set")
+                updateStat("HPMAX", dbs.levelStats["HPMAX"], "set")
+                updateStat("HP", dbs.levelStats["HPMAX"], "set")
+                updateStat("MPMAX", dbs.levelStats["MPMAX"], "set")
+                updateStat("MP", dbs.levelStats["MPMAX"], "set")
+                print("{BRIGHT}{FYELLOW}Ted has reached level {LVL}!!{NORMAL}{FWHITE}".format(**clr.styles, LVL = str(dbs.playerStats["LVL"])))
+                do_stats()
+            else:
+                if DEBUG == 1:
+                    print("Ted's XP level is below the requirement for next level.")
             time.sleep(3)
             return False
         else:
@@ -370,7 +412,7 @@ class combatMode():
                 else:
                     pass
                 if enemyCrit == 5:
-                    enemyAttack += chosenEnemy["CRITBNS"]
+                    enemyAttack += ratingInfo["CRITBNS"]
                 else:
                     pass
                 if DEBUG == 1:
@@ -978,13 +1020,15 @@ class TextAdventureCmd(cmd.Cmd):
 
     def do_stats(self, arg):
         # Display player stats, weapon, and accessory
+        nextLVL = dbs.levelStats["LEVEL"] + 1
+        nextLVLStats = dbs.levels.find_one( { "LEVEL": nextLVL } )
         print("{DIM}--- Stats ---{NORMAL}{FWHITE}".format(**clr.styles))
         print("  HP: " + str(dbs.playerStats["HP"]) + "/" + str(dbs.playerStats["HPMAX"]))
         print("  MP: " + str(dbs.playerStats["MP"]) + "/" + str(dbs.playerStats["MPMAX"]))
-        print("  Hero Level: " + str(dbs.playerStats["LVL"]))
-        print("  Hero XP: " + str(dbs.playerStats["XP"]))
-        print("  You have " + str(dbs.playerStats["FLOYDS"]) + " Floyds.")
-        print("  Equipped Weapon: " + dbs.equippedWeapon + " [+" + str(dbs.weaponInfo["ATKBNS"]) + "]")
+        print("  {FYELLOW}Hero Level: ".format(**clr.styles) + str(dbs.playerStats["LVL"]))
+        print("  Hero XP: {XP}/{NEXT}".format(**clr.styles, XP = str(dbs.playerStats["XP"]), NEXT = str(nextLVLStats["XPREQ"])))
+        print("  {FGREEN}You have ".format(**clr.styles) + str(dbs.playerStats["FLOYDS"]) + " Floyds.")
+        print("  {FWHITE}Equipped Weapon: ".format(**clr.styles) + dbs.equippedWeapon + " [+" + str(dbs.weaponInfo["ATKBNS"]) + "]")
         print("  Added FX: " + dbs.addedFX + " [+" + str(dbs.fxInfo["ATKBNS"]) + "]")
         print("{DIM}============={NORMAL}{FWHITE}".format(**clr.styles))
 
