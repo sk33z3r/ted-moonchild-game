@@ -15,15 +15,15 @@
     },
     {
         "NAME": "Rising Force",
-        "MPREQ": 2,
-        "MAGDMG": 2,
+        "MPREQ": 5,
+        "MAGDMG": 5,
         "TYPE": "magic",
         "LEVEL": 1
     },
     {
         "NAME": "Purple Rain",
-        "MPREQ": 3,
-        "MAGDMG": 3,
+        "MPREQ": 10,
+        "MAGDMG": 10,
         "TYPE": "magic",
         "LEVEL": 1
     }
