@@ -118,7 +118,7 @@
         "BATTLE": true,
         "VALUE": 25,
         "TYPE": "consumable",
-        "EFFECT": [ "HP", 10 ],
+        "EFFECT": [ "HP", 10, "inc" ],
         "DESCWORDS": [ "ale", "bottle of ale", "dark matter ale" ]
     },
     {
@@ -130,7 +130,7 @@
         "BATTLE": true,
         "VALUE": 100,
         "TYPE": "consumable",
-        "EFFECT": [ "MP", 25 ],
+        "EFFECT": [ "MP", 25, "inc" ],
         "DESCWORDS": [ "joint", "j", "hippy j", "jay", "lit joint", "lit j" ]
     },
     {
@@ -143,7 +143,7 @@
         "BATTLE": true,
         "VALUE": 25,
         "TYPE": "consumable",
-        "EFFECT": [ "MP", 5 ],
+        "EFFECT": [ "MP", 5, "inc" ],
         "DESCWORDS": [ "shrooms", "mushies", "magic shrooms", "magic mushies" ]
     },
     {
@@ -156,7 +156,7 @@
         "BATTLE": true,
         "VALUE": 75,
         "TYPE": "consumable",
-        "EFFECT": [ "MP", 10 ],
+        "EFFECT": [ "MP", 10, "inc" ],
         "DESCWORDS": [ "acid", "tab", "lsd" ]
     },
     {
@@ -169,7 +169,7 @@
         "BATTLE": true,
         "VALUE": 75,
         "TYPE": "consumable",
-        "EFFECT": [ "HP", 25 ],
+        "EFFECT": [ "HP", 25, "inc" ],
         "DESCWORDS": [ "mescalin", "peyote" ]
     },
     {
@@ -182,7 +182,7 @@
         "BATTLE": true,
         "VALUE": 200,
         "TYPE": "consumable",
-        "EFFECT": [ "HP", 50 ],
+        "EFFECT": [ "HP", 50, "inc" ],
         "DESCWORDS": [ "amanitas", "red caps", "other mushrooms", "amanitas muscaria" ]
     },
     {

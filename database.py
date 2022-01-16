@@ -210,6 +210,68 @@ def updateStat(stat, num, action):
     if eng.DEBUG == 1:
         print("New value for " + stat + ": " + str(playerStats[stat]))
 
+# function to use items
+def useItem(name):
+    # get item info
+    itemInfo = items.find_one( { "NAME": name } )
+    # do something special if this is a blocking item
+    if itemInfo["EFFECT"] == "block":
+        print("Ted uses " + name + "!")
+        print("Blocking effects aren't implemented yet.")
+        updateInv(name, "del")
+    # do a general operation if it's consumable
+    elif itemInfo["TYPE"] == "consumable":
+        # store some vars for later
+        stat = itemInfo["EFFECT"][0]
+        num = itemInfo["EFFECT"][1]
+        action = itemInfo["EFFECT"][2]
+        maxHP = playerStats["HPMAX"]
+        hp = playerStats["HP"]
+        maxMP = playerStats["MPMAX"]
+        mp = playerStats["MP"]
+        # if the stat is HP or MP, we need to check that the new value isn't above or below the max/min parameters
+        if stat == "HP" and action == "inc":
+            hp = hp + num
+            if hp >= maxHP:
+                updateStat(stat, maxHP, "set")
+            else:
+                updateStat(stat, num, action)
+        elif stat == "HP" and action == "dec":
+            hp = hp - num
+            if hp <= 0:
+                print("{FRED}Don't do it! That would kill you, Ted!{FWHITE}".format(**clr.styles))
+                return
+            else:
+                updateStat(stat, num, action)
+        elif stat == "MP" and action == "inc":
+            mp = mp + num
+            if mp >= maxMP:
+                updateStat(stat, maxMP, "set")
+            else:
+                updateStat(stat, num, action)
+        elif stat == "MP" and action == "dec":
+            mp = mp - num
+            if mp <= 0:
+                updateStat(stat, 0, "set")
+            else:
+                updateStat(stat, num, action)
+        # otherwise, update the stat
+        else:
+            updateStat(stat, num, action)
+        # set the user display text up
+        if action == "inc":
+            operator = "+"
+        elif action == "dec":
+            operator = "-"
+        elif action == "set":
+            operator = "is now "
+        print("Ted consumes {NAME}! {FYELLOW}{DIM}Effect: {S} {O}{N}{FWHITE}{NORMAL}".format(**clr.styles, NAME = name, S = stat, O = operator, N = str(num))
+        # remove the item from inventory
+        updateInv(name, "del")
+
+    else:
+        print("Ted can't use this item!")
+
 # function to set paths and collections
 def define(n):
     # Define collection variables

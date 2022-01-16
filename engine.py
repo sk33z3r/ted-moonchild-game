@@ -298,11 +298,9 @@ class combatMode():
                 except KeyError:
                     pass
                 if chosenItemInfo["BATTLE"] == True:
-                    # TODO do something with the item
+                    # do something with the item
                     # then drop the item from inventory
-                    dbs.updateInv(chosenItemInfo["NAME"], "del")
-                    print("\nTed uses " + chosenItemInfo["NAME"] + "! Too bad item effects aren't implemented yet.")
-                    print("The " + chosenItemInfo["NAME"] + " is still used up, though ;)")
+                    dbs.useItem(chosenItemInfo["NAME"])
                     time.sleep(3)
                     # Set next action to enemy
                     NEXT_ACTION = 0
@@ -1022,8 +1020,7 @@ class TextAdventureCmd(cmd.Cmd):
             except KeyError:
                 cantEat = True
                 continue # there may be other items named this that Ted can eat, so we continue checking
-            print("Ted eats " + itemInfo["SHORTDESC"])
-            dbs.updateInv(item, "del")
+            dbs.useItem(item)
             return
 
         if cantEat:
