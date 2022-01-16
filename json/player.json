@@ -15,8 +15,7 @@
         "MPMAX": 25,
         "FLOYDS": 0,
         "LVL": 1,
-        "XP": 0,
-        "CRIT": 1
+        "XP": 0
     },
     {
         "SECTION": "inventory",
