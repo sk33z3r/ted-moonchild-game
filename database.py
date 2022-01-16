@@ -199,7 +199,7 @@ def updateStat(stat, num, action):
         temp -= int(num)
         player.update_one( { "SECTION": "stats" }, { "$set": { stat : temp } } )
     elif action == "set":
-        player.update_one( { "SECTION": "stats" }, { "$set": { stat : temp } } )
+        player.update_one( { "SECTION": "stats" }, { "$set": { stat : num } } )
     else:
         print("FUNCTION CALL BUG: Someone forgot to specify an action for updateStat()")
         time.sleep(3)
@@ -240,7 +240,7 @@ def useItem(name):
                 print("{FRED}Don't do it! That would kill you, Ted!{FWHITE}".format(**clr.styles))
                 return
             else:
-                updateStat(stat, num, action)
+                updateStat(stat, num, "dec")
         elif stat == "MP" and action == "+":
             mp = mp + num
             if mp >= maxMP:
