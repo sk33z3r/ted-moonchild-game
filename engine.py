@@ -120,7 +120,6 @@ class combatMode():
             print(planet)
             print(enemyIDList)
         # choose an enemy name at random from the list
-        # TODO add weights to each enemy to direct the randomness
         randEnemy = random.choice(enemyIDList)
         chosenEnemy = dbs.enemies.find_one( { "NAME": randEnemy } )
         ratingInfo = dbs.challenge_ratings.find_one( { "RATING": chosenEnemy["CR"] } )
