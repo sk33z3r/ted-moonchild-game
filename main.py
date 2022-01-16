@@ -1,7 +1,7 @@
 import os, natsort, time
-import art
-import database as dbs
 import engine as eng
+import database as dbs
+import art
 
 if eng.COLORS == 0:
     import blackwhite as clr
