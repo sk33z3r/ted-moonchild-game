@@ -7,7 +7,10 @@
         "ATTACKMIN": 1,
         "ATTACKMAX": 3,
         "CRITBNS": 1,
+        "CR": 0,
         "PLANETS": [ "Zappa", "Mactel 6" ],
+        "ITEMS": [ "Protection" ],
+        "FLOYDS": [ 0, 5 ],
         "DIALOG": [ "It spits in your face!", "It flaps its pathetic wings with great force!" ]
     },
     {
@@ -18,7 +21,10 @@
         "ATTACKMIN": 2,
         "ATTACKMAX": 5,
         "CRITBNS": 2,
+        "CR": 0,
         "PLANETS": [ "Zappa" ],
+        "ITEMS": [ "ACiD", "Magic Mushies" ],
+        "FLOYDS": [ 5, 20 ],
         "DIALOG": [ "It throws a dog-doo snow cone!", "It rubs yellow snow in your eye!" ]
     }
 ]
