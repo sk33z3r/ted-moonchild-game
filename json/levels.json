@@ -1,0 +1,142 @@
+[
+    {
+        "LEVEL": 1,
+        "XPREQ": 0,
+        "MAXHP": 100,
+        "MAXMP": 25,
+        "CRITBNS": 1
+    },
+    {
+        "LEVEL": 2,
+        "XPREQ": 300,
+        "MAXHP": 100,
+        "MAXMP": 25,
+        "CRITBNS": 2
+    },
+    {
+        "LEVEL": 3,
+        "XPREQ": 900,
+        "MAXHP": 100,
+        "MAXMP": 25,
+        "CRITBNS": 2
+    },
+    {
+        "LEVEL": 4,
+        "XPREQ": 2700,
+        "MAXHP": 100,
+        "MAXMP": 25,
+        "CRITBNS": 2
+    },
+    {
+        "LEVEL": 5,
+        "XPREQ": 6500,
+        "MAXHP": 100,
+        "MAXMP": 25,
+        "CRITBNS": 3
+    },
+    {
+        "LEVEL": 6,
+        "XPREQ": 14000,
+        "MAXHP": 100,
+        "MAXMP": 25,
+        "CRITBNS": 3
+    },
+    {
+        "LEVEL": 7,
+        "XPREQ": 23000,
+        "MAXHP": 100,
+        "MAXMP": 25,
+        "CRITBNS": 3
+    },
+    {
+        "LEVEL": 8,
+        "XPREQ": 34000,
+        "MAXHP": 100,
+        "MAXMP": 25,
+        "CRITBNS": 3
+    },
+    {
+        "LEVEL": 9,
+        "XPREQ": 48000,
+        "MAXHP": 100,
+        "MAXMP": 25,
+        "CRITBNS": 4
+    },
+    {
+        "LEVEL": 10,
+        "XPREQ": 64000,
+        "MAXHP": 100,
+        "MAXMP": 25,
+        "CRITBNS": 4
+    },
+    {
+        "LEVEL": 11,
+        "XPREQ": 85000,
+        "MAXHP": 100,
+        "MAXMP": 25,
+        "CRITBNS": 4
+    },
+    {
+        "LEVEL": 12,
+        "XPREQ": 100000,
+        "MAXHP": 100,
+        "MAXMP": 25,
+        "CRITBNS": 4
+    },
+    {
+        "LEVEL": 13,
+        "XPREQ": 120000,
+        "MAXHP": 100,
+        "MAXMP": 25,
+        "CRITBNS": 5
+    },
+    {
+        "LEVEL": 14,
+        "XPREQ": 140000,
+        "MAXHP": 100,
+        "MAXMP": 25,
+        "CRITBNS": 5
+    },
+    {
+        "LEVEL": 15,
+        "XPREQ": 165000,
+        "MAXHP": 100,
+        "MAXMP": 25,
+        "CRITBNS": 5
+    },
+    {
+        "LEVEL": 16,
+        "XPREQ": 195000,
+        "MAXHP": 100,
+        "MAXMP": 25,
+        "CRITBNS": 5
+    },
+    {
+        "LEVEL": 17,
+        "XPREQ": 225000,
+        "MAXHP": 100,
+        "MAXMP": 25,
+        "CRITBNS": 6
+    },
+    {
+        "LEVEL": 18,
+        "XPREQ": 265000,
+        "MAXHP": 100,
+        "MAXMP": 25,
+        "CRITBNS": 6
+    },
+    {
+        "LEVEL": 19,
+        "XPREQ": 305000,
+        "MAXHP": 100,
+        "MAXMP": 25,
+        "CRITBNS": 6
+    },
+    {
+        "LEVEL": 20,
+        "XPREQ": 355000,
+        "MAXHP": 100,
+        "MAXMP": 25,
+        "CRITBNS": 6
+    }
+]
