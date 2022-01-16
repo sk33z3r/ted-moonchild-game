@@ -169,8 +169,8 @@ class combatMode():
         if battleChoice == 'a':
             # Iterate over dictionary keys and print
             i = 1
-            # Stores a list of all attacks in dict item as they are unordered.
-            attackList = dbs.abilities.find( { "TYPE": "physical" } )
+            query = { "$and": [ { "TYPE": "physical" }, { "LEVEL": { "$lte": dbs.playerStats["LVL"] } } ] }
+            attackList = dbs.abilities.find(query)
             attackIDList = [ "_index" ]
             print("\n{DIM}>> {NORMAL}CHOOSE ATTACK:".format(**clr.styles))
             for item in attackList:
@@ -220,12 +220,12 @@ class combatMode():
                 else:
                     pass
                 # MISS check, 4 = miss
-                playerMiss = random.randrange(0,5)
+                playerMiss = random.randrange(1, 50)
                 if DEBUG == 1:
                     print("\nMiss Check: {DIM}{MISS} (4 = true){NORMAL}\n".format(**clr.styles, MISS = str(playerMiss)))
                 else:
                     pass
-                if playerMiss == 4:
+                if playerMiss > 40:
                     print("{FCYAN}{BRIGHT}A swing, and a miss!!{NORMAL}{FWHITE}".format(**clr.styles))
                 else:
                     ENEMYHP = ENEMYHP - heroAttackDamage
@@ -240,7 +240,14 @@ class combatMode():
         elif battleChoice == 'm':
             # Iterate over dictionary keys and print
             i = 1
-            magicList = dbs.abilities.find( { "TYPE": "magic" } )
+            query = { "$and": [ { "TYPE": "magic" }, { "LEVEL": { "$lte": dbs.playerStats["LVL"] } } ] }
+            magicList = list(dbs.abilities.find(query))
+
+            if len(magicList) == 0:
+                print("Ted doesn't have any magic to use in battle!")
+                time.sleep(1)
+                return
+
             magicIDList = [ "_index" ]
             print("\n{DIM}>> {NORMAL}CHOOSE ABILITY:".format(**clr.styles))
             for item in magicList:
@@ -291,6 +298,7 @@ class combatMode():
 
             if len(inv) == 0:
                 print("Ted doesn't have any shit to use in battle!")
+                time.sleep(1)
                 return
 
             # first get a count of each distinct item in the inventory
@@ -360,11 +368,11 @@ class combatMode():
                     NEXT_ACTION = 1
 
         elif battleChoice == "e":
-            if random.randint(0, 9) >= 5:
+            if random.randrange(1, 50) >= 25:
                 print("{BRIGHT}{FGREEN}Ted got the fuck out of there, quick!{FWHITE}{NORMAL}".format(**clr.styles))
                 time.sleep(1)
-                if random.randint(0, 99) >= 75:
-                    lost = random.randint(5, 50)
+                if random.randrange(1, 100) >= 75:
+                    lost = random.randrange(5, 50)
                     # Make sure the value doesn't go negative
                     if dbs.playerStats["FLOYDS"] <= lost:
                         lost = dbs.playerStats["FLOYDS"]
@@ -398,38 +406,40 @@ class combatMode():
             exit()
         elif ENEMYHP <= 0:
             clear()
-            print("{FGREEN}{BRIGHT}Ted beat the fuck out of that {NAME}!!{NORMAL}{FWHITE}".format(**clr.styles, NAME = chosenEnemy["NAME"]))
+            print("\n{FGREEN}{BRIGHT}Ted beat the fuck out of that {NAME}!!{NORMAL}{FWHITE}".format(**clr.styles, NAME = chosenEnemy["NAME"]))
             time.sleep(1)
             # calculate FLOYD reward
             floydAward = random.randrange(ratingInfo["FLOYDS"][0], ratingInfo["FLOYDS"][1])
             dbs.updateStat("FLOYDS", floydAward, "inc")
             print("{FGREEN}{DIM}Ted found {F} FLOYDS!".format(**clr.styles, F = str(floydAward)))
             time.sleep(1)
-            # apply XP gain
-            dbs.updateStat("XP", ratingInfo["XPAWARD"], "inc")
-            print("{FYELLOW}Ted has been awarded {XP} XP!{NORMAL}{FWHITE}".format(**clr.styles, XP = str(ratingInfo["XPAWARD"])))
-            time.sleep(1)
             # random item drop
-            if random.randrange(0, 5) == 5:
+            if random.randrange(1, 50) > 35:
                 drop = random.choice(chosenEnemy["ITEMS"])
                 if DEBUG == 1:
                     print("Item drop chance success. Item awarded: {ITEM}".format(**clr.styles, ITEM = drop))
-                updateInv(drop, "add")
+                dbs.updateInv(drop, "add")
                 print("{FCYAN}{DIM}Ted found {ITEM}!{NORMAL}{FWHITE}".format(**clr.styles, ITEM = dbs.items.find_one( { "NAME": drop } )["GROUNDDESC"]))
             else:
                 if DEBUG == 1:
                     print("Item drop chance missed.")
+            # apply XP gain
+            dbs.updateStat("XP", ratingInfo["XPAWARD"], "inc")
+            print("{FYELLOW}Ted has been awarded {XP} XP!{NORMAL}{FWHITE}".format(**clr.styles, XP = str(ratingInfo["XPAWARD"])))
+            time.sleep(1)
             # check player level up
             playerXP = dbs.playerStats["XP"]
             nextLVL = dbs.playerStats["LVL"] + 1
-            if playerXP >= dbs.levels.find_one( { "LEVEL": nextLVL } )["XPREQ"]:
+            nextLVLStats = dbs.levels.find_one( { "LEVEL": nextLVL } )
+            if playerXP >= nextLVLStats["XPREQ"]:
                 dbs.updateStat("LVL", nextLVL, "set")
-                dbs.updateStat("HPMAX", dbs.levelStats["HPMAX"], "set")
-                dbs.updateStat("HP", dbs.levelStats["HPMAX"], "set")
-                dbs.updateStat("MPMAX", dbs.levelStats["MPMAX"], "set")
-                dbs.updateStat("MP", dbs.levelStats["MPMAX"], "set")
+                dbs.updateStat("HPMAX", nextLVLStats["HPMAX"], "set")
+                dbs.updateStat("HP", nextLVLStats["HPMAX"], "set")
+                dbs.updateStat("MPMAX", nextLVLStats["MPMAX"], "set")
+                dbs.updateStat("MP", nextLVLStats["MPMAX"], "set")
                 print("{BRIGHT}{FYELLOW}Ted has reached level {LVL}!!{NORMAL}{FWHITE}".format(**clr.styles, LVL = str(dbs.playerStats["LVL"])))
-                do_stats()
+                print(dbs.levels.find_one( { "LEVEL": dbs.playerStats["LVL"] } )["MSG"].format(**clr.styles) + "\n")
+                TextAdventureCmd().do_stats("show")
             else:
                 if DEBUG == 1:
                     print("Ted's XP level is below the requirement for next level.")
@@ -478,12 +488,12 @@ class combatMode():
                 else:
                     pass
                 # determine critical strike
-                enemyCrit = random.randrange(0, 10)
+                enemyCrit = random.randrange(1, 50)
                 if DEBUG == 1:
                     print("{DIM}  >CRIT Check:   {CRIT} (5 = true){NORMAL}{FWHITE}".format(**clr.styles, CRIT = str(enemyCrit)))
                 else:
                     pass
-                if enemyCrit == 5:
+                if enemyCrit > 40:
                     enemyAttack += ratingInfo["CRITBNS"]
                 else:
                     pass
@@ -491,12 +501,12 @@ class combatMode():
                     print("{DIM} DMG + CRIT:     {ATK}{NORMAL}{FWHITE}".format(**clr.styles, ATK = str(enemyAttack)))
                 else:
                     pass
-                enemyMiss = random.randrange(0, 5)
+                enemyMiss = random.randrange(1, 50)
                 if DEBUG == 1:
                     print("\nMiss Check: " + str(enemyMiss) + " (4 = true)\n")
                 else:
                     pass
-                if enemyMiss == 4:
+                if enemyMiss > 40:
                     print("{FCYAN}{BRIGHT}The {NAME} missed like a dangus!{NORMAL}{FWHITE}".format(**clr.styles, NAME = chosenEnemy["NAME"]))
                 else:
                     dbs.updateStat("HP", enemyAttack, "dec")
@@ -575,7 +585,7 @@ def moveDirection(direction):
     combatCheck = random.randrange(1, 50)
 
     if direction in dbs.locationInfo:
-        if combatCheck > 25:
+        if combatCheck > 40:
             combatMode().fight()
             dbs.setLocation(dbs.locationInfo[direction])
             displayLocation(dbs.location)
@@ -1163,3 +1173,5 @@ class TextAdventureCmd(cmd.Cmd):
     def do_combat(self, arg):
         # Enter combat with a random enemy
         combatMode().fight()
+
+    do_fight = do_combat
