@@ -2,141 +2,161 @@
     {
         "LEVEL": 1,
         "XPREQ": 0,
-        "MAXHP": 100,
-        "MAXMP": 25,
-        "CRITBNS": 1
+        "HPMAX": 50,
+        "MPMAX": 15,
+        "CRITBNS": 1,
+        "MSG": "Welcome to Level 1!"
     },
     {
         "LEVEL": 2,
         "XPREQ": 300,
-        "MAXHP": 100,
-        "MAXMP": 25,
-        "CRITBNS": 2
+        "HPMAX": 100,
+        "MPMAX": 25,
+        "CRITBNS": 2,
+        "MSG": "{BRIGHT}{FGREEN}HP +, MP +!{FCYAN}\nTed learned new combat abilities: Headbang, Rising Force!{NORMAL}{FWHITE}"
     },
     {
         "LEVEL": 3,
         "XPREQ": 900,
-        "MAXHP": 100,
-        "MAXMP": 25,
-        "CRITBNS": 2
+        "HPMAX": 150,
+        "MPMAX": 35,
+        "CRITBNS": 2,
+        "MSG": "{BRIGHT}{FGREEN}HP +, MP +!{FCYAN}\nTed learned new combat ability: Purple Rain!{NORMAL}{FWHITE}"
     },
     {
         "LEVEL": 4,
         "XPREQ": 2700,
-        "MAXHP": 100,
-        "MAXMP": 25,
-        "CRITBNS": 2
+        "HPMAX": 200,
+        "MPMAX": 50,
+        "CRITBNS": 2,
+        "MSG": "{BRIGHT}{FGREEN}HP +, MP +!{NORMAL}{FWHITE}"
     },
     {
         "LEVEL": 5,
         "XPREQ": 6500,
-        "MAXHP": 100,
-        "MAXMP": 25,
-        "CRITBNS": 3
+        "HPMAX": 275,
+        "MPMAX": 75,
+        "CRITBNS": 3,
+        "MSG": "{BRIGHT}{FGREEN}HP +, MP +!{NORMAL}{FWHITE}"
     },
     {
         "LEVEL": 6,
         "XPREQ": 14000,
-        "MAXHP": 100,
-        "MAXMP": 25,
-        "CRITBNS": 3
+        "HPMAX": 350,
+        "MPMAX": 100,
+        "CRITBNS": 3,
+        "MSG": "{BRIGHT}{FGREEN}HP +, MP +!{NORMAL}{FWHITE}"
     },
     {
         "LEVEL": 7,
         "XPREQ": 23000,
-        "MAXHP": 100,
-        "MAXMP": 25,
-        "CRITBNS": 3
+        "HPMAX": 500,
+        "MPMAX": 150,
+        "CRITBNS": 3,
+        "MSG": "{BRIGHT}{FGREEN}HP +, MP +!{NORMAL}{FWHITE}"
     },
     {
         "LEVEL": 8,
         "XPREQ": 34000,
-        "MAXHP": 100,
-        "MAXMP": 25,
-        "CRITBNS": 3
+        "HPMAX": 650,
+        "MPMAX": 225,
+        "CRITBNS": 3,
+        "MSG": "{BRIGHT}{FGREEN}HP +, MP +!{NORMAL}{FWHITE}"
     },
     {
         "LEVEL": 9,
         "XPREQ": 48000,
-        "MAXHP": 100,
-        "MAXMP": 25,
-        "CRITBNS": 4
+        "HPMAX": 850,
+        "MPMAX": 300,
+        "CRITBNS": 4,
+        "MSG": "{BRIGHT}{FGREEN}HP +, MP +!{NORMAL}{FWHITE}"
     },
     {
         "LEVEL": 10,
         "XPREQ": 64000,
-        "MAXHP": 100,
-        "MAXMP": 25,
-        "CRITBNS": 4
+        "HPMAX": 1000,
+        "MPMAX": 450,
+        "CRITBNS": 4,
+        "MSG": "{BRIGHT}{FGREEN}HP +, MP +!{NORMAL}{FWHITE}"
     },
     {
         "LEVEL": 11,
         "XPREQ": 85000,
-        "MAXHP": 100,
-        "MAXMP": 25,
-        "CRITBNS": 4
+        "HPMAX": 1250,
+        "MPMAX": 550,
+        "CRITBNS": 4,
+        "MSG": "{BRIGHT}{FGREEN}HP +, MP +!{NORMAL}{FWHITE}"
     },
     {
         "LEVEL": 12,
         "XPREQ": 100000,
-        "MAXHP": 100,
-        "MAXMP": 25,
-        "CRITBNS": 4
+        "HPMAX": 1650,
+        "MPMAX": 750,
+        "CRITBNS": 4,
+        "MSG": "{BRIGHT}{FGREEN}HP +, MP +!{NORMAL}{FWHITE}"
     },
     {
         "LEVEL": 13,
         "XPREQ": 120000,
-        "MAXHP": 100,
-        "MAXMP": 25,
-        "CRITBNS": 5
+        "HPMAX": 2000,
+        "MPMAX": 1000,
+        "CRITBNS": 5,
+        "MSG": "{BRIGHT}{FGREEN}HP +, MP +!{NORMAL}{FWHITE}"
     },
     {
         "LEVEL": 14,
         "XPREQ": 140000,
-        "MAXHP": 100,
-        "MAXMP": 25,
-        "CRITBNS": 5
+        "HPMAX": 2500,
+        "MPMAX": 1250,
+        "CRITBNS": 5,
+        "MSG": "{BRIGHT}{FGREEN}HP +, MP +!{NORMAL}{FWHITE}"
     },
     {
         "LEVEL": 15,
         "XPREQ": 165000,
-        "MAXHP": 100,
-        "MAXMP": 25,
-        "CRITBNS": 5
+        "HPMAX": 3500,
+        "MPMAX": 1750,
+        "CRITBNS": 5,
+        "MSG": "{BRIGHT}{FGREEN}HP +, MP +!{NORMAL}{FWHITE}"
     },
     {
         "LEVEL": 16,
         "XPREQ": 195000,
-        "MAXHP": 100,
-        "MAXMP": 25,
-        "CRITBNS": 5
+        "HPMAX": 5000,
+        "MPMAX": 2250,
+        "CRITBNS": 5,
+        "MSG": "{BRIGHT}{FGREEN}HP +, MP +!{NORMAL}{FWHITE}"
     },
     {
         "LEVEL": 17,
         "XPREQ": 225000,
-        "MAXHP": 100,
-        "MAXMP": 25,
-        "CRITBNS": 6
+        "HPMAX": 7500,
+        "MPMAX": 3500,
+        "CRITBNS": 6,
+        "MSG": "{BRIGHT}{FGREEN}HP +, MP +!{NORMAL}{FWHITE}"
     },
     {
         "LEVEL": 18,
         "XPREQ": 265000,
-        "MAXHP": 100,
-        "MAXMP": 25,
-        "CRITBNS": 6
+        "HPMAX": 10000,
+        "MPMAX": 5000,
+        "CRITBNS": 6,
+        "MSG": "{BRIGHT}{FGREEN}HP +, MP +!{NORMAL}{FWHITE}"
     },
     {
         "LEVEL": 19,
         "XPREQ": 305000,
-        "MAXHP": 100,
-        "MAXMP": 25,
-        "CRITBNS": 6
+        "HPMAX": 12000,
+        "MPMAX": 6000,
+        "CRITBNS": 6,
+        "MSG": "{BRIGHT}{FGREEN}HP +, MP +!{NORMAL}{FWHITE}"
     },
     {
         "LEVEL": 20,
         "XPREQ": 355000,
-        "MAXHP": 100,
-        "MAXMP": 25,
-        "CRITBNS": 6
+        "HPMAX": 15000,
+        "MPMAX": 8000,
+        "CRITBNS": 6,
+        "MSG": "{BRIGHT}{FGREEN}HP +, MP +!{NORMAL}{FWHITE}"
     }
 ]

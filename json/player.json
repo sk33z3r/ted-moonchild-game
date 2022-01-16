@@ -9,11 +9,11 @@
     },
     {
         "SECTION": "stats",
-        "HP": 100,
-        "HPMAX": 100,
-        "MP": 25,
-        "MPMAX": 25,
-        "FLOYDS": 0,
+        "HP": 50,
+        "HPMAX": 50,
+        "MP": 15,
+        "MPMAX": 15,
+        "FLOYDS": 10,
         "LVL": 1,
         "XP": 0
     },
