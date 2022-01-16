@@ -79,14 +79,23 @@ class combatMode():
 
     def selectEnemy(self):
         # Randomly selects an enemy and sets base stats
-        # TODO implement logic to only select enemies from the current planet
         global chosenEnemy
         global ratingInfo
         global ENEMYHP
         global ENEMYMP
-        enemyIDList = list(dbs.enemies.find( {}, { "NAME": 1 } ))
-        chosenID = random.choice(enemyIDList)["_id"]
-        chosenEnemy = dbs.enemies.find_one( { "_id": chosenID } )
+        # set enemy list to ones available on the current planet
+        planet = dbs.locationInfo["PLANET"]
+        planetEnemies = dbs.enemies.find( { "PLANETS": planet } )
+        enemyIDList = []
+        for enemy in planetEnemies:
+            enemyIDList.append(enemy["NAME"])
+        if DEBUG == 1:
+            print(planet)
+            print(enemyIDList)
+        # choose an enemy name at random from the list
+        # TODO add weights to each enemy to direct the randomness
+        randEnemy = random.choice(enemyIDList)
+        chosenEnemy = dbs.enemies.find_one( { "NAME": randEnemy } )
         ratingInfo = dbs.challenge_ratings.find_one( { "RATING": chosenEnemy["CR"] } )
         ENEMYHP = chosenEnemy["HP"]
         ENEMYMP = chosenEnemy["MP"]
