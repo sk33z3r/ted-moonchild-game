@@ -20,8 +20,6 @@ for o in os.listdir("./json"):
 equippedWeapon = None
 addedFX = None
 
-# TODO make CRIT value based on PLAYERLVL
-
 # define function to remove a save slot
 def deleteSave(n, rm):
     try:
@@ -230,42 +228,40 @@ def useItem(name):
         maxMP = playerStats["MPMAX"]
         mp = playerStats["MP"]
         # if the stat is HP or MP, we need to check that the new value isn't above or below the max/min parameters
-        if stat == "HP" and action == "inc":
+        if stat == "HP" and action == "+":
             hp = hp + num
             if hp >= maxHP:
                 updateStat(stat, maxHP, "set")
             else:
-                updateStat(stat, num, action)
-        elif stat == "HP" and action == "dec":
+                updateStat(stat, num, "inc")
+        elif stat == "HP" and action == "-":
             hp = hp - num
             if hp <= 0:
                 print("{FRED}Don't do it! That would kill you, Ted!{FWHITE}".format(**clr.styles))
                 return
             else:
                 updateStat(stat, num, action)
-        elif stat == "MP" and action == "inc":
+        elif stat == "MP" and action == "+":
             mp = mp + num
             if mp >= maxMP:
                 updateStat(stat, maxMP, "set")
             else:
-                updateStat(stat, num, action)
-        elif stat == "MP" and action == "dec":
+                updateStat(stat, num, "inc")
+        elif stat == "MP" and action == "-":
             mp = mp - num
             if mp <= 0:
                 updateStat(stat, 0, "set")
             else:
-                updateStat(stat, num, action)
+                updateStat(stat, num, "dec")
         # otherwise, update the stat
-        else:
-            updateStat(stat, num, action)
-        # set the user display text up
-        if action == "inc":
-            operator = "+"
-        elif action == "dec":
-            operator = "-"
+        elif action == "+":
+            updateStat(stat, num, "inc")
+        elif action == "-":
+            updateStat(stat, num, "dec")
         elif action == "set":
-            operator = "is now "
-        print("Ted consumes {NAME}! {FYELLOW}{DIM}Effect: {S} {O}{N}{FWHITE}{NORMAL}".format(**clr.styles, NAME = name, S = stat, O = operator, N = str(num))
+            updateStat(stat, num, action)
+            action = "is now "
+        print("Ted consumes {NAME}! {FYELLOW}{DIM}Effect: {S} {O}{N}{FWHITE}{NORMAL}".format(**clr.styles, NAME = name, S = stat, O = action, N = str(num)))
         # remove the item from inventory
         updateInv(name, "del")
 
@@ -458,3 +454,8 @@ def newGame(name):
         print("New game created: '" + name + "'")
         time.sleep(1)
     print("        ...done.")
+
+if eng.COLORS == 0:
+    import blackwhite as clr
+elif eng.COLORS == 1:
+    import colors as clr
