@@ -1005,27 +1005,36 @@ class TextAdventureCmd(cmd.Cmd):
         return list(set(possibleItems)) # make list unique
 
     def do_sell(self, arg):
-        dbs.getInventory()
-        dbs.getStats()
         # "sell <item>" - sell an item at the current location's shop.
         if "SHOP" not in dbs.locationInfo:
             print("Ain't no one to sell it to.")
             return
 
-        inv = list(dbs.playerInv["ITEMS"])
+        dbs.getInventory()
+        dbs.getStats()
+
+        i = list(dbs.playerInv["ITEMS"])
+        k = list(dbs.playerInv["KEY_ITEMS"])
+        e = list(dbs.playerInv["EQUIPPED"])
         itemToSell = arg.lower()
 
         if itemToSell == '':
             print("Whatchoo wanna sell?{DIM} Type \"inv\" to see items{NORMAL}{FWHITE}".format(**clr.styles))
             return
-        elif itemToSell in dbs.playerInv["KEY_ITEMS"]:
-            print("{FYELLOW}I don't think you want to sell that, it may come in handy later.{FWHITE}".format(**clr.styles))
-            return
-        elif itemToSell in dbs.playerInv["EQUIPPED"]:
-            print("{FCYAN}You need to un-equip it first!{FWHITE}".format(**clr.styles))
-            return
 
-        for item in inv:
+        for item in k:
+            itemInfo = dbs.items.find_one( { "NAME": item } )
+            if itemToSell in itemInfo["DESCWORDS"]:
+                print("{FYELLOW}I don't think you want to sell that, it may come in handy later.{FWHITE}".format(**clr.styles))
+                return
+
+        for item in e:
+            itemInfo = dbs.items.find_one( { "NAME": item } )
+            if itemToSell in itemInfo["DESCWORDS"]:
+                print("{FCYAN}You need to un-equip it first!{FWHITE}".format(**clr.styles))
+                return
+
+        for item in i:
             itemInfo = dbs.items.find_one( { "NAME": item } )
             if itemToSell in itemInfo["DESCWORDS"]:
                 price = round(itemInfo["VALUE"] * 0.75)
