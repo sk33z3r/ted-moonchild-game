@@ -172,9 +172,9 @@ class combatMode():
             query = { "$and": [ { "TYPE": "physical" }, { "LEVEL": { "$lte": dbs.playerStats["LVL"] } } ] }
             attackList = dbs.abilities.find(query)
             attackIDList = [ "_index" ]
-            print("\n{DIM}>> {NORMAL}CHOOSE ATTACK:".format(**clr.styles))
+            print("\n{DIM}>>  {NORMAL}CHOOSE ATTACK:".format(**clr.styles))
             for item in attackList:
-                print("   [" + str(i) + "] - " + item["NAME"])
+                print("    [" + str(i) + "] - " + item["NAME"])
                 attackIDList.append(item["_id"])
                 i += 1
             print()
@@ -233,7 +233,7 @@ class combatMode():
                         print("Ted packs a WOLLOP with his {ATK} for {FGREEN}{BRIGHT}{DMG}{NORMAL}{FWHITE} damage!!".format(**clr.styles, ATK = chosenAttackInfo["NAME"], DMG = str(heroAttackDamage)))
                     else:
                         print("Ted lands a blow with his {ATK} for {FGREEN}{BRIGHT}{DMG}{NORMAL}{FWHITE} damage!".format(**clr.styles, ATK = chosenAttackInfo["NAME"], DMG = str(heroAttackDamage)))
-                time.sleep(3)
+                time.sleep(2)
                 # Set next action to enemy
                 NEXT_ACTION = 0
 
@@ -249,9 +249,9 @@ class combatMode():
                 return
 
             magicIDList = [ "_index" ]
-            print("\n{DIM}>> {NORMAL}CHOOSE ABILITY:".format(**clr.styles))
+            print("\n{DIM}>>  {NORMAL}CHOOSE ABILITY:".format(**clr.styles))
             for item in magicList:
-                print("   [" + str(i) + "] - " + item["NAME"])
+                print("    [" + str(i) + "] - " + item["NAME"])
                 magicIDList.append(item["_id"])
                 i += 1
             print()
@@ -286,7 +286,7 @@ class combatMode():
                         ENEMYHP = ENEMYHP - heroMagicDamage
                         print("Ted performs {NAME} for {FCYAN}{DMG}{NORMAL}{FWHITE} damage!".format(**clr.styles, NAME = chosenMagicInfo["NAME"], DMG = str(heroMagicDamage)))
                     dbs.updateStat("MP", chosenMagicInfo["MPREQ"], "dec")
-                    time.sleep(3)
+                    time.sleep(2)
                     # Set next action to enemy
                     NEXT_ACTION = 0
 
@@ -309,16 +309,16 @@ class combatMode():
                 else:
                     itemCount[item] = 1
 
-            print("\n{DIM}>> {NORMAL}CHOOSE ITEM:".format(**clr.styles))
+            print("\n{DIM}>>  {NORMAL}CHOOSE ITEM:".format(**clr.styles))
             # get a list of inventory items with duplicates removed:
             for item in set(inv):
                 getEffectString(item)
                 # If item is a duplicate, print once with the quantity in ()
                 if itemCount[item] > 1:
-                    print("{DIM}{FYELLOW}   [{I}] - {FWHITE}{NORMAL}{ITEM} ({COUNT}) {DIM}{FCYAN}{TEXT}{FWHITE}{NORMAL}".format(**clr.styles, I = str(i), ITEM = item, COUNT = str(itemCount[item]), TEXT = effectString))
+                    print("{DIM}{FYELLOW}    [{I}] - {FWHITE}{NORMAL}{ITEM} ({COUNT}) {DIM}{FCYAN}{TEXT}{FWHITE}{NORMAL}".format(**clr.styles, I = str(i), ITEM = item, COUNT = str(itemCount[item]), TEXT = effectString))
                     battleItems.append(item)
                 else:
-                    print("{DIM}{FYELLOW}   [{I}] - {FWHITE}{NORMAL}{ITEM} {DIM}{FCYAN}{TEXT}{FWHITE}{NORMAL}".format(**clr.styles, I = str(i), ITEM = item, TEXT = effectString))
+                    print("{DIM}{FYELLOW}    [{I}] - {FWHITE}{NORMAL}{ITEM} {DIM}{FCYAN}{TEXT}{FWHITE}{NORMAL}".format(**clr.styles, I = str(i), ITEM = item, TEXT = effectString))
                     battleItems.append(item)
                 i += 1
             print()
@@ -340,7 +340,7 @@ class combatMode():
                     # do something with the item
                     # then drop the item from inventory
                     dbs.useItem(chosenItemInfo["NAME"])
-                    time.sleep(3)
+                    time.sleep(2)
                     # Set next action to enemy
                     NEXT_ACTION = 0
                 elif chosenItemInfo["WEAPON"] == True and chosenItemInfo["NAME"] != dbs.equippedWeapon:
@@ -465,7 +465,7 @@ class combatMode():
         print("    //  {BRIGHT}ENTERING COMBAT MODE{DIM}  //    ".format(**clr.styles))
         print("    ////////////////////////////    ")
         print("                                    {BBLACK}{NORMAL}{FWHITE}".format(**clr.styles))
-        time.sleep(3)
+        time.sleep(2)
         NEXT_ACTION = random.randrange(0, 2)  # Randomly select who attacks first.
         # Changes color to white
         print("{FWHITE}".format(**clr.styles))
@@ -518,7 +518,7 @@ class combatMode():
                     else:
                         print("Ted suffers {FRED}{BRIGHT}{ATK}{NORMAL}{FWHITE} damage!".format(**clr.styles, ATK = str(enemyAttack)))
 
-                time.sleep(3)
+                time.sleep(2)
                 # Set next action to player
                 NEXT_ACTION = 1
             elif NEXT_ACTION == 1:
@@ -963,6 +963,9 @@ class TextAdventureCmd(cmd.Cmd):
             print("Ain't shit to buy, Ted.")
             return
 
+        dbs.getInventory()
+        dbs.getStats()
+        money = dbs.playerStats["FLOYDS"]
         itemToBuy = arg.lower()
 
         if itemToBuy == '':
@@ -971,11 +974,13 @@ class TextAdventureCmd(cmd.Cmd):
 
         item = getFirstItemMatchingDesc(itemToBuy, dbs.locationInfo["SHOP"])
         if item != None:
-            # NOTE - If Ted wanted to implement money, here is where Ted would add
-            # code that checks if the player has enough, then deducts the price
-            # from their money.
-            print("Ted just bought " + dbs.items.find_one( { "NAME": item } )["SHORTDESC"])
-            dbs.updateInv(item, "add")
+            itemInfo = dbs.items.find_one( { "NAME": item } )
+            if money >= itemInfo["VALUE"]:
+                dbs.updateStat("FLOYDS", itemInfo["VALUE"], "dec")
+                dbs.updateInv(item, "add")
+                print("Ted just bought " + itemInfo["SHORTDESC"])
+            elif money < itemInfo["VALUE"]:
+                print("{FRED}You don't have enough money, Ted!{FWHITE}".format(**clr.styles))
             return
 
         print("They don't have any \"" + itemToBuy + ".\" Try again, Ted.")
@@ -1001,9 +1006,10 @@ class TextAdventureCmd(cmd.Cmd):
 
     def do_sell(self, arg):
         dbs.getInventory()
+        dbs.getStats()
         # "sell <item>" - sell an item at the current location's shop.
         if "SHOP" not in dbs.locationInfo:
-            print("Ain't no one to sell it.")
+            print("Ain't no one to sell it to.")
             return
 
         inv = list(dbs.playerInv["ITEMS"])
@@ -1012,14 +1018,20 @@ class TextAdventureCmd(cmd.Cmd):
         if itemToSell == '':
             print("Whatchoo wanna sell?{DIM} Type \"inv\" to see items{NORMAL}{FWHITE}".format(**clr.styles))
             return
+        elif itemToSell in dbs.playerInv["KEY_ITEMS"]:
+            print("{FYELLOW}I don't think you want to sell that, it may come in handy later.{FWHITE}".format(**clr.styles))
+            return
+        elif itemToSell in dbs.playerInv["EQUIPPED"]:
+            print("{FCYAN}You need to un-equip it first!{FWHITE}".format(**clr.styles))
+            return
 
         for item in inv:
             itemInfo = dbs.items.find_one( { "NAME": item } )
             if itemToSell in itemInfo["DESCWORDS"]:
-                # NOTE - If Ted wanted to implement money, here is where Ted would add
-                # code that gives the player money for selling the item.
-                print("Ted sold " + itemInfo["SHORTDESC"])
+                price = round(itemInfo["VALUE"] * 0.75)
+                dbs.updateStat("FLOYDS", price, "inc")
                 dbs.updateInv(item, "del")
+                print("{FGREEN}Ted sold {ITEM} for {N} FLOYDS.{FWHITE}".format(**clr.styles, ITEM = itemInfo["SHORTDESC"], N = price))
                 return
 
         print("You don't have \"" + itemToSell + "\", Ted.")
@@ -1074,6 +1086,7 @@ class TextAdventureCmd(cmd.Cmd):
 
     # map drink to eat
     do_drink = do_eat
+    do_smoke = do_eat
 
     def complete_eat(self, text, line, begidx, endidx):
         dbs.getInventory()
