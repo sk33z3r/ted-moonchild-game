@@ -97,6 +97,16 @@
         "DESCWORDS": [ "stick", "wood shard", "drumstick", "drum stick", "broken drumstick" ]
     },
     {
+        "NAME": "Schnitmuckle",
+        "GROUNDDESC": "Schnitmuckle",
+        "SHORTDESC": "celestial pile of shit",
+        "LONGDESC": "An amorphous blorb that seems to react to light. Most likely the fecal matter of an ancient celestial being.",
+        "TAKEABLE": true,
+        "VALUE": 0,
+        "TYPE": "key",
+        "DESCWORDS": [ "turd", "feces", "celestial shit", "pile of shit", "schnitmuckle" ]
+    },
+    {
         "NAME": "Protection",
         "GROUNDDESC": "Protection",
         "SHORTDESC": "protection",
