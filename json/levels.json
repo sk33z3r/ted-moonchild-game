@@ -5,7 +5,7 @@
         "HPMAX": 50,
         "MPMAX": 15,
         "CRITBNS": 1,
-        "MSG": "Welcome to Level 1!"
+        "MSG": [ "Welcome to Level 1!" ]
     },
     {
         "LEVEL": 2,
@@ -13,7 +13,7 @@
         "HPMAX": 100,
         "MPMAX": 25,
         "CRITBNS": 2,
-        "MSG": "{BRIGHT}{FGREEN}HP +, MP +!{FCYAN}\nTed learned new combat abilities: Headbang, Rising Force!{NORMAL}{FWHITE}"
+        "MSG": [ "HP +, MP +!", "Ted learned new combat abilities: Headbang, Rising Force!" ]
     },
     {
         "LEVEL": 3,
@@ -21,7 +21,7 @@
         "HPMAX": 150,
         "MPMAX": 35,
         "CRITBNS": 2,
-        "MSG": "{BRIGHT}{FGREEN}HP +, MP +!{FCYAN}\nTed learned new combat ability: Purple Rain!{NORMAL}{FWHITE}"
+        "MSG": [ "HP +, MP +!", "Ted learned new combat ability: Purple Rain!" ]
     },
     {
         "LEVEL": 4,
@@ -29,7 +29,7 @@
         "HPMAX": 200,
         "MPMAX": 50,
         "CRITBNS": 2,
-        "MSG": "{BRIGHT}{FGREEN}HP +, MP +!{NORMAL}{FWHITE}"
+        "MSG": [ "HP +, MP +!" ]
     },
     {
         "LEVEL": 5,
@@ -37,7 +37,7 @@
         "HPMAX": 275,
         "MPMAX": 75,
         "CRITBNS": 3,
-        "MSG": "{BRIGHT}{FGREEN}HP +, MP +!{NORMAL}{FWHITE}"
+        "MSG": [ "HP +, MP +!" ]
     },
     {
         "LEVEL": 6,
@@ -45,7 +45,7 @@
         "HPMAX": 350,
         "MPMAX": 100,
         "CRITBNS": 3,
-        "MSG": "{BRIGHT}{FGREEN}HP +, MP +!{NORMAL}{FWHITE}"
+        "MSG": [ "HP +, MP +!" ]
     },
     {
         "LEVEL": 7,
@@ -53,7 +53,7 @@
         "HPMAX": 500,
         "MPMAX": 150,
         "CRITBNS": 3,
-        "MSG": "{BRIGHT}{FGREEN}HP +, MP +!{NORMAL}{FWHITE}"
+        "MSG": [ "HP +, MP +!" ]
     },
     {
         "LEVEL": 8,
@@ -61,7 +61,7 @@
         "HPMAX": 650,
         "MPMAX": 225,
         "CRITBNS": 3,
-        "MSG": "{BRIGHT}{FGREEN}HP +, MP +!{NORMAL}{FWHITE}"
+        "MSG": [ "HP +, MP +!" ]
     },
     {
         "LEVEL": 9,
@@ -69,7 +69,7 @@
         "HPMAX": 850,
         "MPMAX": 300,
         "CRITBNS": 4,
-        "MSG": "{BRIGHT}{FGREEN}HP +, MP +!{NORMAL}{FWHITE}"
+        "MSG": [ "HP +, MP +!" ]
     },
     {
         "LEVEL": 10,
@@ -77,7 +77,7 @@
         "HPMAX": 1000,
         "MPMAX": 450,
         "CRITBNS": 4,
-        "MSG": "{BRIGHT}{FGREEN}HP +, MP +!{NORMAL}{FWHITE}"
+        "MSG": [ "HP +, MP +!" ]
     },
     {
         "LEVEL": 11,
@@ -85,7 +85,7 @@
         "HPMAX": 1250,
         "MPMAX": 550,
         "CRITBNS": 4,
-        "MSG": "{BRIGHT}{FGREEN}HP +, MP +!{NORMAL}{FWHITE}"
+        "MSG": [ "HP +, MP +!" ]
     },
     {
         "LEVEL": 12,
@@ -93,7 +93,7 @@
         "HPMAX": 1650,
         "MPMAX": 750,
         "CRITBNS": 4,
-        "MSG": "{BRIGHT}{FGREEN}HP +, MP +!{NORMAL}{FWHITE}"
+        "MSG": [ "HP +, MP +!" ]
     },
     {
         "LEVEL": 13,
@@ -101,7 +101,7 @@
         "HPMAX": 2000,
         "MPMAX": 1000,
         "CRITBNS": 5,
-        "MSG": "{BRIGHT}{FGREEN}HP +, MP +!{NORMAL}{FWHITE}"
+        "MSG": [ "HP +, MP +!" ]
     },
     {
         "LEVEL": 14,
@@ -109,7 +109,7 @@
         "HPMAX": 2500,
         "MPMAX": 1250,
         "CRITBNS": 5,
-        "MSG": "{BRIGHT}{FGREEN}HP +, MP +!{NORMAL}{FWHITE}"
+        "MSG": [ "HP +, MP +!" ]
     },
     {
         "LEVEL": 15,
@@ -117,7 +117,7 @@
         "HPMAX": 3500,
         "MPMAX": 1750,
         "CRITBNS": 5,
-        "MSG": "{BRIGHT}{FGREEN}HP +, MP +!{NORMAL}{FWHITE}"
+        "MSG": [ "HP +, MP +!" ]
     },
     {
         "LEVEL": 16,
@@ -125,7 +125,7 @@
         "HPMAX": 5000,
         "MPMAX": 2250,
         "CRITBNS": 5,
-        "MSG": "{BRIGHT}{FGREEN}HP +, MP +!{NORMAL}{FWHITE}"
+        "MSG": [ "HP +, MP +!" ]
     },
     {
         "LEVEL": 17,
@@ -133,7 +133,7 @@
         "HPMAX": 7500,
         "MPMAX": 3500,
         "CRITBNS": 6,
-        "MSG": "{BRIGHT}{FGREEN}HP +, MP +!{NORMAL}{FWHITE}"
+        "MSG": [ "HP +, MP +!" ]
     },
     {
         "LEVEL": 18,
@@ -141,7 +141,7 @@
         "HPMAX": 10000,
         "MPMAX": 5000,
         "CRITBNS": 6,
-        "MSG": "{BRIGHT}{FGREEN}HP +, MP +!{NORMAL}{FWHITE}"
+        "MSG": [ "HP +, MP +!" ]
     },
     {
         "LEVEL": 19,
@@ -149,7 +149,7 @@
         "HPMAX": 12000,
         "MPMAX": 6000,
         "CRITBNS": 6,
-        "MSG": "{BRIGHT}{FGREEN}HP +, MP +!{NORMAL}{FWHITE}"
+        "MSG": [ "HP +, MP +!" ]
     },
     {
         "LEVEL": 20,
@@ -157,6 +157,6 @@
         "HPMAX": 15000,
         "MPMAX": 8000,
         "CRITBNS": 6,
-        "MSG": "{BRIGHT}{FGREEN}HP +, MP +!{NORMAL}{FWHITE}"
+        "MSG": [ "HP +, MP +!" ]
     }
 ]
