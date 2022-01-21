@@ -1,6 +1,6 @@
 [
     {
-        "NAME": "Dagobar Parking Lot",
+        "NAME": "Dagobar Lot",
         "FIRST_EVENTS": {
             "0": []
         },
@@ -27,7 +27,7 @@
         "SOLVED": 0
     },
     {
-        "NAME": "WMG Studios Parking Lot",
+        "NAME": "WMG Studios Lot",
         "FIRST_EVENTS": {
             "0": []
         },
@@ -45,6 +45,7 @@
             "0": []
         },
         "UP": "Winnibego",
+        "NORTH": "WMG Lobby",
         "PLANET": "WMG Studios",
         "SECTOR": "Jorlene Sector",
         "GROUND": [],

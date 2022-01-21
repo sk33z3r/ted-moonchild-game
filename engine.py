@@ -106,6 +106,17 @@ def getFirstItemMatchingDesc(desc, itemList):
             return item
     return None
 
+def getRandDescWords(item):
+    # Returns a list of "description words" for each item named in itemList.
+    descWords = []
+    descWords.extend(dbs.items.find_one( { "NAME": item } )["DESCWORDS"])
+    desc = random.randomchoice(descWords)
+    return desc
+
+def getGroundDesc(item):
+    desc = dbs.items.find_one( { "NAME": item } )["GROUNDDESC"]
+    return desc
+
 # function to get a full list of the current player inventory
 def tempInv():
     dbs.getInventory()

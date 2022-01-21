@@ -24,7 +24,7 @@
     {
         "NAME": "Epiphone SG",
         "GROUNDDESC": "Used Epiphone SG",
-        "SHORTDESC": "Epiphone SG",
+        "SHORTDESC": "the Epiphone SG",
         "LONGDESC": "Not quite a Gibson, but it looks fuckin' sweet.",
         "TAKEABLE": true,
         "ATKBNS": 2,
@@ -35,7 +35,7 @@
     {
         "NAME": "noFX",
         "GROUNDDESC": "Raw tone",
-        "SHORTDESC": "air",
+        "SHORTDESC": "the air",
         "LONGDESC": "Nothing but tone.",
         "TAKEABLE": true,
         "ATKBNS": 0,
@@ -56,8 +56,8 @@
     },
     {
         "NAME": "Wormhole Delay",
-        "GROUNDDESC": "Delay pedal from Wormhole",
-        "SHORTDESC": "Wormhole Delay",
+        "GROUNDDESC": "Delay pedal",
+        "SHORTDESC": "the delay pedal",
         "LONGDESC": "Delay FX from another world. Use sparingly.",
         "TAKEABLE": true,
         "ATKBNS": 2,
@@ -68,7 +68,7 @@
     {
         "NAME": "Winnibego Keys",
         "GROUNDDESC": "Keys to the Winnie",
-        "SHORTDESC": "the keys to the Winnie",
+        "SHORTDESC": "Ted's keys",
         "LONGDESC": "The keys to Ted's sweet Winnibego",
         "TAKEABLE": true,
         "VALUE": 0,
@@ -78,7 +78,7 @@
     {
         "NAME": "Screwdriver",
         "GROUNDDESC": "Screwdriver",
-        "SHORTDESC": "screwdriver",
+        "SHORTDESC": "the screwdriver",
         "LONGDESC": "A generic, insulated philips head screwdriver commonly carried by Roadies.",
         "TAKEABLE": true,
         "VALUE": 0,
@@ -93,7 +93,17 @@
         "TAKEABLE": true,
         "VALUE": 0,
         "TYPE": "key",
-        "DESCWORDS": [ "genital piercing", "prince albert" ]
+        "DESCWORDS": [ "genital piercing", "prince albert", "piercing" ]
+    },
+    {
+        "NAME": "WMG Keycard",
+        "GROUNDDESC": "Executive Keycard",
+        "SHORTDESC": "the keycard",
+        "LONGDESC": "An access card to somewhere at Wiener Music Group's studios.",
+        "TAKEABLE": true,
+        "VALUE": 0,
+        "TYPE": "key",
+        "DESCWORDS": [ "keycard", "wmg keycard", "access card" ]
     },
     {
         "NAME": "Chaz Note",
@@ -104,6 +114,26 @@
         "VALUE": 0,
         "TYPE": "key",
         "DESCWORDS": [ "note", "chaz note" ]
+    },
+    {
+        "NAME": "EBGB Moonshine",
+        "GROUNDDESC": "OMFUG's Moonshine",
+        "SHORTDESC": "the moonshine",
+        "LONGDESC": "An incredibly potent moonshine, distilled in EBGB's basement by OMFUG. I wouldn't drink it.",
+        "TAKEABLE": true,
+        "VALUE": 0,
+        "TYPE": "key",
+        "DESCWORDS": [ "moonshine", "ebgb moonshine", "omfugs moonshine" ]
+    },
+    {
+        "NAME": "Ted's Lighter",
+        "GROUNDDESC": "Zippo Lighter",
+        "SHORTDESC": "the lighter",
+        "LONGDESC": "Ted's best lighter. He'd kill a person if they took it.",
+        "TAKEABLE": true,
+        "VALUE": 0,
+        "TYPE": "key",
+        "DESCWORDS": [ "lighter", "zippo", "teds lighter" ]
     },
     {
         "NAME": "Drumstick Tip",
@@ -128,28 +158,28 @@
     {
         "NAME": "Grumm's Drumstick",
         "GROUNDDESC": "Mighty Drumstick",
-        "SHORTDESC": "mighty drumstick",
+        "SHORTDESC": "the mighty drumstick",
         "LONGDESC": "A celestial drumstick used by Grumm. It broke, but somehow fused itself back together. Ted's hand trembles while he holds it.",
         "PIECES": [ "Drumstick Bottom", "Drumstick Tip" ],
         "TAKEABLE": true,
         "VALUE": 0,
         "TYPE": "key",
-        "DESCWORDS": [ "stick tip", "broken tip", "drumstick tip", "drum stick tip", "broken drumstick tip" ]
+        "DESCWORDS": [ "grumms stick", "grumms drumstick", "drumstick", "drum stick" ]
     },
     {
         "NAME": "Schnitmuckle",
-        "GROUNDDESC": "Schnitmuckle",
-        "SHORTDESC": "celestial pile of shit",
-        "LONGDESC": "An amorphous blorb that seems to react to light. Most likely the fecal matter of an ancient celestial being.",
+        "GROUNDDESC": "Fart blob",
+        "SHORTDESC": "the celestial pile of shit",
+        "LONGDESC": "An amorphous blorb that seems to react to fire. Most likely the fecal matter of an ancient celestial being.",
         "TAKEABLE": true,
         "VALUE": 0,
         "TYPE": "key",
-        "DESCWORDS": [ "turd", "feces", "celestial shit", "pile of shit", "schnitmuckle" ]
+        "DESCWORDS": [ "turd", "feces", "celestial shit", "pile of shit", "schnitmuckle", "fart blob", "shit", "blob" ]
     },
     {
         "NAME": "Jimmy Helix's Headband",
         "GROUNDDESC": "Headband",
-        "SHORTDESC": "headband",
+        "SHORTDESC": "the headband",
         "LONGDESC": "The headband that Jimmy Helix wore in the battle for the sector. He gave it to Ted for jamming some sweet harmonies.",
         "TAKEABLE": true,
         "VALUE": 0,
@@ -160,7 +190,7 @@
     {
         "NAME": "Ham Sandwich",
         "GROUNDDESC": "Tasty Looking Sandwich",
-        "SHORTDESC": "sandwich",
+        "SHORTDESC": "the sandwich",
         "LONGDESC": "Looks like it's been sat on. Smells good, though.",
         "TAKEABLE": true,
         "BATTLE": true,
@@ -170,9 +200,9 @@
         "DESCWORDS": [ "sandwich", "ham sandwich", "tasty sandwich" ]
     },
     {
-        "NAME": "Dark Matter Ale",
+        "NAME": "DM Ale",
         "GROUNDDESC": "Refreshing Dark Ale",
-        "SHORTDESC": "ale",
+        "SHORTDESC": "the ale",
         "LONGDESC": "A cold refreshing ale brewed in the outer rim of the galaxy. The label claims to have an alcohol content of 2.08x10^15.",
         "TAKEABLE": true,
         "BATTLE": true,
@@ -184,19 +214,19 @@
     {
         "NAME": "Gormeson Whiskey",
         "GROUNDDESC": "Fine Whiskey",
-        "SHORTDESC": "whiskey",
+        "SHORTDESC": "the whiskey",
         "LONGDESC": "Jarmax Gormeson always used to say, \"Talk is cheap, it takes money to buy whiskey.\" Maybe this will give Ted the motivation needed for that album.",
         "TAKEABLE": true,
         "BATTLE": true,
         "VALUE": 100,
         "TYPE": "drink",
         "EFFECT": [ "DEF", "++" ],
-        "DESCWORDS": [ "ale", "bottle of ale", "dark matter ale" ]
+        "DESCWORDS": [ "gormesons", "whiskey", "gormesons whiskey" ]
     },
     {
         "NAME": "Ayahuasca",
         "GROUNDDESC": "Cup of Ayahuasca",
-        "SHORTDESC": "ayahuasca",
+        "SHORTDESC": "the aya tea",
         "LONGDESC": "A thick, earthy brew that will show you the Universe as it's meant to be seen.",
         "TAKEABLE": true,
         "BATTLE": true,
@@ -208,7 +238,7 @@
     {
         "NAME": "Packed Bongoloid",
         "GROUNDDESC": "Bongoloid",
-        "SHORTDESC": "bongoloid",
+        "SHORTDESC": "the little fella",
         "LONGDESC": "A tiny bongoloid, so stuffed it can't even walk. Maybe Ted can help it out...",
         "TAKEABLE": true,
         "BATTLE": true,
@@ -220,7 +250,7 @@
     {
         "NAME": "Lit Joint",
         "GROUNDDESC": "Hippy's J",
-        "SHORTDESC": "lit joint",
+        "SHORTDESC": "the lit joint",
         "LONGDESC": "A cherried joint some hippy gave Ted for not beating the shit out of him.",
         "TAKEABLE": true,
         "BATTLE": true,
@@ -232,7 +262,7 @@
     {
         "NAME": "Cigarette",
         "GROUNDDESC": "Hand Rolled Cig",
-        "SHORTDESC": "cigarette",
+        "SHORTDESC": "the cigarette",
         "LONGDESC": "Hand-rolled by Ted himself, using only the finest of Virginia tobaccos.",
         "TAKEABLE": true,
         "BATTLE": true,
@@ -244,7 +274,7 @@
     {
         "NAME": "Qorban Cigar",
         "GROUNDDESC": "Fancy Cigar",
-        "SHORTDESC": "cigar",
+        "SHORTDESC": "the cigar",
         "LONGDESC": "One of the finest cigars that can be found in the Jorlene quadrant.",
         "TAKEABLE": true,
         "BATTLE": true,
@@ -304,7 +334,7 @@
     {
         "NAME": "DMT",
         "GROUNDDESC": "Dimethyltryptamine",
-        "SHORTDESC": "DMT",
+        "SHORTDESC": "the DMT",
         "LONGDESC": "A yellow, crystalized dust meant to be freebased. WARNING: launches a rocket.",
         "TAKEABLE": true,
         "BATTLE": true,

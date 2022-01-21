@@ -36,15 +36,25 @@ def setLocation(n):
     global SECTOR
     global PLANET
     player.update_one( { "SECTION": "location" }, { "$set": { "NAME": n } } )
-    if n == "space":
-        locationInfo = locations.find_one( { "$and": { { "NAME": "space" }, { "SECTOR": SECTOR } } } )
-    elif n.endswith("Sector"):
+    if n.endswith("Sector"):
         locationInfo = locations.find_one( { "$and": { { "NAME": "space" }, { "SECTOR": SECTOR } } } )
     elif n.lower() == "winnibego":
         locations.update_one( { "NAME": "Winnibego" }, { "$set": { "SECTOR": SECTOR } } )
         locationInfo = locations.find_one( { "NAME": n } )
     else:
         locationInfo = locations.find_one( { "NAME": n } )
+    ROOM = locationInfo["NAME"]
+    SECTOR = locationInfo["SECTOR"]
+    PLANET = locationInfo["PLANET"]
+
+# set a new space location
+def setSpaceLocation(sector):
+    global locationInfo
+    global ROOM
+    global SECTOR
+    global PLANET
+    player.update_one( { "SECTION": "location" }, { "$set": { "NAME": "space" } } )
+    locationInfo = locations.find_one( { "$and": { { "NAME": "space" }, { "SECTOR": sector } } } )
     ROOM = locationInfo["NAME"]
     SECTOR = locationInfo["SECTOR"]
     PLANET = locationInfo["PLANET"]
@@ -183,6 +193,24 @@ def updateStat(stat, num, action):
     else:
         raise Exception("FUNCTION CALL BUG: Someone forgot to specify an action for updateStat()")
     getStats()
+
+# function specifically for money transactions
+def floydsTransaction(num, action):
+    global playerStats
+    getStats()
+    floyds = int(playerStats["FLOYDS"])
+    if action == "inc":
+        floyds += num
+    elif action == "dec":
+        if floyds >= num:
+            floyds -= num
+        elif floyds < num:
+            return False
+    elif action == "set":
+        floyds = num
+    player.update_one( { "SECTION": "stats" }, { "$set": { "FLOYDS": floyds } } )
+    getStats()
+    return True
 
 # function to set paths and collections
 def define(n):

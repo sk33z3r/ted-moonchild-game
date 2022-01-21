@@ -17,8 +17,8 @@
     },
     {
         "SECTION": "inventory",
-        "ITEMS": [ "Cigarette", "Ham Sandwich", "DMT", "DMT", "DMT", "DMT" ],
-        "KEY_ITEMS": [ "Winnibego Keys" ],
+        "ITEMS": [ "Cigarette", "Ham Sandwich", "Screwdriver", "DMT", "DMT", "DMT" ],
+        "KEY_ITEMS": [ "Ted's Lighter", "Winnibego Keys" ],
         "EQUIPPED": []
     },
     {

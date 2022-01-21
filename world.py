@@ -6,6 +6,7 @@ import database as dbs
 class worldUI():
 
     BASE_COMMANDS = [ "save", "shop", "look", "take", "drop", "sell", "buy", "equip", "unequip", "quit", "exit", "help", "use" ]
+    USE_CMDS = [ "use", "try" ]
     EAT_CMDS = [ "eat", "gobble", "consume" ]
     DRINK_CMDS = [ "swallow", "gulp", "slurp", "drink" ]
     SMOKE_CMDS = [ "smoke", "toke", "inhale" ]
@@ -22,14 +23,30 @@ class worldUI():
         elif what == "SOLVED":
             status = dbs.locationInfo["SOLVED"]
             dbs.locations.update_one( { "NAME": dbs.ROOM }, { "$set": { "SOLVED": 1 } } )
+            # add an item to the ground if specified
             if "ADD_GROUND" in dbs.locationInfo:
                 for item in dbs.locationInfo["ADD_GROUND"]:
                     dbs.locations.update_one( { "NAME": dbs.ROOM }, { "$push": { "GROUND" : item } } )
+            # remove an item from the ground if specified
+            if "DEL_GROUND" in dbs.locationInfo:
+                for item in dbs.locationInfo["DEL_GROUND"]:
+                    dbs.locations.update_one( { "NAME": dbs.ROOM }, { "$pull": { "GROUND" : item } } )
+            # add a direction to the room if specified
             if "ADD_DIRS" in dbs.locationInfo:
                 d = 0
-                while d <= len(dbs.locationInfo["ADD_DIRS"]):
+                while d < len(dbs.locationInfo["ADD_DIRS"]):
                     dbs.locations.update_one( { "NAME": dbs.ROOM }, { "$set": { dbs.locationInfo["ADD_DIRS"][str(d)][0] : dbs.locationInfo["ADD_DIRS"][str(d)][1] } } )
                     d += 1
+            # remove a direction from the room if specified
+            if "DEL_DIRS" in dbs.locationInfo:
+                d = 0
+                while d < len(dbs.locationInfo["DEL_DIRS"]):
+                    dbs.locations.update_one( { "NAME": dbs.ROOM }, { "$unset": { dbs.locationInfo["DEL_DIRS"][str(d)][0] : dbs.locationInfo["DEL_DIRS"][str(d)][1] } } )
+                    d += 1
+            # remove item from player's inventory
+            for item in dbs.locationInfo["EVENT_KEYS"]:
+                if item != "FLOYDS" and not type(item) == int:
+                    dbs.updateInv(item, "del")
         eng.refreshInfo()
 
     def writeTimedEvents(speed, what):
@@ -42,6 +59,13 @@ class worldUI():
         else:
             raise Exception("BUG: 'what' arg for writeTimedEvents() not specified")
         while l < len(events):
+            # if the dialogue is taking up the whole window, we need to clear it and start writing at the beginning again
+            if y >= 15:
+                eventWin.addstr(18, 4, ">>>>>", eng.c["BLINK_BRIGHT_YELLOW"])
+                time.sleep(speed)
+                y = 1
+                eventWin.clear()
+                time.sleep(0.5)
             # get event text and wrap the text to fit inside the window
             eventString = '\n'.join(textwrap.wrap(events[str(l)][1], 75))
             # get event's text style
@@ -51,19 +75,16 @@ class worldUI():
             # add more newlines if text will be wrapped multiple times in the window
             if len(eventString) < 75:
                 y += 2
+                time.sleep(speed)
             if len(eventString) > 75 and len(eventString) < 150:
                 y += 3
+                time.sleep((speed + 1))
             elif len(eventString) > 150 and len(eventString) < 225:
                 y += 4
+                time.sleep((speed + 2))
             elif len(eventString) > 225 and len(eventString) < 300:
                 y += 5
-            time.sleep(speed)
-            # if the dialogue is taking up the whole window, we need to clear it and start writing at the beginning again
-            if y >= 16:
-                eventWin.addstr(y, 0, ". . .", eng.c["BLINK_BRIGHT_YELLOW"])
-                time.sleep(speed)
-                y = 1
-                eventWin.clear()
+                time.sleep((speed + 3))
 
     def writeStaticEvents(what):
         # print the UNSOLVED_EVENTS or SOLVED_EVENTS text
@@ -111,17 +132,20 @@ class worldUI():
             titleWin.addstr(0, 0, title, eng.c["BRIGHT"])
             # display the winnibego room
             if dbs.locationInfo["VISITED"] == 0:
-                worldUI.writeTimedEvents(2, "first")
+                worldUI.writeTimedEvents(3, "first")
                 worldUI.updateRoomStatus("VISITED")
             elif dbs.locationInfo["VISITED"] == 1 and dbs.locationInfo["SOLVED"] == 0:
                 worldUI.writeStaticEvents("unsolved")
             elif dbs.locationInfo["VISITED"] == 1 and dbs.locationInfo["SOLVED"] == 1 and key == True:
-                worldUI.writeTimedEvents(2, "key")
+                worldUI.writeTimedEvents(4, "key")
                 worldUI.updateRoomStatus("SOLVED")
             elif dbs.locationInfo["VISITED"] == 1 and dbs.locationInfo["SOLVED"] == 1 and key == False:
-                worldUI.writeStaticEvents("solved")
+                events = dbs.locationInfo["UNSOLVED_EVENTS"]
+                eventString = '\n'.join(textwrap.wrap(events[str(l)][1], 75)).format(dbs.PLANET)
+                stringStyle = events[str(l)][0]
+                eventWin.addstr(y, 0, eventString, eng.c[stringStyle])
         elif where == "space":
-            dbs.setLocation(room)
+            dbs.setSpaceLocation(room)
             eng.refreshInfo()
             # setup the title window
             titleWin.clear()
@@ -129,12 +153,12 @@ class worldUI():
             titleWin.addstr(0, 0, title, eng.c["BRIGHT"])
             # display the space travel room
             if dbs.locationInfo["VISITED"] == 0:
-                worldUI.writeTimedEvents(2, "first")
+                worldUI.writeTimedEvents(3, "first")
                 worldUI.updateRoomStatus("VISITED")
             elif dbs.locationInfo["VISITED"] == 1 and dbs.locationInfo["SOLVED"] == 0:
                 worldUI.writeStaticEvents("unsolved")
             elif dbs.locationInfo["VISITED"] == 1 and dbs.locationInfo["SOLVED"] == 1 and key == True:
-                worldUI.writeTimedEvents(2, "key")
+                worldUI.writeTimedEvents(4, "key")
                 worldUI.updateRoomStatus("SOLVED")
             elif dbs.locationInfo["VISITED"] == 1 and dbs.locationInfo["SOLVED"] == 1 and key == False:
                 worldUI.writeStaticEvents("solved")
@@ -147,12 +171,12 @@ class worldUI():
             titleWin.addstr(0, 0, title, eng.c["BRIGHT"])
             # display a normal room
             if dbs.locationInfo["VISITED"] == 0:
-                worldUI.writeTimedEvents(2, "first")
+                worldUI.writeTimedEvents(3, "first")
                 worldUI.updateRoomStatus("VISITED")
             elif dbs.locationInfo["VISITED"] == 1 and dbs.locationInfo["SOLVED"] == 0:
                 worldUI.writeStaticEvents("unsolved")
             elif dbs.locationInfo["VISITED"] == 1 and dbs.locationInfo["SOLVED"] == 1 and key == True:
-                worldUI.writeTimedEvents(2, "key")
+                worldUI.writeTimedEvents(4, "key")
                 worldUI.updateRoomStatus("SOLVED")
             elif dbs.locationInfo["VISITED"] == 1 and dbs.locationInfo["SOLVED"] == 1 and key == False:
                 worldUI.writeStaticEvents("solved")
@@ -206,11 +230,12 @@ class worldUI():
             y, x, l = 1, 0, 0
             # print item count with duplicates, otherwise just print the item
             for item in set(groundList):
+                desc = eng.getGroundDesc(item)
                 if itemCount[item] > 1:
-                    groundString = "{0}x {1}".format(str(itemCount[item]), item)
+                    groundString = "{0}x {1}".format(str(itemCount[item]), desc)
                     groundWin.addstr(y, x, groundString, eng.c["DIM"])
                 else:
-                    groundString = item
+                    groundString = desc
                     groundWin.addstr(y, x, groundString, eng.c["DIM"])
                 if len(groundString) > l:
                     l = len(groundString)
@@ -341,6 +366,7 @@ class worldUI():
         upper = direction.upper()
         lower = direction.lower()
         combatCheck = random.randrange(1, 50)
+        msgWin.clear()
         # link short names to long names
         if lower in worldUI.SHORT_DIRS:
             if lower == "n":
@@ -587,11 +613,6 @@ class worldUI():
                     worldUI.writeMsg(message[0], message[1])
             else:
                 worldUI.writeMsg("Ted doesn't even see that anywhere.", "RED")
-        # run the use command
-        elif cmd == "use":
-            # TODO `use item` in a room triggers the key event
-            # TODO `use item with item` combines two items into one
-            worldUI.writeMsg("TODO: This should allow Ted to use items with the environment, or with another item.", "MAGENTA")
         # run the save command
         elif cmd == "save":
             message = dbs.saveGame()
@@ -607,10 +628,100 @@ class worldUI():
         else:
             raise Exception("Command not found in runAction().")
 
+    def runUseItem(args):
+        # setup common vars
+        cmd = args[0]
+        inv = eng.tempInv()
+        eventWin.clear()
+        groundWin.clear()
+        dirWin.clear()
+        # if 'with' doesn't appear in the command, then do a single item
+        try:
+            withPos = args.index("with")
+        except ValueError:
+            if args[1].upper() == "FLOYDS":
+                item1 = "FLOYDS"
+                item2 = dbs.locationInfo["EVENT_KEYS"][1]
+            elif len(args) == 3:
+                item1 = eng.getFirstItemMatchingDesc("{0} {1}".format(args[1], args[2]), inv)
+                item2 = None
+            elif len(args) == 2:
+                item1 = eng.getFirstItemMatchingDesc(args[1], inv)
+                item2 = None
+        # otherwise, get the item names based on where the 'with' command is
+        else:
+            if withPos == 2 and len(args) == 4:
+                item1 = eng.getFirstItemMatchingDesc(args[1], inv)
+                item2 = eng.getFirstItemMatchingDesc(args[3], inv)
+            elif withPos == 2 and len(args) == 5:
+                item1 = eng.getFirstItemMatchingDesc(args[1], inv)
+                item2 = eng.getFirstItemMatchingDesc("{0} {1}".format(args[3], args[4]), inv)
+            elif withPos == 3 and len(args) == 5:
+                item1 = eng.getFirstItemMatchingDesc("{0} {1}".format(args[1], args[2]), inv)
+                item2 = eng.getFirstItemMatchingDesc(args[4], inv)
+            elif withPos == 3 and len(args) == 6:
+                item1 = eng.getFirstItemMatchingDesc("{0} {1}".format(args[1], args[2]), inv)
+                item2 = eng.getFirstItemMatchingDesc("{0} {1}".format(args[4], args[5]), inv)
+            else:
+                worldUI.writeMsg("You gave me too many arguments, Ted! Try that again.", "RED")
+        if item2 is None and item1 != "FLOYDS":
+            # first check if the event needs a second item or not
+            if len(dbs.locationInfo["EVENT_KEYS"]) > 1:
+                # if it does, check user's inventory for the second item
+                for item in dbs.locationInfo["EVENT_KEYS"]:
+                    # if the user has it, set True
+                    if item in inv:
+                        reqs = True
+                    # if not, set False
+                    else:
+                        reqs = False
+            # if only one item needed, set True
+            else:
+                reqs = True
+            # `use item` in a room triggers the key event
+            if item1 in dbs.locationInfo["EVENT_KEYS"] and reqs is True:
+                worldUI.writeMsg("{0} triggered an event!".format(item1), "BRIGHT_YELLOW")
+                time.sleep(1.5)
+                msgWin.clear()
+                worldUI.writeTimedEvents(4, "key")
+                worldUI.updateRoomStatus("SOLVED")
+            elif item1 in dbs.locationInfo["EVENT_KEYS"] and reqs is False:
+                worldUI.writeMsg("Ted finds a way to use {0} here, but there might be something missing.".format(item1), "DIM_YELLOW")
+            else:
+                worldUI.writeMsg("Ted pokes and prods the room with {0}, but nothing seems to happen.".format(item1), "DIM_YELLOW")
+        elif item2 is not None and item1 == "FLOYDS":
+            if dbs.floydsTransaction(item2, "dec"):
+                worldUI.writeMsg("Paying {0} FLOYDS triggered an event!".format(str(item2)), "BRIGHT_YELLOW")
+                time.sleep(1.5)
+                msgWin.clear()
+                worldUI.writeTimedEvents(4, "key")
+                worldUI.updateRoomStatus("SOLVED")
+            else:
+                worldUI.writeMsg("Ted doesn't have enough FLOYDS for that".format(item1), "DIM_YELLOW")
+        elif item2 is not None:
+            # `use item with item` combines two items into one
+            itemsWithPieces = dbs.items.find( { "PIECES": { "$regex": ".*" } } )
+            comboExists = False
+            for item in itemsWithPieces:
+                newItem = item["NAME"]
+                if item1 and item2 in item["PIECES"]:
+                    dbs.updateInv(item1, "del")
+                    dbs.updateInv(item2, "del")
+                    dbs.updateInv(newItem, "add")
+                    comboExists = True
+                    worldUI.writeMsg("Ted crafts {0} and {1} into {2}!".format(item1, item2, newItem), "BRIGHT_YELLOW")
+            if comboExists == False:
+                worldUI.writeMsg("I don't think {0} and {1} were meant to be together.".format(item1, item2), "DIM_YELLOW")
+        else:
+            worldUI.writeMsg("I'm not sure what to use, Ted.".format(item1), "RED")
+        worldUI.writeInv()
+        worldUI.writeStats()
+        worldUI.writeGround()
+        worldUI.writeDirs()
+
     def getCmd():
         # wait for user input
         while True:
-            msgWin.clear()
             inputWin.clear()
             curses.curs_set(2)
             userInput = inputCmd.edit().lower()
@@ -622,7 +733,9 @@ class worldUI():
                 args.remove("x")
             except ValueError:
                 pass
-            if args[0] in worldUI.ALL_COMMANDS:
+            if args[0] in worldUI.USE_CMDS:
+                worldUI.runUseItem(args)
+            elif args[0] in worldUI.ALL_COMMANDS:
                 if len(args) == 3:
                     worldUI.runAction(args[0], "{0} {1}".format(args[1], args[2]))
                 elif len(args) == 2:

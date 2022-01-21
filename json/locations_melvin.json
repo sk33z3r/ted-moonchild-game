@@ -45,9 +45,8 @@
             "5": [ "BRIGHT_MAGENTA", "OMFUG: \"Whatever, you don' know shit. You jus' got yer panties in a wad over Chaz n the boys.\"" ],
             "6": [ "BRIGHT_CYAN", "TED: \"Tell me what you know, or I'm gonna light this whole place up.\"" ],
             "7": [ "DIM", "Ted pulls out his lighter and ignites it with a swift flick of the flint. He stands ready to chuck it at the distilling gear." ],
-            "8": [ "BRIGHT_MAGENTA", "OMFUG: \"WHOA! Hold on there, buddy. Go get my piercing for me and I'll do ya one better. I lost it backstage somewhere." ],
-            "9": [ "BRIGHT_MAGENTA", "        No need to go pyro on my shit.\"" ],
-            "10": [ "DIM", "Ted puts out the lighter, snags a bottle of moonshine, and heads back to the stairs while giving OMFUG a snarl." ]
+            "8": [ "BRIGHT_MAGENTA", "OMFUG: \"WHOA! Hold on there, buddy. Go get my piercing for me and I'll do ya one better. I lost it backstage somewhere. No need to go pyro on my shit.\"" ],
+            "9": [ "DIM", "Ted puts out the lighter, snags a bottle of moonshine, and heads back to the stairs while giving OMFUG a snarl." ]
         },
         "UNSOLVED_EVENTS": {
             "0": [ "DIM", "OMFUG is still cleaning up the mess he made when Ted barged in. He seems to be breathing heavily." ],
@@ -57,9 +56,9 @@
             "0": [ "BRIGHT_MAGENTA", "OMFUG: \"Well?\"" ],
             "1": [ "DIM", "Ted begrudgingly reaches into his pocket and pulls out the Prince Alert. He tosses it onto the broken glass of the flask OMFUG knocked over." ],
             "2": [ "BRIGHT_MAGENTA", "OMFUG: \"What a dick. Here, take this damn card and get outta my bar. Your boys all got taken to different studios." ],
-            "3": [ "BRIGHT_MAGENTA", "        I know Chaz got carried off to WMG Studios over in the Jorlene sector. They already got a whole thing for him!" ],
-            "4": [ "BRIGHT_MAGENTA", "        For what it's worth, I hope you never find 'em all! Ha!\"" ],
-            "5": [ "BOSS_BATTLE", "OMFUG the Moonshiner" ]
+            "3": [ "BRIGHT_MAGENTA", "I know Chaz got carried off to WMG Studios over in the Jorlene sector. They already got a whole thing for him!" ],
+            "4": [ "BRIGHT_MAGENTA", "For what it's worth, I hope you never find 'em all! Ha!\"" ],
+            "5": [ "DIM_YELLOW", "Boss Battle: OMFUG the Moonshiner will happen here." ]
         },
         "SOLVED_EVENTS": {
             "0": [ "DIM", "OMFUG lies passed out in a pool of his own sick. The distilling gear is still bubbling away." ]
@@ -84,7 +83,7 @@
             "1": [ "DIM", "The bartender can be seen wiping down the bar; last call hasn't been announced." ]
         },
         "KEY_EVENTS": {
-            "0": [ "DIM", "The hippies stop making out for a second as Ted takes a hit from the joint." ],
+            "0": [ "DIM", "The hippies stop making out for a second as Ted takes a hit." ],
             "1": [ "BRIGHT_MAGENTA", "HIPPY DUDE: \"Hey buddy, mind if we take a hit?\"" ],
             "2": [ "DIM", "Ted nods while holding in the smoke and reaches out to the hippies with the joint." ],
             "3": [ "BRIGHT_MAGENTA", "HIPPY DUDETTE: \"Far out, man.\"" ],
@@ -95,7 +94,7 @@
         },
         "EVENT_KEYS": [ "Lit Joint" ],
         "ADD_GROUND": [ "Drumstick Bottom" ],
-        "NORTH": "Zappa Parking Lot",
+        "NORTH": "Zappa Lot",
         "EAST": "EBGB Bar",
         "SOUTH": "EBGB Stage",
         "WEST": "EBGB Jukebox",
@@ -127,6 +126,7 @@
         },
         "EVENT_KEYS": [ "EBGB Moonshine" ],
         "ADD_GROUND": [ "Prince Albert" ],
+        "DEL_GROUND": [ "Used Condom" ],
         "WEST": "EBGB Stage",
         "PLANET": "Zappa",
         "SECTOR": "Melvin Sector",
@@ -149,9 +149,9 @@
         },
         "KEY_EVENTS": {
             "0": [ "DIM", "Ted rolls up the note and sets it on fire, then pokes at the viscous liquid. The blob reacts and wiggles, then starts reaching for the paper." ],
-            "1": [ "DIM", "Ted is startled and pulls his hand away. The viscous blob starts to flow from the crack faster towards the ground, like it's melting." ],
+            "1": [ "DIM", "Ted is startled and drops the flaming paper. The viscous blob starts to flow from the crack faster towards the ground, like it's melting." ],
             "2": [ "BRIGHT_CYAN", "TED: \"What the fuck...\"" ],
-            "3": [ "DIM", "The blob slimes its way down the wall until it pools up at his feet. Ted nudges the blob with his foot, and it holds together surprisingly well." ],
+            "3": [ "DIM", "The blob slimes its way down the wall until it pools up at his feet and consumes the paper. Ted nudges the blob with his foot, and it holds together surprisingly well." ],
             "4": [ "DIM", "There's a thick odor of farts coming from the blob" ],
             "5": [ "BRIGHT_CYAN", "TED: \"I bet this is off-gassing methane, maybe I can use this thing.\""]
         },
@@ -188,9 +188,9 @@
             "0": []
         },
         "EVENT_KEYS": [],
-        "NORTH": "Zappa Parking Lot",
+        "NORTH": "Zappa Lot",
         "WEST": "EBGB Dance Floor",
-        "SHOP": [ "Dark Matter Ale", "Gormeson Whiskey" ],
+        "SHOP": [ "DM Ale", "Gormeson Whiskey" ],
         "PLANET": "Zappa",
         "SECTOR": "Melvin Sector",
         "GROUND": [],
@@ -220,7 +220,7 @@
             "1": [ "BLINK_BRIGHT_YELLOW", "OUT OF ORDER" ]
         },
         "EVENT_KEYS": [ "FLOYDS", 5 ],
-        "NORTH": "Zappa Parking Lot",
+        "NORTH": "Zappa Lot",
         "EAST": "EBGB Dance Floor",
         "PLANET": "Zappa",
         "SECTOR": "Melvin Sector",
@@ -229,7 +229,7 @@
         "SOLVED": 0
     },
     {
-        "NAME": "Zappa Parking Lot",
+        "NAME": "Zappa Lot",
         "FIRST_EVENTS": {
             "0": [ "DIM", "Ted leaves EBGBs to find his sweet looking Winnibego in the parking lot." ],
             "1": [ "DIM", "There are two other ships parked here, one is real fancy lookin'. OMFUG must still be inside somewhere." ]
@@ -271,7 +271,7 @@
             "0": []
         },
         "EVENT_KEYS": [],
-        "WEST": "Mactel 6 Parking Lot",
+        "WEST": "Mactel 6 Lot",
         "SHOP": [ "Magic Mushies", "ACiD", "Mescalin", "Amanitas" ],
         "PLANET": "Mactel 6",
         "SECTOR": "Melvin Sector",
@@ -280,11 +280,11 @@
         "SOLVED": 0
     },
     {
-        "NAME": "Mactel 6 Parking Lot",
+        "NAME": "Mactel 6 Lot",
         "FIRST_EVENTS": {
             "0": [ "DIM", "As Ted exits the Winnie, he's hit with a stiff and pungent odor." ],
             "1": [ "BRIGHT_CYAN", "TED: \"Holy shit! What died on this planet?\"" ],
-            "3": [ "DIM", "As Ted pulls his shirt up over his mouth and nose to filter the putrid smell, he notices a dark alleyway to the east." ]
+            "2": [ "DIM", "As Ted pulls his shirt up over his mouth and nose to filter the putrid smell, he notices a dark alleyway to the east." ]
         },
         "UNSOLVED_EVENTS": {
             "0": [ "DIM", "There's not much happening. Ted's Winnibego is parked here." ],
@@ -298,6 +298,7 @@
         },
         "EVENT_KEYS": [],
         "EAST": "The Trash Warrens",
+        "UP": "Winnibego",
         "SHOP": [],
         "PLANET": "Mactel 6",
         "SECTOR": "Melvin Sector",
