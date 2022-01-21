@@ -148,10 +148,10 @@
             "1": [ "DIM", "Ted notices a strange, viscous drip coming from a crack in the wall of one of the stalls." ]
         },
         "KEY_EVENTS": {
-            "0": [ "DIM", "Ted rolls up the note and pokes at the viscous liquid. The blob reacts and wiggles, then starts reaching for the paper." ],
-            "1": [ "DIM", "Ted is startled and pulls his hand away. The viscous blob starts to flow from the crack faster towards the ground." ],
+            "0": [ "DIM", "Ted rolls up the note and sets it on fire, then pokes at the viscous liquid. The blob reacts and wiggles, then starts reaching for the paper." ],
+            "1": [ "DIM", "Ted is startled and pulls his hand away. The viscous blob starts to flow from the crack faster towards the ground, like it's melting." ],
             "2": [ "BRIGHT_CYAN", "TED: \"What the fuck...\"" ],
-            "3": [ "DIM", "The blob slimes its way down the wall until it pools up at his feet. Ted nudges the blob with feet, and it holds together surprisingly well." ],
+            "3": [ "DIM", "The blob slimes its way down the wall until it pools up at his feet. Ted nudges the blob with his foot, and it holds together surprisingly well." ],
             "4": [ "DIM", "There's a thick odor of farts coming from the blob" ],
             "5": [ "BRIGHT_CYAN", "TED: \"I bet this is off-gassing methane, maybe I can use this thing.\""]
         },
