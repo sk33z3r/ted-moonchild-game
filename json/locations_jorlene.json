@@ -1,0 +1,54 @@
+[
+    {
+        "NAME": "Dagobar Parking Lot",
+        "FIRST_EVENTS": {
+            "0": []
+        },
+        "UNSOLVED_EVENTS": {
+            "0": []
+        },
+        "KEY_EVENTS": {
+            "0": []
+        },
+        "SOLVED_EVENTS": {
+            "0": []
+        },
+        "EVENT_KEYS": [],
+        "ADD_DIRS": {
+            "0": []
+        },
+        "NORTH": "Dagobar Entrance",
+        "WEST": "Dagobar Alley",
+        "UP": "Winnibego",
+        "PLANET": "Dagobar",
+        "SECTOR": "Jorlene Sector",
+        "GROUND": [],
+        "VISITED": 0,
+        "SOLVED": 0
+    },
+    {
+        "NAME": "WMG Studios Parking Lot",
+        "FIRST_EVENTS": {
+            "0": []
+        },
+        "UNSOLVED_EVENTS": {
+            "0": []
+        },
+        "KEY_EVENTS": {
+            "0": []
+        },
+        "SOLVED_EVENTS": {
+            "0": []
+        },
+        "EVENT_KEYS": [],
+        "ADD_DIRS": {
+            "0": []
+        },
+        "UP": "Winnibego",
+        "PLANET": "WMG Studios",
+        "SECTOR": "Jorlene Sector",
+        "GROUND": [],
+        "VISITED": 0,
+        "SOLVED": 0
+    }
+]

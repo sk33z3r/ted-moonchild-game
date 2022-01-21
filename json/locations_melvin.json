@@ -1,0 +1,308 @@
+[
+    {
+        "NAME": "EBGB Stage",
+        "FIRST_EVENTS": {
+            "0": [ "DIM", "Ted finishes wrapping cables and tearing down the stage." ],
+            "1": [ "BRIGHT_CYAN", "TED: \"I'm gettin' too old for this shit, but that was a damn fine show.\"" ],
+            "2": [ "DIM", "Ted reminisces of the sweet breakdowns and face melters the boys laid down tonight. He knows that he's found the right mixture this time, it's time to get started on the ultimate metal album this universe has ever seen." ],
+            "3": [ "DIM", "Ted looks around, but he doesn't see the band anywhere. Just a few stragglers from the audience." ],
+            "4": [ "DIM", "Ted can hear faint bubbling from somewhere." ]
+        },
+        "UNSOLVED_EVENTS": {
+            "0": [ "DIM", "The bar is winding down for the night. Ted can hear faint bubbling from somewhere." ]
+        },
+        "KEY_EVENTS": {
+            "0": [ "DIM", "Ted looks around and finds a strange latch on the floor under the drums. He shoves his screwdriver into a metal ring on the latch and pulls up hard." ],
+            "1": [ "DIM", "There's a loud snap as the screwdriver breaks, and a clunk underneath the stage. The whole drum kit begins to move and shift forward, revealing a stairway leading down into the basement." ],
+            "2": [ "BRIGHT_CYAN", "TED: \"That sneaky bastard, OMFUG... I wonder what he's up to down there.\""],
+            "3": [ "DIM", "There's a dim, pulsating light and bubbling noises coming from the stairs." ]
+        },
+        "SOLVED_EVENTS": {
+            "0": [ "DIM", "The bar is winding down for the night." ],
+            "1": [ "DIM", "There's a dim, pulsating light and bubbling noises coming from the stairs." ]
+        },
+        "EVENT_KEYS": [ "Screwdriver" ],
+        "ADD_DIRS": {
+            "0": [ "DOWN", "EBGB Basement" ]
+        },
+        "NORTH": "EBGB Dance Floor",
+        "EAST": "EBGB Backstage",
+        "WEST": "EBGB Bathrooms",
+        "PLANET": "Zappa",
+        "SECTOR": "Melvin Sector",
+        "GROUND": [ "Empty Bottle", "Stack of Cables", "EBGB Drums" ],
+        "VISITED": 0,
+        "SOLVED": 0
+    },
+    {
+        "NAME": "EBGB Basement",
+        "FIRST_EVENTS": {
+            "0": [ "DIM", "Ted bashes in the door, startling OMFUG hunched over a table." ],
+            "1": [ "DIM", "OMFUG turns around quickly, knocking over a flask filled with bubbling liquid. The table is covered in a chemistry contraption with liquid dripping slowly into a glass jar." ],
+            "2": [ "BRIGHT_MAGENTA", "OMFUG: \"Ack! How'd you get down here, Ted?\"" ],
+            "3": [ "DIM", "OMFUG is a blubbery pile of lard known as a Beefheart. He really lives up to his nickname, 'One Mother Fuckin' Ugly Guy.'" ],
+            "4": [ "BRIGHT_CYAN", "TED: \"Jesus, OMFUG. I knew you were up to somethin', but moonshine? Isn't that a little... obvious?\"" ],
+            "5": [ "BRIGHT_MAGENTA", "OMFUG: \"Whatever, you don' know shit. You jus' got yer panties in a wad over Chaz n the boys.\"" ],
+            "6": [ "BRIGHT_CYAN", "TED: \"Tell me what you know, or I'm gonna light this whole place up.\"" ],
+            "7": [ "DIM", "Ted pulls out his lighter and ignites it with a swift flick of the flint. He stands ready to chuck it at the distilling gear." ],
+            "8": [ "BRIGHT_MAGENTA", "OMFUG: \"WHOA! Hold on there, buddy. Go get my piercing for me and I'll do ya one better. I lost it backstage somewhere." ],
+            "9": [ "BRIGHT_MAGENTA", "        No need to go pyro on my shit.\"" ],
+            "10": [ "DIM", "Ted puts out the lighter, snags a bottle of moonshine, and heads back to the stairs while giving OMFUG a snarl." ]
+        },
+        "UNSOLVED_EVENTS": {
+            "0": [ "DIM", "OMFUG is still cleaning up the mess he made when Ted barged in. He seems to be breathing heavily." ],
+            "1": [ "BRIGHT_MAGENTA", "OMFUG: \"Found my thingy, yet? Or you just watchin' me like a loaf?\"" ]
+        },
+        "KEY_EVENTS": {
+            "0": [ "BRIGHT_MAGENTA", "OMFUG: \"Well?\"" ],
+            "1": [ "DIM", "Ted begrudgingly reaches into his pocket and pulls out the Prince Alert. He tosses it onto the broken glass of the flask OMFUG knocked over." ],
+            "2": [ "BRIGHT_MAGENTA", "OMFUG: \"What a dick. Here, take this damn card and get outta my bar. Your boys all got taken to different studios." ],
+            "3": [ "BRIGHT_MAGENTA", "        I know Chaz got carried off to WMG Studios over in the Jorlene sector. They already got a whole thing for him!" ],
+            "4": [ "BRIGHT_MAGENTA", "        For what it's worth, I hope you never find 'em all! Ha!\"" ],
+            "5": [ "BOSS_BATTLE", "OMFUG the Moonshiner" ]
+        },
+        "SOLVED_EVENTS": {
+            "0": [ "DIM", "OMFUG lies passed out in a pool of his own sick. The distilling gear is still bubbling away." ]
+        },
+        "EVENT_KEYS": [ "Prince Albert" ],
+        "ADD_GROUND": [ "WMG Keycard" ],
+        "UP": "EBGB Stage",
+        "PLANET": "Zappa",
+        "SECTOR": "Melvin Sector",
+        "GROUND": [ "EBGB Moonshine" ],
+        "VISITED": 0,
+        "SOLVED": 0
+    },
+    {
+        "NAME": "EBGB Dance Floor",
+        "FIRST_EVENTS": {
+            "0": [ "DIM", "Ted walks out onto the dance floor. There are two drunken hippies making out furiously. Ted tries to ignore them." ],
+            "1": [ "DIM", "The bartender can be seen wiping down the bar; last call hasn't been announced." ]
+        },
+        "UNSOLVED_EVENTS": {
+            "0": [ "DIM", "Ted walks out onto the dance floor. There are two drunken hippies making out furiously. Ted tries to ignore them." ],
+            "1": [ "DIM", "The bartender can be seen wiping down the bar; last call hasn't been announced." ]
+        },
+        "KEY_EVENTS": {
+            "0": [ "DIM", "The hippies stop making out for a second as Ted takes a hit from the joint." ],
+            "1": [ "BRIGHT_MAGENTA", "HIPPY DUDE: \"Hey buddy, mind if we take a hit?\"" ],
+            "2": [ "DIM", "Ted nods while holding in the smoke and reaches out to the hippies with the joint." ],
+            "3": [ "BRIGHT_MAGENTA", "HIPPY DUDETTE: \"Far out, man.\"" ],
+            "4": [ "DIM", "They manage to get two deep pulls from the joint before it's done. The hippies turn and walk to the exit throwing up the peace sign to Ted. Something falls onto the ground as they walk away." ]
+        },
+        "SOLVED_EVENTS": {
+            "0": [ "DIM", "The bartender can be seen wiping down the bar; last call hasn't been announced."]
+        },
+        "EVENT_KEYS": [ "Lit Joint" ],
+        "ADD_GROUND": [ "Drumstick Bottom" ],
+        "NORTH": "Zappa Parking Lot",
+        "EAST": "EBGB Bar",
+        "SOUTH": "EBGB Stage",
+        "WEST": "EBGB Jukebox",
+        "PLANET": "Zappa",
+        "SECTOR": "Melvin Sector",
+        "GROUND": [ "Guitar Pick", "Drumstick Tip" ],
+        "VISITED": 0,
+        "SOLVED": 0
+    },
+    {
+        "NAME": "EBGB Backstage",
+        "FIRST_EVENTS": {
+            "0": [ "DIM", "Ted finds himself trudging through a sea of beer cans, roaches, and used condoms. Lying on top of a case is a grungy white guitar that was used by the cover band." ],
+            "1": [ "BRIGHT_CYAN", "TED: \"Dumb ass left his guitar.\"" ],
+            "2": [ "DIM", "As ted reaches for the guitar, he notices a condom stuck to the table, right next to a note in Chaz's handwriting." ]
+        },
+        "UNSOLVED_EVENTS": {
+            "0": [ "DIM", "Ted grimaces at the extensive grunge in this part of the bar." ],
+            "1": [ "DIM", "The condom is still stuck to the table. He might contract space-AIDs if he's not careful." ]
+        },
+        "KEY_EVENTS": {
+            "0": [ "DIM", "Ted pours the moonshine onto the condom and it begins to fizzle and fester like a rabid dog's mouth." ],
+            "1": [ "DIM", "After a few seconds, the condom and parts of the table have been completely dissolved by the moonshine." ],
+            "2": [ "BRIGHT_CYAN", "TED: \"Damn. OMFUG isn't messing around.\"" ],
+            "3": [ "DIM", "Once the condom and moonshine evaporates, Ted sees a genital piercing laying on the ground." ]
+        },
+        "SOLVED_EVENTS": {
+            "0": [ "DIM", "Ted still grimaces at the extensive grunge in this part of the bar, but at least the condom is gone now." ]
+        },
+        "EVENT_KEYS": [ "EBGB Moonshine" ],
+        "ADD_GROUND": [ "Prince Albert" ],
+        "WEST": "EBGB Stage",
+        "PLANET": "Zappa",
+        "SECTOR": "Melvin Sector",
+        "GROUND": [ "Squire Strat", "Used Condom", "Chaz Note" ],
+        "VISITED": 0,
+        "SOLVED": 0
+    },
+    {
+        "NAME": "EBGB Bathrooms",
+        "FIRST_EVENTS": {
+            "0": [ "DIM", "The smell of piss and shit from the hippies at the show tonight is overbearing." ],
+            "1": [ "BRIGHT_CYAN", "TED: \"I swear I'm going to murder every hippy in the galaxy. Need to find the guys, first.\"" ],
+            "2": [ "DIM", "The faint odor of cannabis lingers from a stall." ],
+            "3": [ "DIM", "Ted kicks the door in to find a startled hippy. Thinking quickly, the hippy offers a lit joint to Ted." ],
+            "4": [ "BRIGHT_MAGENTA", "HIPPY: \"Wanna hit, dude?\"" ]
+        },
+        "UNSOLVED_EVENTS": {
+            "0": [ "DIM", "The hippy lit another joint, but he didn't bother to close the stall this time." ],
+            "1": [ "DIM", "Ted notices a strange, viscous drip coming from a crack in the wall of one of the stalls." ]
+        },
+        "KEY_EVENTS": {
+            "0": [ "DIM", "Ted rolls up the note and pokes at the viscous liquid. The blob reacts and wiggles, then starts reaching for the paper." ],
+            "1": [ "DIM", "Ted is startled and pulls his hand away. The viscous blob starts to flow from the crack faster towards the ground." ],
+            "2": [ "BRIGHT_CYAN", "TED: \"What the fuck...\"" ],
+            "3": [ "DIM", "The blob slimes its way down the wall until it pools up at his feet. Ted nudges the blob with feet, and it holds together surprisingly well." ],
+            "4": [ "DIM", "There's a thick odor of farts coming from the blob" ],
+            "5": [ "BRIGHT_CYAN", "TED: \"I bet this is off-gassing methane, maybe I can use this thing.\""]
+        },
+        "SOLVED_EVENTS": {
+            "0": [ "DIM", "The smell of weed is gone, but Ted can still smell farts and hippy. The stall door is closed and Ted can hear snoring through it." ]
+        },
+        "EVENT_KEYS": [ "Chaz Note" ],
+        "ADD_GROUND": [ "Schnitmuckle" ],
+        "EAST": "EBGB Stage",
+        "PLANET": "Zappa",
+        "SECTOR": "Melvin Sector",
+        "GROUND": [ "Lit Joint" ],
+        "VISITED": 0,
+        "SOLVED": 0
+    },
+    {
+        "NAME": "EBGB Bar",
+        "FIRST_EVENTS": {
+            "0": [ "DIM", "Ted sizes up the bartender. He's a large rotund individual from the planet Zappa. Best not to try anything stupid with him." ],
+            "1": [ "BRIGHT_MAGENTA", "BONGO: \"Whatchoo won' Ted?\"" ],
+            "2": [ "BRIGHT_CYAN", "TED: \"Where'd Chaz and the band go?\"" ],
+            "3": [ "BRIGHT_MAGENTA", "BONGO: \"Heh, they hitched a ride with some fancy-pants producer." ],
+            "4": [ "BRIGHT_MAGENTA", "        They don' need you no more, Ted." ],
+            "5": [ "BRIGHT_MAGENTA", "        You bes' buy somethin' or get the hell outta here\"" ]
+        },
+        "UNSOLVED_EVENTS": {
+            "0": [ "DIM", "Bongo is done cleaning up the bar and sitting on a barstool sipping a whiskey, neat, with a half-empty bottle of Gormeson's next to him." ],
+            "1": [ "BRIGHT_MAGENTA", "BONGO: \"Damnit, Ted. Buy somethin' er leave.\""]
+        },
+        "KEY_EVENTS": {
+            "0": []
+        },
+        "SOLVED_EVENTS": {
+            "0": []
+        },
+        "EVENT_KEYS": [],
+        "NORTH": "Zappa Parking Lot",
+        "WEST": "EBGB Dance Floor",
+        "SHOP": [ "Dark Matter Ale", "Gormeson Whiskey" ],
+        "PLANET": "Zappa",
+        "SECTOR": "Melvin Sector",
+        "GROUND": [],
+        "VISITED": 0,
+        "SOLVED": 0
+    },
+    {
+        "NAME": "EBGB Jukebox",
+        "FIRST_EVENTS": {
+            "0": [ "DIM", "Ted needs to listen to some tunes, so he walks over to the ratty Jukebox that's probably been here for centuries." ],
+            "1": [ "DIM", "There are 4 buttons, and a blinking slot with text that reads:" ],
+            "2": [ "BLINK_BRIGHT_GREEN", "INSERT 5 FLOYDS" ]
+        },
+        "UNSOLVED_EVENTS": {
+            "0": [ "DIM", "There are 4 buttons, and a blinking slot with text that reads:" ],
+            "1": [ "BLINK_BRIGHT_GREEN", "INSERT 5 FLOYDS" ]
+        },
+        "KEY_EVENTS": {
+            "0": [ "DIM", "Ted drops 5 FLOYDS into the slot. He can hear them fall and clink around in the machine." ],
+            "1": [ "DIM", "A new message appears on-screen, blinking yellow:" ],
+            "2": [ "BLINK_BRIGHT_YELLOW", "OUT OF ORDER" ],
+            "3": [ "BRIGHT_CYAN", "TED: \"Fuckin' dive bars.\"" ],
+            "4": [ "DIM", "Ted smashes several buttons, but nothing happens." ]
+        },
+        "SOLVED_EVENTS": {
+            "0": [ "DIM", "There are 4 buttons, and a blinking slot with text that reads:" ],
+            "1": [ "BLINK_BRIGHT_YELLOW", "OUT OF ORDER" ]
+        },
+        "EVENT_KEYS": [ "FLOYDS", 5 ],
+        "NORTH": "Zappa Parking Lot",
+        "EAST": "EBGB Dance Floor",
+        "PLANET": "Zappa",
+        "SECTOR": "Melvin Sector",
+        "GROUND": [],
+        "VISITED": 0,
+        "SOLVED": 0
+    },
+    {
+        "NAME": "Zappa Parking Lot",
+        "FIRST_EVENTS": {
+            "0": [ "DIM", "Ted leaves EBGBs to find his sweet looking Winnibego in the parking lot." ],
+            "1": [ "DIM", "There are two other ships parked here, one is real fancy lookin'. OMFUG must still be inside somewhere." ]
+        },
+        "UNSOLVED_EVENTS": {
+            "0": [ "DIM", "Ted's Winnibego is parked here." ],
+            "1": [ "DIM", "EBGB's is to the south." ]
+        },
+        "KEY_EVENTS": {
+            "0": []
+        },
+        "SOLVED_EVENTS": {
+            "0": []
+        },
+        "EVENT_KEYS": [],
+        "UP": "Winnibego",
+        "SOUTH": "EBGB Bar",
+        "PLANET": "Zappa",
+        "SECTOR": "Melvin Sector",
+        "GROUND": [],
+        "VISITED": 0,
+        "SOLVED": 0
+    },
+    {
+        "NAME": "The Trash Warrens",
+        "FIRST_EVENTS": {
+            "0": [ "DIM", "Ted finds himself in a dark alley with a layer of thick smoke. Lounging before him, on a mound of used condoms and empty Dark Matter Ale bottles, there's a rough looking buzzoid hobo smoking what looks to be a joint made of trash." ],
+            "1": [ "BRIGHT_MAGENTA", "HOBO: \"What'll ya be havin', stranger?\"" ],
+            "2": [ "DIM", "The hobo smirks maniacally and opens his shitty excuse for wings to reveal a smorgasbord of psychedelic drugs." ]
+        },
+        "UNSOLVED_EVENTS": {
+            "0": [ "BRIGHT_MAGENTA", "HOBO: \"Ya still want somethin' er not?\"" ],
+            "1": [ "DIM", "The hobo takes another big draw from the joint of trash and exhales into Ted's face." ]
+        },
+        "KEY_EVENTS": {
+            "0": []
+        },
+        "SOLVED_EVENTS": {
+            "0": []
+        },
+        "EVENT_KEYS": [],
+        "WEST": "Mactel 6 Parking Lot",
+        "SHOP": [ "Magic Mushies", "ACiD", "Mescalin", "Amanitas" ],
+        "PLANET": "Mactel 6",
+        "SECTOR": "Melvin Sector",
+        "GROUND": [],
+        "VISITED": 0,
+        "SOLVED": 0
+    },
+    {
+        "NAME": "Mactel 6 Parking Lot",
+        "FIRST_EVENTS": {
+            "0": [ "DIM", "As Ted exits the Winnie, he's hit with a stiff and pungent odor." ],
+            "1": [ "BRIGHT_CYAN", "TED: \"Holy shit! What died on this planet?\"" ],
+            "3": [ "DIM", "As Ted pulls his shirt up over his mouth and nose to filter the putrid smell, he notices a dark alleyway to the east." ]
+        },
+        "UNSOLVED_EVENTS": {
+            "0": [ "DIM", "There's not much happening. Ted's Winnibego is parked here." ],
+            "1": [ "DIM", "A peculiar looking alley lies to the east." ]
+        },
+        "KEY_EVENTS": {
+            "0": []
+        },
+        "SOLVED_EVENTS": {
+            "0": []
+        },
+        "EVENT_KEYS": [],
+        "EAST": "The Trash Warrens",
+        "SHOP": [],
+        "PLANET": "Mactel 6",
+        "SECTOR": "Melvin Sector",
+        "GROUND": [],
+        "VISITED": 0,
+        "SOLVED": 0
+    }
+]

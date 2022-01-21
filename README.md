@@ -21,14 +21,7 @@
 
 ## Notes
 
-* 170 x 47 is base assumed max terminal size
-* Following commands entered into bash will show column and line size for terminal window.
-  * `tput cols`
-  * `tput lines`
-* Command line arguments:
-  * `python main.py [-d|--debug]` - Prints game calculations and results to console output.
-  * `python main.py [-nc|--nocolor]` - Turns off colorama styles.
-  * `python main.py [-w|--width] INT` - Specifies the terminal output width
+* 110 x 40 is the minimum terminal size
 
 ## Combat Turn Logic
 

@@ -1,11 +1,9 @@
 [
     {
         "SECTION": "location",
-        "NAME": "EBGB Stage"
-    },
-    {
-        "SECTION": "prefs",
-        "EXITS": "full"
+        "NAME": "EBGB Stage",
+        "PLANET": "Zappa",
+        "SECTOR": "Melvin"
     },
     {
         "SECTION": "stats",
@@ -13,19 +11,20 @@
         "HPMAX": 50,
         "MP": 15,
         "MPMAX": 15,
-        "FLOYDS": 10,
+        "FLOYDS": 25,
         "LVL": 1,
         "XP": 0
     },
     {
         "SECTION": "inventory",
-        "ITEMS": [ "Protection" ],
+        "ITEMS": [ "Cigarette", "Ham Sandwich", "DMT", "DMT", "DMT", "DMT" ],
         "KEY_ITEMS": [ "Winnibego Keys" ],
         "EQUIPPED": []
     },
     {
         "SECTION": "equipped",
         "WEAPON": "Fists",
-        "FX": "noFX"
+        "FX": "noFX",
+        "HEAD": "Hair"
     }
 ]
