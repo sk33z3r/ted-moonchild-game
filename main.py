@@ -1,4 +1,6 @@
-import os, natsort, time
+import os
+from time import sleep
+from natsort import natsorted
 import engine as eng
 import database as dbs
 import art
@@ -41,7 +43,7 @@ def menu():
                 print("             =======================================\n")
                 slots = [ "_index" ]
                 i = 1
-                for s in natsort.natsorted(os.listdir("./save-states")):
+                for s in natsorted(os.listdir("./save-states")):
                     print("  [" + str(i) + "] - " + s)
                     slots.append(s)
                     i += 1
@@ -56,7 +58,7 @@ def menu():
                             dbs.loadGame(slots[int(slotChoice)])
                         except:
                             print("Save slot doesn't exist!")
-                            time.sleep(2)
+                            sleep(2)
                             continue
                         startGame("load")
                         break
@@ -66,7 +68,7 @@ def menu():
                         break
                     else:
                         print("Save slot doesn't exist!")
-                        time.sleep(2)
+                        sleep(2)
                         continue
                 else:
                     eng.clear()
@@ -109,7 +111,7 @@ def menu():
                         print("Save Slots Found:")
                         for s in slots:
                             print("  " + s)
-                        time.sleep(3)
+                        sleep(3)
                         print("Returning to the title screen.")
                         break
                     dbs.newGame(slotName)
@@ -124,11 +126,11 @@ def menu():
                     ans = input(eng.PROMPT)
                     if ans == "n" or ans == "no":
                         print("Not Overwriting.")
-                        time.sleep(2)
+                        sleep(2)
                         continue
                     elif ans == "y" or ans == "yes":
                         print("Okay, overwriting save slot with a new game!")
-                        time.sleep(1)
+                        sleep(1)
                         dbs.deleteSave(slotName, True)
                         dbs.newGame(slotName)
                         startGame("new")

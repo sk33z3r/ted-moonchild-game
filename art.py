@@ -1,4 +1,4 @@
-import time
+from time import sleep
 import engine as eng
 
 # http://www.text-image.com/convert/ascii.html
@@ -39,19 +39,19 @@ def printLogo():
 
 def introAnimation():
     eng.clear()
-    time.sleep(1)
+    sleep(1)
     print(intro1 + "\n")
-    time.sleep(1)
+    sleep(1)
     print(intro2 + "\n")
-    time.sleep(1)
+    sleep(1)
     print(intro3 + "\n")
-    time.sleep(1)
+    sleep(1)
     print(intro4 + "\n")
-    time.sleep(1)
+    sleep(1)
     print(intro5 + "\n")
-    time.sleep(3)
+    sleep(3)
     eng.clear()
     print(logo1)
     print(logo2)
     print(logo3)
-    time.sleep(3)
+    sleep(3)

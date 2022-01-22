@@ -1,4 +1,7 @@
-import curses, os, sys, time, random, argparse, cmd, json, natsort
+import curses, sys
+from os import system
+from time import sleep
+from natsort import natsorted
 import database as dbs
 from world import worldUI
 import art
@@ -22,7 +25,7 @@ def identify_os():
 
 # clear the terminal
 def clear():
-    os.system(identify_os())
+    system(identify_os())
 
 def setStyles():
     # define globals
@@ -134,7 +137,7 @@ def tempInv():
     for i in dbs.playerInv["EQUIPPED"]:
         inv.append(dbs.playerInv["EQUIPPED"][n])
         n += 1
-    inv = natsort.natsorted(inv)
+    inv = natsorted(inv)
     return inv
 
 # function to buy and sell items

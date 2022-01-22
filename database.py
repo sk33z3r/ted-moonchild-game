@@ -1,4 +1,5 @@
-import pymongo, json, os, shutil, re, time
+import pymongo, os, json, re
+from shutil import rmtree
 from bson.json_util import dumps
 import engine as eng
 
@@ -27,7 +28,7 @@ def deleteSave(n, rm):
     if rm == True:
         path = "{0}/{1}".format(savesPath, n)
         if os.path.exists(path):
-            shutil.rmtree(path)
+            rmtree(path)
 
 # set a new location
 def setLocation(n):
