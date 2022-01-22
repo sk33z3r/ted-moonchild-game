@@ -130,7 +130,7 @@
         "WEST": "EBGB Stage",
         "PLANET": "Zappa",
         "SECTOR": "Melvin Sector",
-        "GROUND": [ "Squire Strat", "Used Condom", "Chaz Note" ],
+        "GROUND": [ "Squire Strat", "Used Condom", "Chaz's Note" ],
         "VISITED": 0,
         "SOLVED": 0
     },
@@ -158,7 +158,7 @@
         "SOLVED_EVENTS": {
             "0": [ "DIM", "The smell of weed is gone, but Ted can still smell farts and hippy. The stall door is closed and Ted can hear snoring through it." ]
         },
-        "EVENT_KEYS": [ "Chaz Note" ],
+        "EVENT_KEYS": [ "Chaz's Note" ],
         "ADD_GROUND": [ "Schnitmuckle" ],
         "EAST": "EBGB Stage",
         "PLANET": "Zappa",
@@ -190,7 +190,7 @@
         "EVENT_KEYS": [],
         "NORTH": "Zappa Lot",
         "WEST": "EBGB Dance Floor",
-        "SHOP": [ "DM Ale", "Gormeson Whiskey" ],
+        "SHOP": [ "DM Ale", "Whiskey" ],
         "PLANET": "Zappa",
         "SECTOR": "Melvin Sector",
         "GROUND": [],

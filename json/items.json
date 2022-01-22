@@ -106,7 +106,7 @@
         "DESCWORDS": [ "keycard", "wmg keycard", "access card" ]
     },
     {
-        "NAME": "Chaz Note",
+        "NAME": "Chaz's Note",
         "GROUNDDESC": "Handwritten note",
         "SHORTDESC": "the note",
         "LONGDESC": "A note in Chaz's sloppy handwriting: \"Yo Ted, a scout at the show wants us to sign with 'em. We're heading to their station after the gig, see you later bro.\"",
@@ -212,8 +212,8 @@
         "DESCWORDS": [ "ale", "bottle of ale", "dark matter ale" ]
     },
     {
-        "NAME": "Gormeson Whiskey",
-        "GROUNDDESC": "Fine Whiskey",
+        "NAME": "Whiskey",
+        "GROUNDDESC": "Bottle of Gormeson's",
         "SHORTDESC": "the whiskey",
         "LONGDESC": "Jarmax Gormeson always used to say, \"Talk is cheap, it takes money to buy whiskey.\" Maybe this will give Ted the motivation needed for that album.",
         "TAKEABLE": true,
