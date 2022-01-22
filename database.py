@@ -53,8 +53,10 @@ def setSpaceLocation(sector):
     global ROOM
     global SECTOR
     global PLANET
-    player.update_one( { "SECTION": "location" }, { "$set": { "NAME": "space" } } )
-    locationInfo = locations.find_one( { "$and": { { "NAME": "space" }, { "SECTOR": sector } } } )
+    player.update_one( { "SECTION": "location" }, { "$set": { "NAME": "Space" } } )
+    locationInfo = locations.find_one( { "NAME": "Space" } )
+    locations.update_one( { "NAME": "Winnibego" }, { "$set": { "SECTOR": sector } } )
+    locations.update_one( { "NAME": "Space" }, { "$set": { "SECTOR": sector } } )
     ROOM = locationInfo["NAME"]
     SECTOR = locationInfo["SECTOR"]
     PLANET = locationInfo["PLANET"]

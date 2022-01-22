@@ -41,13 +41,56 @@ class worldUI():
             if "DEL_DIRS" in dbs.locationInfo:
                 d = 0
                 while d < len(dbs.locationInfo["DEL_DIRS"]):
-                    dbs.locations.update_one( { "NAME": dbs.ROOM }, { "$unset": { dbs.locationInfo["DEL_DIRS"][str(d)][0] : dbs.locationInfo["DEL_DIRS"][str(d)][1] } } )
+                    dbs.locations.update_one( { "NAME": dbs.ROOM }, { "$unset": { dbs.locationInfo["DEL_DIRS"][str(d)][0] : "" } } )
                     d += 1
             # remove item from player's inventory
             for item in dbs.locationInfo["EVENT_KEYS"]:
                 if item != "FLOYDS" and not type(item) == int:
                     dbs.updateInv(item, "del")
         eng.refreshInfo()
+
+    def updateSectorStatus(sector):
+        sectorShort = sector.replace(" Sector", "")
+        dbs.locations.update_one( { "NAME": "Space" }, { "$set": { sectorShort.upper() : 1 } } )
+        eng.refreshInfo()
+
+    def writeSpaceEvents(speed, sector):
+        # print the SECTOR_EVENTS text
+        y, l = 1, 0
+        sectorShort = sector.replace(" Sector", "").upper()
+        spaceInfo = dbs.locations.find_one( { "NAME": "Space" } )
+        if spaceInfo[sectorShort] == 0:
+            sectorEvents = "{0}_EVENTS".format(sectorShort)
+            events = dbs.locations.find_one( { "NAME": "Space" } )[sectorEvents]
+        else:
+            events = dbs.locations.find_one( { "NAME": "Space" } )["DEFAULT_EVENTS"]
+        while l < len(events):
+            # if the dialogue is taking up the whole window, we need to clear it and start writing at the beginning again
+            if y >= 15:
+                eventWin.addstr(18, 4, ">>>>>", eng.c["BLINK_BRIGHT_YELLOW"])
+                time.sleep(speed)
+                y = 1
+                eventWin.clear()
+                time.sleep(0.5)
+            # get event text and wrap the text to fit inside the window
+            eventString = '\n'.join(textwrap.wrap(events[str(l)][1], 75))
+            # get event's text style
+            stringStyle = events[str(l)][0]
+            eventWin.addstr(y, 0, eventString, eng.c[stringStyle])
+            l += 1
+            # add more newlines if text will be wrapped multiple times in the window
+            if len(eventString) < 75:
+                y += 2
+                time.sleep(speed)
+            if len(eventString) > 75 and len(eventString) < 150:
+                y += 3
+                time.sleep((speed + 1))
+            elif len(eventString) > 150 and len(eventString) < 225:
+                y += 4
+                time.sleep((speed + 2))
+            elif len(eventString) > 225 and len(eventString) < 300:
+                y += 5
+                time.sleep((speed + 3))
 
     def writeTimedEvents(speed, what):
         # print the FIRST_EVENTS or KEY_EVENTS text
@@ -122,9 +165,9 @@ class worldUI():
         # write events to the event window
         curses.curs_set(0)
         if where == "winnibego":
+            dbs.setLocation(room)
             # setup DOWN direction
             dbs.locations.update_one( { "NAME": "Winnibego" }, { "$set": { dbs.locationInfo["PLANET_DIRS"][dbs.PLANET][0] : dbs.locationInfo["PLANET_DIRS"][dbs.PLANET][1] } } )
-            dbs.setLocation(room)
             eng.refreshInfo()
             # setup the title window
             titleWin.clear()
@@ -140,28 +183,29 @@ class worldUI():
                 worldUI.writeTimedEvents(4, "key")
                 worldUI.updateRoomStatus("SOLVED")
             elif dbs.locationInfo["VISITED"] == 1 and dbs.locationInfo["SOLVED"] == 1 and key == False:
-                events = dbs.locationInfo["UNSOLVED_EVENTS"]
-                eventString = '\n'.join(textwrap.wrap(events[str(l)][1], 75)).format(dbs.PLANET)
-                stringStyle = events[str(l)][0]
-                eventWin.addstr(y, 0, eventString, eng.c[stringStyle])
+                events = dbs.locationInfo["SOLVED_EVENTS"]
+                eventString = '\n'.join(textwrap.wrap(events[str(0)][1], 75)).format(dbs.PLANET)
+                stringStyle = events[str(0)][0]
+                eventWin.addstr(1, 0, eventString, eng.c[stringStyle])
         elif where == "space":
             dbs.setSpaceLocation(room)
+            # setup directions
+            dirList = dbs.locationInfo["SECTOR_DIRS"][room]
+            for direction in worldUI.LONG_DIRS:
+                if direction.upper() in dbs.locationInfo:
+                    dbs.locations.update_one( { "NAME": "Space" }, { "$unset": { direction.upper() : "" } } )
+            l = 0
+            while l < len(dirList):
+                dbs.locations.update_one( { "NAME": "Space" }, { "$set": { dirList[str(l)][0] : dirList[str(l)][1] } } )
+                l += 1
             eng.refreshInfo()
             # setup the title window
             titleWin.clear()
-            title = "{0}: {1}".format(dbs.PLANET, dbs.ROOM)
+            title = "{0}: {1}".format(dbs.SECTOR, dbs.ROOM)
             titleWin.addstr(0, 0, title, eng.c["BRIGHT"])
             # display the space travel room
-            if dbs.locationInfo["VISITED"] == 0:
-                worldUI.writeTimedEvents(3, "first")
-                worldUI.updateRoomStatus("VISITED")
-            elif dbs.locationInfo["VISITED"] == 1 and dbs.locationInfo["SOLVED"] == 0:
-                worldUI.writeStaticEvents("unsolved")
-            elif dbs.locationInfo["VISITED"] == 1 and dbs.locationInfo["SOLVED"] == 1 and key == True:
-                worldUI.writeTimedEvents(4, "key")
-                worldUI.updateRoomStatus("SOLVED")
-            elif dbs.locationInfo["VISITED"] == 1 and dbs.locationInfo["SOLVED"] == 1 and key == False:
-                worldUI.writeStaticEvents("solved")
+            worldUI.writeSpaceEvents(2, room)
+            worldUI.updateSectorStatus(room)
         elif where == "planet":
             dbs.setLocation(room)
             eng.refreshInfo()
@@ -262,10 +306,13 @@ class worldUI():
         worldUI.writeGround()
         worldUI.writeDirs()
         if what == "room":
-            if dbs.ROOM.lower() == "winnibego":
+            if room.lower() == "winnibego":
                 worldUI.writeRoom(room, "winnibego", key)
                 worldUI.getCmd()
-            elif dbs.ROOM.lower() == "space":
+            elif room.lower() == "space":
+                worldUI.writeRoom(dbs.SECTOR, "space", key)
+                worldUI.getCmd()
+            elif room.endswith("Sector"):
                 worldUI.writeRoom(room, "space", key)
                 worldUI.getCmd()
             else:
