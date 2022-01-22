@@ -15,8 +15,9 @@
             "4": [ "BLINK_BRIGHT_BLUE", "WHERE DO YOU WANT TO GO?" ]
         },
         "DEFAULT_EVENTS": {
-            "0": [ "DIM", "There's a flashing blue message on the NavMaster 2200's screen:" ],
-            "1": [ "BLINK_BRIGHT_BLUE", "WHERE DO YOU WANT TO GO?" ]
+            "0": [ "DIM", "There's a message on the NavMaster 2200's screen:" ],
+            "1": [ "BRIGHT", "CURRENT LOCATION: {0}"],
+            "2": [ "BLINK_BRIGHT_BLUE", "WHERE DO YOU WANT TO GO?" ]
         },
         "PLANET": "Traveling",
         "SECTOR_DIRS": {
