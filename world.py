@@ -159,11 +159,8 @@ class worldUI():
         eventBorder.clear()
         eventBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
         eventBorder.addstr(0, 65, "[ROOM EVENTS]")
-        eventWin.clear()
-        groundWin.clear()
-        dirWin.clear()
+        worldUI.clearScreen()
         # write events to the event window
-        curses.curs_set(0)
         if where == "winnibego":
             dbs.setLocation(room)
             # setup DOWN direction
@@ -226,10 +223,7 @@ class worldUI():
                 worldUI.writeStaticEvents("solved")
         else:
             raise Exception("BUG: writeRoom() didn't have the right arg passed.")
-        worldUI.writeInv()
-        worldUI.writeGround()
-        worldUI.writeStats()
-        worldUI.writeDirs()
+        worldUI.rewriteScreen()
 
     def writeShop():
         eventBorder.clear()
@@ -308,25 +302,19 @@ class worldUI():
         if what == "room":
             if room.lower() == "winnibego":
                 worldUI.writeRoom(room, "winnibego", key)
-                worldUI.getCmd()
             elif room.lower() == "space":
                 worldUI.writeRoom(dbs.SECTOR, "space", key)
-                worldUI.getCmd()
             elif room.endswith("Sector"):
                 worldUI.writeRoom(room, "space", key)
-                worldUI.getCmd()
             else:
                 worldUI.writeRoom(room, "planet", key)
-                worldUI.getCmd()
         elif what == "shop":
             worldUI.writeShop()
-            worldUI.getCmd()
         else:
             raise Exception("Forgot to specify writeout for the event window!")
 
     def writeMsg(msg, style):
         # write message to the message wndow, clearing old ones
-        curses.curs_set(0)
         msgWin.clear()
         msgWin.addstr(0, 0, msg, eng.c[style])
 
@@ -444,6 +432,9 @@ class worldUI():
         worldUI.writeInv()
         worldUI.writeMsg("", "DIM")
         worldUI.writeLocation(dbs.ROOM, "room", False)
+        while True:
+            userInput = worldUI.getCmd()
+            worldUI.processCmd(userInput)
 
     def runAction(cmd, arg):
         # setup the environment
@@ -679,9 +670,6 @@ class worldUI():
         # setup common vars
         cmd = args[0]
         inv = eng.tempInv()
-        eventWin.clear()
-        groundWin.clear()
-        dirWin.clear()
         # if 'with' doesn't appear in the command, then do a single item
         try:
             withPos = args.index("with")
@@ -727,6 +715,7 @@ class worldUI():
                 reqs = True
             # `use item` in a room triggers the key event
             if item1 in dbs.locationInfo["EVENT_KEYS"] and reqs is True:
+                worldUI.clearScreen()
                 worldUI.writeMsg("{0} triggered an event!".format(item1), "BRIGHT_YELLOW")
                 time.sleep(1.5)
                 msgWin.clear()
@@ -738,6 +727,7 @@ class worldUI():
                 worldUI.writeMsg("Ted pokes and prods the room with {0}, but nothing seems to happen.".format(item1), "DIM_YELLOW")
         elif item2 is not None and item1 == "FLOYDS":
             if dbs.floydsTransaction(item2, "dec"):
+                worldUI.clearScreen()
                 worldUI.writeMsg("Paying {0} FLOYDS triggered an event!".format(str(item2)), "BRIGHT_YELLOW")
                 time.sleep(1.5)
                 msgWin.clear()
@@ -760,42 +750,54 @@ class worldUI():
             if comboExists == False:
                 worldUI.writeMsg("I don't think {0} and {1} were meant to be together.".format(item1, item2), "DIM_YELLOW")
         else:
-            worldUI.writeMsg("I'm not sure what to use, Ted.".format(item1), "RED")
+            worldUI.writeMsg("I'm not sure what to use, Ted.", "RED")
+        worldUI.rewriteScreen()
+
+    def clearScreen():
+        eventWin.clear()
+        groundWin.clear()
+        dirWin.clear()
+        msgWin.clear()
+
+    def rewriteScreen():
         worldUI.writeInv()
         worldUI.writeStats()
         worldUI.writeGround()
         worldUI.writeDirs()
 
-    def getCmd():
-        # wait for user input
-        while True:
-            inputWin.clear()
-            curses.curs_set(2)
-            userInput = inputCmd.edit().lower()
-            inputWin.clear()
-            if userInput == "" or userInput == None:
-                continue
-            args = userInput.split()
-            try:
-                args.remove("x")
-            except ValueError:
-                pass
-            if args[0] in worldUI.USE_CMDS:
-                worldUI.runUseItem(args)
-            elif args[0] in worldUI.ALL_COMMANDS:
-                if len(args) == 3:
-                    worldUI.runAction(args[0], "{0} {1}".format(args[1], args[2]))
-                elif len(args) == 2:
-                    worldUI.runAction(args[0], args[1])
-                elif len(args) == 1:
-                    worldUI.runAction(args[0], None)
-                else:
-                    raise Exception("CMD ERROR: Unexpected number of arguments from user input")
-            elif args[0] in worldUI.LONG_DIRS or args[0] in worldUI.SHORT_DIRS:
-                worldUI.moveDirection(args[0])
+    def processCmd(userInput):
+        if userInput == "" or userInput == None:
+            return
+        args = userInput.split()
+        try:
+            args.remove("x")
+        except ValueError:
+            pass
+        if args[0] in worldUI.USE_CMDS:
+            worldUI.runUseItem(args)
+        elif args[0] in worldUI.ALL_COMMANDS:
+            if len(args) == 3:
+                worldUI.runAction(args[0], "{0} {1}".format(args[1], args[2]))
+            elif len(args) == 2:
+                worldUI.runAction(args[0], args[1])
+            elif len(args) == 1:
+                worldUI.runAction(args[0], None)
             else:
-                worldUI.writeMsg("I don't recognize that command, Ted.", "RED")
-            continue
+                raise Exception("CMD ERROR: Unexpected number of arguments from user input")
+        elif args[0] in worldUI.LONG_DIRS or args[0] in worldUI.SHORT_DIRS:
+            worldUI.moveDirection(args[0])
+        else:
+            worldUI.writeMsg("I don't recognize that command, Ted.", "RED")
+            return
+
+    def getCmd():
+        # wait for user input and store it
+        inputWin.clear()
+        curses.curs_set(2)
+        userInput = inputCmd.edit().lower()
+        curses.curs_set(0)
+        inputWin.clear()
+        return userInput
 
     def build(stdscr):
         # define globals
@@ -820,6 +822,7 @@ class worldUI():
         stdscr.clear()
         stdscr.immedok(True)
         eng.setStyles()
+        curses.curs_set(0)
         # set max size
         term_x = 110
         term_y = 40
