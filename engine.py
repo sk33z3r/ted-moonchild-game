@@ -12,6 +12,89 @@ lb, rb = 0, 0
 tb, bb = 0, 0
 tl, tr, ll, lr = 0, 0, 0, 0
 
+### Setup Window Dimensions
+
+# define max size
+max_x = 110
+max_y = 70
+
+# function to calculate section dimensions and starting points based on terminal size
+def calculateWindows(height, width):
+
+    # define globals
+    global initHeight
+    global initWidth
+    global initBegin_y
+    global initBegin_x
+    global sectionDims
+    global titleDims
+    global groundDims
+    global exitDims
+    global eventDims
+    global inputDims
+    global msgDims
+    global statDims
+    global invDims
+
+    # TODO set initial height, width, begin_y, begin_x from terminal size
+    initHeight = 0
+    initWidth = 0
+    initBegin_y = round((height - max_y) / 2)
+    initBegin_x = round((width - max_x) / 2)
+
+    # section dimension map
+    ### all tuples (height, width, begin_y, begin_x)
+    ### input border tuple (uly, ulx, lry, lrx)
+    sectionDims = {
+        "title": {
+            "border": [ 3, 80, initBegin_y, (initBegin_x + 1) ],
+            "content": [ 1, 76, (initBegin_y + 1), (initBegin_x + 3) ]
+        },
+        "ground": {
+            "border": [ 8, 50, (initBegin_y + 25), (initBegin_x + 1) ],
+            "content": [ 6, 46, (initBegin_y + 26), (initBegin_x + 3) ]
+        },
+        "exits": {
+            "border": [ 8, 29, (initBegin_y + 25), (initBegin_x + 52) ],
+            "content": [ 6, 25, (initBegin_y + 26), (initBegin_x + 53) ]
+        },
+        "events": {
+            "border": [ 22, 80, (initBegin_y + 3), (initBegin_x + 1) ],
+            "content": [ 20, 76, (initBegin_y + 4), (initBegin_x + 3) ]
+        },
+        "input": {
+            "border": [ (initBegin_y + 33), (initBegin_x + 1), (initBegin_y + 35), (initBegin_x + 80) ],
+            "content": [ 1, 72, (initBegin_y + 34), (initBegin_x + len(PROMPT) + 3) ],
+            "prompt": [ (initBegin_y + 34), (initBegin_x + 3) ]
+        },
+        "msg": {
+            "border": [ 4, 109, (initBegin_y + 36), (initBegin_x + 1) ],
+            "content": [ 2, 105, (initBegin_y + 37), (initBegin_x + 3) ]
+        },
+        "stats": {
+            "border": [ 9, 28, initBegin_y, (initBegin_x + 82) ],
+            "content": [ 7, 24, (initBegin_y + 1), (initBegin_x + 84) ]
+        },
+        "inventory": {
+            "border": [ 27, 28, (initBegin_y + 9), (initBegin_x + 82) ],
+            "content": [ 25, 24, (initBegin_y + 10), (initBegin_x + 84) ]
+        },
+        "help": {
+            "border": [],
+            "content": []
+        }
+    }
+
+    # section references
+    titleDims = sectionDims["title"]
+    groundDims = sectionDims["ground"]
+    exitDims = sectionDims["exits"]
+    eventDims = sectionDims["events"]
+    inputDims = sectionDims["input"]
+    msgDims = sectionDims["msg"]
+    statDims = sectionDims["stats"]
+    invDims = sectionDims["inventory"]
+
 # define the PROMPT design
 PROMPT = "\m/: "
 

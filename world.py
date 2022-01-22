@@ -1244,7 +1244,13 @@ class worldUI():
         global groundWin
         global exitBorder
         global exitWin
-        global sectionDims
+
+        # TODO get current terminal size
+        height, width = stdscr.getmaxyx()
+        eng.calculateWindows(height, width)
+
+        # refresh info in memory
+        eng.refreshInfo()
 
         # setup the main window and color dict
         stdscr.clear()
@@ -1252,143 +1258,83 @@ class worldUI():
         eng.setStyles()
         curses.curs_set(0)
 
-        # define max size
-        max_x = 110
-        max_y = 40
-        # TODO get current terminal size
-        # TODO set initial height, width, begin_y, begin_x from terminal size
-        initHeight = 0
-        initWidth = 0
-        initBegin_y = 0
-        initBegin_x = 0
-
-        # section dimension map
-        sectionDims = {
-            "title": {
-                "border": [ 3, 80, 0, 1 ],
-                "content": [ 1, 76, 1, 3 ]
-            },
-            "ground": {
-                "border": [ 8, 50, 25, 1 ],
-                "content": [ 6, 46, 26, 3 ]
-            },
-            "exits": {
-                "border": [ 8, 29, 25, 52 ],
-                "content": [ 6, 25, 26, 53 ]
-            },
-            "events": {
-                "border": [ 22, 80, 3, 1 ],
-                "content": [ 20, 76, 4, 3 ]
-            },
-            "input": {
-                "border": [ 33, 1, 35, 80 ],
-                "content": [ 1, 72, 34, (len(eng.PROMPT) + 3) ]
-            },
-            "msg": {
-                "border": [ 4, 109, 36, 1 ],
-                "content": [ 2, 105, 37, 3 ]
-            },
-            "stats": {
-                "border": [ 9, 28, 0, 82 ],
-                "content": [ 7, 24, 1, 84 ]
-            },
-            "inventory": {
-                "border": [ 27, 28, 9, 82 ],
-                "content": [ 25, 24, 10, 84 ]
-            }
-        }
-
-        # refresh info in memory
-        eng.refreshInfo()
-
-        ### Setup Window Dimensions
-        ### subwin(height, width, begin_y, begin_x)
-
         # LOCATION
-        titleDims = sectionDims["title"]
         # define the border
-        titleBorder = stdscr.subwin(titleDims["border"][0], titleDims["border"][1], titleDims["border"][2], titleDims["border"][3])
+        titleBorder = stdscr.subwin(eng.titleDims["border"][0], eng.titleDims["border"][1], eng.titleDims["border"][2], eng.titleDims["border"][3])
         titleBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
         titleBorder.immedok(True)
         titleBorder.addstr(0, 68, "[LOCATION]")
         # define the content area
-        titleWin = stdscr.subwin(titleDims["content"][0], titleDims["content"][1], titleDims["content"][2], titleDims["content"][3])
+        titleWin = stdscr.subwin(eng.titleDims["content"][0], eng.titleDims["content"][1], eng.titleDims["content"][2], eng.titleDims["content"][3])
         titleWin.immedok(True)
 
         # GROUND
-        groundDims = sectionDims["ground"]
         # define the border
-        groundBorder = stdscr.subwin(groundDims["border"][0], groundDims["border"][1], groundDims["border"][2], groundDims["border"][3])
+        groundBorder = stdscr.subwin(eng.groundDims["border"][0], eng.groundDims["border"][1], eng.groundDims["border"][2], eng.groundDims["border"][3])
         groundBorder.immedok(True)
         groundBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
         groundBorder.addstr(0, 40, "[GROUND]")
         # define the content area
-        groundWin = stdscr.subwin(groundDims["content"][0], groundDims["content"][1], groundDims["content"][2], groundDims["content"][3])
+        groundWin = stdscr.subwin(eng.groundDims["content"][0], eng.groundDims["content"][1], eng.groundDims["content"][2], eng.groundDims["content"][3])
         groundWin.immedok(True)
 
         # EXITS
-        exitDims = sectionDims["exits"]
         # define the border
-        exitBorder = stdscr.subwin(exitDims["border"][0], exitDims["border"][1], exitDims["border"][2], exitDims["border"][3])
+        exitBorder = stdscr.subwin(eng.exitDims["border"][0], eng.exitDims["border"][1], eng.exitDims["border"][2], eng.exitDims["border"][3])
         exitBorder.immedok(True)
         exitBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll)
         exitBorder.addstr(0, 20, "[EXITS]")
         # define the content area
-        exitWin = stdscr.subwin(exitDims["content"][0], exitDims["content"][1], exitDims["content"][2], exitDims["content"][3])
+        exitWin = stdscr.subwin(eng.exitDims["content"][0], eng.exitDims["content"][1], eng.exitDims["content"][2], eng.exitDims["content"][3])
         exitWin.immedok(True)
 
         # EVENTS / SHOP
-        eventDims = sectionDims["events"]
         # define the border
-        eventBorder = stdscr.subwin(eventDims["border"][0], eventDims["border"][1], eventDims["border"][2], eventDims["border"][3])
+        eventBorder = stdscr.subwin(eng.eventDims["border"][0], eng.eventDims["border"][1], eng.eventDims["border"][2], eng.eventDims["border"][3])
         eventBorder.immedok(True)
         eventBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
         # define the content area
-        eventWin = stdscr.subwin(eventDims["content"][0], eventDims["content"][1], eventDims["content"][2], eventDims["content"][3])
+        eventWin = stdscr.subwin(eng.eventDims["content"][0], eng.eventDims["content"][1], eng.eventDims["content"][2], eng.eventDims["content"][3])
         eventWin.immedok(True)
 
         # PROMPT
-        inputDims = sectionDims["input"]
         # define the border
-        rectangle(stdscr, inputDims["border"][0], inputDims["border"][1], inputDims["border"][2], inputDims["border"][3])
+        rectangle(stdscr, eng.inputDims["border"][0], eng.inputDims["border"][1], eng.inputDims["border"][2], eng.inputDims["border"][3])
         # define the content area
-        inputWin = stdscr.subwin(inputDims["content"][0], inputDims["content"][1], inputDims["content"][2], inputDims["content"][3])
+        inputWin = stdscr.subwin(eng.inputDims["content"][0], eng.inputDims["content"][1], eng.inputDims["content"][2], eng.inputDims["content"][3])
         inputWin.immedok(True)
         inputCmd = Textbox(inputWin, insert_mode=True)
         # place PROMPT in the input window
-        stdscr.addstr(34, 3, eng.PROMPT, eng.c["BRIGHT_RED"])
+        stdscr.addstr(eng.inputDims["prompt"][0], eng.inputDims["prompt"][1], eng.PROMPT, eng.c["BRIGHT_RED"])
 
         # MESSAGES
-        msgDims = sectionDims["msg"]
         # define the border
-        msgBorder = stdscr.subwin(msgDims["border"][0], msgDims["border"][1], msgDims["border"][2], msgDims["border"][3])
+        msgBorder = stdscr.subwin(eng.msgDims["border"][0], eng.msgDims["border"][1], eng.msgDims["border"][2], eng.msgDims["border"][3])
         msgBorder.immedok(True)
         msgBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
         msgBorder.addstr(0, 83, "[MESSAGES]")
         # define the content area
-        msgWin = stdscr.subwin(msgDims["content"][0], msgDims["content"][1], msgDims["content"][2], msgDims["content"][3])
+        msgWin = stdscr.subwin(eng.msgDims["content"][0], eng.msgDims["content"][1], eng.msgDims["content"][2], eng.msgDims["content"][3])
         msgWin.immedok(True)
 
         # STATS
-        statDims = sectionDims["stats"]
         # define the border
-        statsBorder = stdscr.subwin(statDims["border"][0], statDims["border"][1], statDims["border"][2], statDims["border"][3])
+        statsBorder = stdscr.subwin(eng.statDims["border"][0], eng.statDims["border"][1], eng.statDims["border"][2], eng.statDims["border"][3])
         statsBorder.immedok(True)
         statsBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
         statsBorder.addstr(0, 2, "[STATS]")
         # define the content area
-        statsWin = stdscr.subwin(statDims["content"][0], statDims["content"][1], statDims["content"][2], statDims["content"][3])
+        statsWin = stdscr.subwin(eng.statDims["content"][0], eng.statDims["content"][1], eng.statDims["content"][2], eng.statDims["content"][3])
         statsWin.immedok(True)
 
         # INVENTORY
-        invDims = sectionDims["inventory"]
         # define the border
-        invBorder = stdscr.subwin(invDims["border"][0], invDims["border"][1], invDims["border"][2], invDims["border"][3])
+        invBorder = stdscr.subwin(eng.invDims["border"][0], eng.invDims["border"][1], eng.invDims["border"][2], eng.invDims["border"][3])
         invBorder.immedok(True)
         invBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
         invBorder.addstr(0, 2, "[INVENTORY]")
         # define content area
-        invWin = stdscr.subwin(invDims["content"][0], invDims["content"][1], invDims["content"][2], invDims["content"][3])
+        invWin = stdscr.subwin(eng.invDims["content"][0], eng.invDims["content"][1], eng.invDims["content"][2], eng.invDims["content"][3])
         invWin.immedok(True)
 
         # run the world command loop
