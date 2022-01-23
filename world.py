@@ -1319,10 +1319,18 @@ class worldUI():
         global groundWin
         global exitBorder
         global exitWin
+        global begin_y
+        global begin_x
+        global max_x
+        global max_y
+
+        # define max size
+        max_x = 110
+        max_y = 40
 
         # get current terminal size and setup UI positions
         height, width = stdscr.getmaxyx()
-        eng.calculateWindows(height, width)
+        begin_y, begin_x = eng.calculateWindows(height, width, max_y, max_x, "world")
 
         # refresh info in memory
         eng.refreshInfo()

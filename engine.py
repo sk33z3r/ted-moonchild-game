@@ -27,20 +27,10 @@ ROOM_WORDS = [ "here", "room", "around", "ground", "floor", "area" ]
 # setup a game text speed
 GAME_SPEED = 4
 
-### Setup Window Dimensions
-
-# define max size
-max_x = 110
-max_y = 40
-
 # function to calculate section dimensions and starting points based on terminal size
-def calculateWindows(height, width):
+def calculateWindows(height, width, max_y, max_x, ui):
 
     # define globals
-    global initHeight
-    global initWidth
-    global initBegin_y
-    global initBegin_x
     global sectionDims
     global titleDims
     global groundDims
@@ -62,126 +52,135 @@ def calculateWindows(height, width):
     ### input border tuple (uly, ulx, lry, lrx)
 
     # main menu section dimension map
-    menuSectionDims = {
-        "main": {
-            "border": [ 9, 109, (initBegin_y + 16), (initBegin_x + 1) ],
-            "content": [ 7, 105, (initBegin_y + 17), (initBegin_x + 3) ],
-            "logo": [ 16, 109, initBegin_y, (initBegin_x + 1) ]
-        },
-        "input": {
-            "border": [ (initBegin_y + 25), (initBegin_x + 1), (initBegin_y + 27), (initBegin_x + 109) ],
-            "content": [ 1, 100, (initBegin_y + 26), (initBegin_x + len(PROMPT) + 3) ],
-            "prompt": [ (initBegin_y + 26), (initBegin_x + 3) ]
+    if ui == "main":
+        menuSectionDims = {
+            "main": {
+                "border": [ 9, 80, (initBegin_y + 16), (initBegin_x + 1) ],
+                "content": [ 7, 76, (initBegin_y + 17), (initBegin_x + 3) ],
+                "logo": [ 16, 80, initBegin_y, (initBegin_x + 1) ]
+            },
+            "input": {
+                "border": [ (initBegin_y + 25), (initBegin_x + 1), (initBegin_y + 27), (initBegin_x + 80) ],
+                "content": [ 1, 70, (initBegin_y + 26), (initBegin_x + len(PROMPT) + 3) ],
+                "prompt": [ (initBegin_y + 26), (initBegin_x + 3) ]
+            }
         }
-    }
+
+        # main menu section references
+        mainDims = menuSectionDims["main"]
+        mainInputDims = menuSectionDims["input"]
 
     # world section dimension map
-    worldSectionDims = {
-        "title": {
-            "border": [ 3, 80, initBegin_y, (initBegin_x + 1) ],
-            "content": [ 1, 76, (initBegin_y + 1), (initBegin_x + 3) ]
-        },
-        "ground": {
-            "border": [ 8, 50, (initBegin_y + 25), (initBegin_x + 1) ],
-            "content": [ 6, 46, (initBegin_y + 26), (initBegin_x + 3) ]
-        },
-        "exits": {
-            "border": [ 8, 29, (initBegin_y + 25), (initBegin_x + 52) ],
-            "content": [ 6, 25, (initBegin_y + 26), (initBegin_x + 53) ]
-        },
-        "events": {
-            "border": [ 22, 80, (initBegin_y + 3), (initBegin_x + 1) ],
-            "content": [ 20, 76, (initBegin_y + 4), (initBegin_x + 3) ]
-        },
-        "input": {
-            "border": [ (initBegin_y + 33), (initBegin_x + 1), (initBegin_y + 35), (initBegin_x + 80) ],
-            "content": [ 1, 72, (initBegin_y + 34), (initBegin_x + len(PROMPT) + 3) ],
-            "prompt": [ (initBegin_y + 34), (initBegin_x + 3) ]
-        },
-        "msg": {
-            "border": [ 4, 109, (initBegin_y + 36), (initBegin_x + 1) ],
-            "content": [ 2, 105, (initBegin_y + 37), (initBegin_x + 3) ]
-        },
-        "stats": {
-            "border": [ 9, 28, initBegin_y, (initBegin_x + 82) ],
-            "content": [ 7, 24, (initBegin_y + 1), (initBegin_x + 84) ]
-        },
-        "inventory": {
-            "border": [ 27, 28, (initBegin_y + 9), (initBegin_x + 82) ],
-            "content": [ 25, 24, (initBegin_y + 10), (initBegin_x + 84) ]
-        },
-        "help": {
-            "border": [35, 55, (initBegin_y + 17), (initBegin_x + 27)],
-            "content": [33, 51, (initBegin_y + 18), (initBegin_x + 29)]
+    elif ui == "world":
+        worldSectionDims = {
+            "title": {
+                "border": [ 3, 80, initBegin_y, (initBegin_x + 1) ],
+                "content": [ 1, 76, (initBegin_y + 1), (initBegin_x + 3) ]
+            },
+            "ground": {
+                "border": [ 8, 50, (initBegin_y + 25), (initBegin_x + 1) ],
+                "content": [ 6, 46, (initBegin_y + 26), (initBegin_x + 3) ]
+            },
+            "exits": {
+                "border": [ 8, 29, (initBegin_y + 25), (initBegin_x + 52) ],
+                "content": [ 6, 25, (initBegin_y + 26), (initBegin_x + 53) ]
+            },
+            "events": {
+                "border": [ 22, 80, (initBegin_y + 3), (initBegin_x + 1) ],
+                "content": [ 20, 76, (initBegin_y + 4), (initBegin_x + 3) ]
+            },
+            "input": {
+                "border": [ (initBegin_y + 33), (initBegin_x + 1), (initBegin_y + 35), (initBegin_x + 80) ],
+                "content": [ 1, 72, (initBegin_y + 34), (initBegin_x + len(PROMPT) + 3) ],
+                "prompt": [ (initBegin_y + 34), (initBegin_x + 3) ]
+            },
+            "msg": {
+                "border": [ 4, 109, (initBegin_y + 36), (initBegin_x + 1) ],
+                "content": [ 2, 105, (initBegin_y + 37), (initBegin_x + 3) ]
+            },
+            "stats": {
+                "border": [ 9, 28, initBegin_y, (initBegin_x + 82) ],
+                "content": [ 7, 24, (initBegin_y + 1), (initBegin_x + 84) ]
+            },
+            "inventory": {
+                "border": [ 27, 28, (initBegin_y + 9), (initBegin_x + 82) ],
+                "content": [ 25, 24, (initBegin_y + 10), (initBegin_x + 84) ]
+            },
+            "help": {
+                "border": [35, 55, (initBegin_y + 17), (initBegin_x + 27)],
+                "content": [33, 51, (initBegin_y + 18), (initBegin_x + 29)]
+            }
         }
-    }
+
+        # world section references
+        worldTitleDims = worldSectionDims["title"]
+        worldGroundDims = worldSectionDims["ground"]
+        worldExitDims = worldSectionDims["exits"]
+        worldEventDims = worldSectionDims["events"]
+        worldInputDims = worldSectionDims["input"]
+        worldMsgDims = worldSectionDims["msg"]
+        worldStatDims = worldSectionDims["stats"]
+        worldInvDims = worldSectionDims["inventory"]
+        worldHelpDims = worldSectionDims["help"]
 
     # battle section dimension map
-    battleSectionDims = {
-        "title": {
-            "border": [ 3, 80, initBegin_y, (initBegin_x + 1) ],
-            "content": [ 1, 76, (initBegin_y + 1), (initBegin_x + 3) ]
-        },
-        "ground": {
-            "border": [ 8, 50, (initBegin_y + 25), (initBegin_x + 1) ],
-            "content": [ 6, 46, (initBegin_y + 26), (initBegin_x + 3) ]
-        },
-        "exits": {
-            "border": [ 8, 29, (initBegin_y + 25), (initBegin_x + 52) ],
-            "content": [ 6, 25, (initBegin_y + 26), (initBegin_x + 53) ]
-        },
-        "events": {
-            "border": [ 22, 80, (initBegin_y + 3), (initBegin_x + 1) ],
-            "content": [ 20, 76, (initBegin_y + 4), (initBegin_x + 3) ]
-        },
-        "input": {
-            "border": [ (initBegin_y + 33), (initBegin_x + 1), (initBegin_y + 35), (initBegin_x + 80) ],
-            "content": [ 1, 72, (initBegin_y + 34), (initBegin_x + len(PROMPT) + 3) ],
-            "prompt": [ (initBegin_y + 34), (initBegin_x + 3) ]
-        },
-        "msg": {
-            "border": [ 4, 109, (initBegin_y + 36), (initBegin_x + 1) ],
-            "content": [ 2, 105, (initBegin_y + 37), (initBegin_x + 3) ]
-        },
-        "stats": {
-            "border": [ 9, 28, initBegin_y, (initBegin_x + 82) ],
-            "content": [ 7, 24, (initBegin_y + 1), (initBegin_x + 84) ]
-        },
-        "inventory": {
-            "border": [ 27, 28, (initBegin_y + 9), (initBegin_x + 82) ],
-            "content": [ 25, 24, (initBegin_y + 10), (initBegin_x + 84) ]
-        },
-        "help": {
-            "border": [35, 55, (initBegin_y + 17), (initBegin_x + 27)],
-            "content": [33, 51, (initBegin_y + 18), (initBegin_x + 29)]
+    elif ui == "battle":
+        battleSectionDims = {
+            "title": {
+                "border": [ 3, 80, initBegin_y, (initBegin_x + 1) ],
+                "content": [ 1, 76, (initBegin_y + 1), (initBegin_x + 3) ]
+            },
+            "ground": {
+                "border": [ 8, 50, (initBegin_y + 25), (initBegin_x + 1) ],
+                "content": [ 6, 46, (initBegin_y + 26), (initBegin_x + 3) ]
+            },
+            "exits": {
+                "border": [ 8, 29, (initBegin_y + 25), (initBegin_x + 52) ],
+                "content": [ 6, 25, (initBegin_y + 26), (initBegin_x + 53) ]
+            },
+            "events": {
+                "border": [ 22, 80, (initBegin_y + 3), (initBegin_x + 1) ],
+                "content": [ 20, 76, (initBegin_y + 4), (initBegin_x + 3) ]
+            },
+            "input": {
+                "border": [ (initBegin_y + 33), (initBegin_x + 1), (initBegin_y + 35), (initBegin_x + 80) ],
+                "content": [ 1, 72, (initBegin_y + 34), (initBegin_x + len(PROMPT) + 3) ],
+                "prompt": [ (initBegin_y + 34), (initBegin_x + 3) ]
+            },
+            "msg": {
+                "border": [ 4, 109, (initBegin_y + 36), (initBegin_x + 1) ],
+                "content": [ 2, 105, (initBegin_y + 37), (initBegin_x + 3) ]
+            },
+            "stats": {
+                "border": [ 9, 28, initBegin_y, (initBegin_x + 82) ],
+                "content": [ 7, 24, (initBegin_y + 1), (initBegin_x + 84) ]
+            },
+            "inventory": {
+                "border": [ 27, 28, (initBegin_y + 9), (initBegin_x + 82) ],
+                "content": [ 25, 24, (initBegin_y + 10), (initBegin_x + 84) ]
+            },
+            "help": {
+                "border": [35, 55, (initBegin_y + 17), (initBegin_x + 27)],
+                "content": [33, 51, (initBegin_y + 18), (initBegin_x + 29)]
+            }
         }
-    }
 
-    # main menu section references
-    mainDims = menuSectionDims["main"]
-    mainInputDims = menuSectionDims["input"]
+        # world section references
+        battleTitleDims = battleSectionDims["title"]
+        battleGroundDims = battleSectionDims["ground"]
+        battleExitDims = battleSectionDims["exits"]
+        battleEventDims = battleSectionDims["events"]
+        battleInputDims = battleSectionDims["input"]
+        battleMsgDims = battleSectionDims["msg"]
+        battleStatDims = battleSectionDims["stats"]
+        battleInvDims = battleSectionDims["inventory"]
+        battleHelpDims = battleSectionDims["help"]
 
-    # world section references
-    worldTitleDims = worldSectionDims["title"]
-    worldGroundDims = worldSectionDims["ground"]
-    worldExitDims = worldSectionDims["exits"]
-    worldEventDims = worldSectionDims["events"]
-    worldInputDims = worldSectionDims["input"]
-    worldMsgDims = worldSectionDims["msg"]
-    worldStatDims = worldSectionDims["stats"]
-    worldInvDims = worldSectionDims["inventory"]
-    worldHelpDims = worldSectionDims["help"]
+    # otherwise raise exception
+    else:
+        raise Exception("BUG: Didn't specify a ui in calculateWindows(height, width, ui)")
 
-    # world section references
-    battleTitleDims = battleSectionDims["title"]
-    battleGroundDims = battleSectionDims["ground"]
-    battleExitDims = battleSectionDims["exits"]
-    battleEventDims = battleSectionDims["events"]
-    battleInputDims = battleSectionDims["input"]
-    battleMsgDims = battleSectionDims["msg"]
-    battleStatDims = battleSectionDims["stats"]
-    battleInvDims = battleSectionDims["inventory"]
-    battleHelpDims = battleSectionDims["help"]
+    return initBegin_y, initBegin_x
 
 # define the PROMPT design
 PROMPT = "\m/: "
