@@ -383,6 +383,32 @@ class worldUI():
             # add newline between items
             y += 2
 
+    # function to write the SHOP menu in the EVENTS section
+    def writeHelp():
+
+        # clear the EVENTS section first
+        eventBorder.clear()
+        eventBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
+        eventBorder.addstr(0, 72, "[HELP]")
+        eventWin.clear()
+
+        # print the help text to screen
+        eventWin.addstr(0, 0, "           Ted Moonchild and the Roadies in Space: The Commands", eng.c["BRIGHT_YELLOW"])
+        eventWin.addstr(1, 0, "----------------------------------------------------------------------------", eng.c["BRIGHT_YELLOW"])
+        eventWin.addstr(3, 0, "BASIC Commands:                           SHOP Commands:", eng.c["BRIGHT"])
+        eventWin.addstr(4, 0, "    save - save progress                  shop - display the room's stock", eng.c["DIM"])
+        eventWin.addstr(5, 0, "    quit - save game and exit             sell - sell an item", eng.c["DIM"])
+        eventWin.addstr(6, 0, "    help - this help message               buy - buy an item", eng.c["DIM"])
+        eventWin.addstr(8, 0, "ITEM Commands:                            CONSUME Commands:", eng.c["BRIGHT"])
+        eventWin.addstr(9, 0, "    look - look at an item or the room     eat - consume food for effects", eng.c["DIM"])
+        eventWin.addstr(10, 0, "    take - take an item                  drink - drink for effects", eng.c["DIM"])
+        eventWin.addstr(11, 0, "    drop - drop an item on the ground    smoke - smoke for effects", eng.c["DIM"])
+        eventWin.addstr(12, 0, "   equip - equip an item                 snort - consume drugs for effects", eng.c["DIM"])
+        eventWin.addstr(13, 0, " unequip - remove an equipped item", eng.c["DIM"])
+        eventWin.addstr(14, 0, "     use - use a key item", eng.c["DIM"])
+        eventWin.addstr(16, 0, "    Some items can be combined:        (There are lots of alternate words", eng.c["DIM"])
+        eventWin.addstr(17, 0, "      use [item] with [item]               to consume items. Try some!)", eng.c["DIM"])
+
     # function to write the GROUND section
     def writeGround():
 
@@ -1028,8 +1054,7 @@ class worldUI():
 
         # help
         elif cmd == "help":
-            # TODO create a help window with commands and tips
-            worldUI.writeMsg("Sorry, Ted! I can't help you yet, my systems are too fresh.", "RED")
+            worldUI.writeHelp()
 
         # exit
         elif cmd == "quit" or cmd == "exit":
@@ -1222,8 +1247,6 @@ class worldUI():
         return userInput
 
     # define the main world UI screen boundaries
-    # TODO center the boundaries if the terminal is larger than our UI
-    # TODO resize the terminal if it's smaller than our UI
     def build(stdscr):
 
         # define globals
@@ -1245,7 +1268,7 @@ class worldUI():
         global exitBorder
         global exitWin
 
-        # TODO get current terminal size
+        # get current terminal size and setup UI positions
         height, width = stdscr.getmaxyx()
         eng.calculateWindows(height, width)
 
