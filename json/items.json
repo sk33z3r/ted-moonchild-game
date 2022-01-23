@@ -364,14 +364,34 @@
         "DESCWORDS": [ "bottle", "empty bottle" ]
     },
     {
-        "NAME": "Stack of Cables",
-        "GROUNDDESC": "Cables",
+        "NAME": "Broken Bottle",
+        "GROUNDDESC": "Broken bottle pieces",
+        "SHORTDESC": "the broken glass",
+        "LONGDESC": "A pile of broken glass from a Dark Matter Ale bottle. Turns out there was some beer left in it...",
+        "TAKEABLE": false,
+        "VALUE": 0,
+        "TYPE": "static",
+        "DESCWORDS": [ "bottle", "broken bottle", "broken glass", "glass" ]
+    },
+    {
+        "NAME": "Neat Cables",
+        "GROUNDDESC": "Neat stack of cables",
         "SHORTDESC": "the cables",
         "LONGDESC": "A stack of professionally coiled cables, no thanks to Ted.",
         "TAKEABLE": false,
         "VALUE": 0,
         "TYPE": "static",
         "DESCWORDS": [ "cables", "stack of cables", "cable stack" ]
+    },
+    {
+        "NAME": "Messy Cables",
+        "GROUNDDESC": "Cable spaghetti",
+        "SHORTDESC": "the mess of cables",
+        "LONGDESC": "So much for all that work coiling these up.",
+        "TAKEABLE": false,
+        "VALUE": 0,
+        "TYPE": "static",
+        "DESCWORDS": [ "cables", "mess of cables", "cable spaghetti" ]
     },
     {
         "NAME": "EBGB Drums",
