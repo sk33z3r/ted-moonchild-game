@@ -24,6 +24,9 @@ LONG_DIRS = [ "north", "south", "east", "west", "up", "down" ]
 SHORT_DIRS = [ "n", "s", "e", "w", "u", "d" ]
 ROOM_WORDS = [ "here", "room", "around", "ground", "floor", "area" ]
 
+# setup a game text speed
+GAME_SPEED = 4
+
 ### Setup Window Dimensions
 
 # define max size
