@@ -3,20 +3,32 @@ from os import system
 from time import sleep
 from natsort import natsorted
 import database as dbs
-from world import worldUI
 import art
-import main
 
 # define border styles so they're easier to change later
 lb, rb = 0, 0
 tb, bb = 0, 0
 tl, tr, ll, lr = 0, 0, 0, 0
 
+# available command definitions
+BASE_COMMANDS = [ "save", "shop", "look", "take", "drop", "sell", "buy", "equip", "unequip", "quit", "exit", "help", "use" ]
+USE_CMDS = [ "use", "try" ]
+EAT_CMDS = [ "eat", "gobble", "consume" ]
+DRINK_CMDS = [ "swallow", "gulp", "slurp", "drink" ]
+SMOKE_CMDS = [ "smoke", "toke", "inhale" ]
+DRUG_CMDS = [ "swallow", "snort", "lick" ]
+BATTLE_COMMANDS = [ "attack", "mojo", "magic", "hit" ]
+MOVE_CMDS = [ "move", "walk", "run", "shimmy", "slide" ]
+ALL_COMMANDS = BASE_COMMANDS + EAT_CMDS + DRINK_CMDS + SMOKE_CMDS + DRUG_CMDS
+LONG_DIRS = [ "north", "south", "east", "west", "up", "down" ]
+SHORT_DIRS = [ "n", "s", "e", "w", "u", "d" ]
+ROOM_WORDS = [ "here", "room", "around", "ground", "floor", "area" ]
+
 ### Setup Window Dimensions
 
 # define max size
 max_x = 110
-max_y = 70
+max_y = 40
 
 # function to calculate section dimensions and starting points based on terminal size
 def calculateWindows(height, width):
@@ -36,73 +48,137 @@ def calculateWindows(height, width):
     global statDims
     global invDims
     global helpDims
+    global mainDims
+    global mainInputDims
 
-    # if the terminal window is bigger than our UI, center everything
-    if max_x < width and max_y < height:
+    # determine where curses needs to start the windows to be centered in the terminal
+    initBegin_y = round((height - max_y) / 2)
+    initBegin_x = round((width - max_x) / 2)
 
-        # determine where curses needs to start the windows to be centered in the terminal
-        initBegin_y = round((height - max_y) / 2)
-        initBegin_x = round((width - max_x) / 2)
+    ### all tuples (height, width, begin_y, begin_x)
+    ### input border tuple (uly, ulx, lry, lrx)
 
-        # section dimension map
-        ### all tuples (height, width, begin_y, begin_x)
-        ### input border tuple (uly, ulx, lry, lrx)
-        sectionDims = {
-            "title": {
-                "border": [ 3, 80, initBegin_y, (initBegin_x + 1) ],
-                "content": [ 1, 76, (initBegin_y + 1), (initBegin_x + 3) ]
-            },
-            "ground": {
-                "border": [ 8, 50, (initBegin_y + 25), (initBegin_x + 1) ],
-                "content": [ 6, 46, (initBegin_y + 26), (initBegin_x + 3) ]
-            },
-            "exits": {
-                "border": [ 8, 29, (initBegin_y + 25), (initBegin_x + 52) ],
-                "content": [ 6, 25, (initBegin_y + 26), (initBegin_x + 53) ]
-            },
-            "events": {
-                "border": [ 22, 80, (initBegin_y + 3), (initBegin_x + 1) ],
-                "content": [ 20, 76, (initBegin_y + 4), (initBegin_x + 3) ]
-            },
-            "input": {
-                "border": [ (initBegin_y + 33), (initBegin_x + 1), (initBegin_y + 35), (initBegin_x + 80) ],
-                "content": [ 1, 72, (initBegin_y + 34), (initBegin_x + len(PROMPT) + 3) ],
-                "prompt": [ (initBegin_y + 34), (initBegin_x + 3) ]
-            },
-            "msg": {
-                "border": [ 4, 109, (initBegin_y + 36), (initBegin_x + 1) ],
-                "content": [ 2, 105, (initBegin_y + 37), (initBegin_x + 3) ]
-            },
-            "stats": {
-                "border": [ 9, 28, initBegin_y, (initBegin_x + 82) ],
-                "content": [ 7, 24, (initBegin_y + 1), (initBegin_x + 84) ]
-            },
-            "inventory": {
-                "border": [ 27, 28, (initBegin_y + 9), (initBegin_x + 82) ],
-                "content": [ 25, 24, (initBegin_y + 10), (initBegin_x + 84) ]
-            },
-            "help": {
-                "border": [35, 55, (initBegin_y + 17), (initBegin_x + 27)],
-                "content": [33, 51, (initBegin_y + 18), (initBegin_x + 29)]
-            }
+    # main menu section dimension map
+    menuSectionDims = {
+        "main": {
+            "border": [ 9, 109, (initBegin_y + 16), (initBegin_x + 1) ],
+            "content": [ 7, 105, (initBegin_y + 17), (initBegin_x + 3) ],
+            "logo": [ 16, 109, initBegin_y, (initBegin_x + 1) ]
+        },
+        "input": {
+            "border": [ (initBegin_y + 25), (initBegin_x + 1), (initBegin_y + 27), (initBegin_x + 109) ],
+            "content": [ 1, 100, (initBegin_y + 26), (initBegin_x + len(PROMPT) + 3) ],
+            "prompt": [ (initBegin_y + 26), (initBegin_x + 3) ]
         }
+    }
 
-        # section references
-        titleDims = sectionDims["title"]
-        groundDims = sectionDims["ground"]
-        exitDims = sectionDims["exits"]
-        eventDims = sectionDims["events"]
-        inputDims = sectionDims["input"]
-        msgDims = sectionDims["msg"]
-        statDims = sectionDims["stats"]
-        invDims = sectionDims["inventory"]
-        helpDims = sectionDims["help"]
+    # world section dimension map
+    worldSectionDims = {
+        "title": {
+            "border": [ 3, 80, initBegin_y, (initBegin_x + 1) ],
+            "content": [ 1, 76, (initBegin_y + 1), (initBegin_x + 3) ]
+        },
+        "ground": {
+            "border": [ 8, 50, (initBegin_y + 25), (initBegin_x + 1) ],
+            "content": [ 6, 46, (initBegin_y + 26), (initBegin_x + 3) ]
+        },
+        "exits": {
+            "border": [ 8, 29, (initBegin_y + 25), (initBegin_x + 52) ],
+            "content": [ 6, 25, (initBegin_y + 26), (initBegin_x + 53) ]
+        },
+        "events": {
+            "border": [ 22, 80, (initBegin_y + 3), (initBegin_x + 1) ],
+            "content": [ 20, 76, (initBegin_y + 4), (initBegin_x + 3) ]
+        },
+        "input": {
+            "border": [ (initBegin_y + 33), (initBegin_x + 1), (initBegin_y + 35), (initBegin_x + 80) ],
+            "content": [ 1, 72, (initBegin_y + 34), (initBegin_x + len(PROMPT) + 3) ],
+            "prompt": [ (initBegin_y + 34), (initBegin_x + 3) ]
+        },
+        "msg": {
+            "border": [ 4, 109, (initBegin_y + 36), (initBegin_x + 1) ],
+            "content": [ 2, 105, (initBegin_y + 37), (initBegin_x + 3) ]
+        },
+        "stats": {
+            "border": [ 9, 28, initBegin_y, (initBegin_x + 82) ],
+            "content": [ 7, 24, (initBegin_y + 1), (initBegin_x + 84) ]
+        },
+        "inventory": {
+            "border": [ 27, 28, (initBegin_y + 9), (initBegin_x + 82) ],
+            "content": [ 25, 24, (initBegin_y + 10), (initBegin_x + 84) ]
+        },
+        "help": {
+            "border": [35, 55, (initBegin_y + 17), (initBegin_x + 27)],
+            "content": [33, 51, (initBegin_y + 18), (initBegin_x + 29)]
+        }
+    }
 
-    # otherwise crap out
-    else:
+    # battle section dimension map
+    battleSectionDims = {
+        "title": {
+            "border": [ 3, 80, initBegin_y, (initBegin_x + 1) ],
+            "content": [ 1, 76, (initBegin_y + 1), (initBegin_x + 3) ]
+        },
+        "ground": {
+            "border": [ 8, 50, (initBegin_y + 25), (initBegin_x + 1) ],
+            "content": [ 6, 46, (initBegin_y + 26), (initBegin_x + 3) ]
+        },
+        "exits": {
+            "border": [ 8, 29, (initBegin_y + 25), (initBegin_x + 52) ],
+            "content": [ 6, 25, (initBegin_y + 26), (initBegin_x + 53) ]
+        },
+        "events": {
+            "border": [ 22, 80, (initBegin_y + 3), (initBegin_x + 1) ],
+            "content": [ 20, 76, (initBegin_y + 4), (initBegin_x + 3) ]
+        },
+        "input": {
+            "border": [ (initBegin_y + 33), (initBegin_x + 1), (initBegin_y + 35), (initBegin_x + 80) ],
+            "content": [ 1, 72, (initBegin_y + 34), (initBegin_x + len(PROMPT) + 3) ],
+            "prompt": [ (initBegin_y + 34), (initBegin_x + 3) ]
+        },
+        "msg": {
+            "border": [ 4, 109, (initBegin_y + 36), (initBegin_x + 1) ],
+            "content": [ 2, 105, (initBegin_y + 37), (initBegin_x + 3) ]
+        },
+        "stats": {
+            "border": [ 9, 28, initBegin_y, (initBegin_x + 82) ],
+            "content": [ 7, 24, (initBegin_y + 1), (initBegin_x + 84) ]
+        },
+        "inventory": {
+            "border": [ 27, 28, (initBegin_y + 9), (initBegin_x + 82) ],
+            "content": [ 25, 24, (initBegin_y + 10), (initBegin_x + 84) ]
+        },
+        "help": {
+            "border": [35, 55, (initBegin_y + 17), (initBegin_x + 27)],
+            "content": [33, 51, (initBegin_y + 18), (initBegin_x + 29)]
+        }
+    }
 
-        # raise an exception
-        raise Exception("ERROR: Terminal window should be at least 110 x 70")
+    # main menu section references
+    mainDims = menuSectionDims["main"]
+    mainInputDims = menuSectionDims["input"]
+
+    # world section references
+    worldTitleDims = worldSectionDims["title"]
+    worldGroundDims = worldSectionDims["ground"]
+    worldExitDims = worldSectionDims["exits"]
+    worldEventDims = worldSectionDims["events"]
+    worldInputDims = worldSectionDims["input"]
+    worldMsgDims = worldSectionDims["msg"]
+    worldStatDims = worldSectionDims["stats"]
+    worldInvDims = worldSectionDims["inventory"]
+    worldHelpDims = worldSectionDims["help"]
+
+    # world section references
+    battleTitleDims = battleSectionDims["title"]
+    battleGroundDims = battleSectionDims["ground"]
+    battleExitDims = battleSectionDims["exits"]
+    battleEventDims = battleSectionDims["events"]
+    battleInputDims = battleSectionDims["input"]
+    battleMsgDims = battleSectionDims["msg"]
+    battleStatDims = battleSectionDims["stats"]
+    battleInvDims = battleSectionDims["inventory"]
+    battleHelpDims = battleSectionDims["help"]
 
 # define the PROMPT design
 PROMPT = "\m/: "
@@ -142,36 +218,43 @@ def setStyles():
         "BRIGHT": curses.A_BOLD,
         "BLINK": curses.A_BLINK,
         "BLINK_BRIGHT": curses.A_BOLD + curses.A_BLINK,
+        "BLINK_DIM": curses.A_DIM + curses.A_BLINK,
         "RED": curses.color_pair(1),
         "DIM_RED": curses.A_DIM + curses.color_pair(1),
         "BRIGHT_RED": curses.A_BOLD + curses.color_pair(1),
         "BLINK_RED": curses.A_BLINK + curses.color_pair(1),
         "BLINK_BRIGHT_RED": curses.A_BLINK + curses.A_BOLD + curses.color_pair(1),
+        "BLINK_DIM_RED": curses.A_BLINK + curses.A_DIM + curses.color_pair(1),
         "GREEN": curses.color_pair(2),
         "DIM_GREEN": curses.A_DIM + curses.color_pair(2),
         "BRIGHT_GREEN": curses.A_BOLD + curses.color_pair(2),
         "BLINK_GREEN": curses.A_BLINK + curses.color_pair(2),
         "BLINK_BRIGHT_GREEN": curses.A_BLINK + curses.A_BOLD + curses.color_pair(2),
+        "BLINK_DIM_GREEN": curses.A_BLINK + curses.A_DIM + curses.color_pair(2),
         "YELLOW": curses.color_pair(3),
         "DIM_YELLOW": curses.A_DIM + curses.color_pair(3),
         "BRIGHT_YELLOW": curses.A_BOLD + curses.color_pair(3),
         "BLINK_YELLOW": curses.A_BLINK + curses.color_pair(3),
         "BLINK_BRIGHT_YELLOW": curses.A_BLINK + curses.A_BOLD + curses.color_pair(3),
+        "BLINK_DIM_YELLOW": curses.A_BLINK + curses.A_DIM + curses.color_pair(3),
         "BLUE": curses.color_pair(4),
         "DIM_BLUE": curses.A_DIM + curses.color_pair(4),
         "BRIGHT_BLUE": curses.A_BOLD + curses.color_pair(4),
         "BLINK_BLUE": curses.A_BLINK + curses.color_pair(4),
         "BLINK_BRIGHT_BLUE": curses.A_BLINK + curses.A_BOLD + curses.color_pair(4),
+        "BLINK_DIM_BLUE": curses.A_BLINK + curses.A_DIM + curses.color_pair(4),
         "MAGENTA": curses.color_pair(5),
         "DIM_MAGENTA": curses.A_DIM + curses.color_pair(5),
         "BRIGHT_MAGENTA": curses.A_BOLD + curses.color_pair(5),
         "BLINK_MAGENTA": curses.A_BLINK + curses.color_pair(5),
         "BLINK_BRIGHT_MAGENTA": curses.A_BLINK + curses.A_BOLD + curses.color_pair(5),
+        "BLINK_DIM_MAGENTA": curses.A_BLINK + curses.A_DIM + curses.color_pair(5),
         "CYAN": curses.color_pair(6),
         "DIM_CYAN": curses.A_DIM + curses.color_pair(6),
         "BRIGHT_CYAN": curses.A_BOLD + curses.color_pair(6),
         "BLINK_CYAN": curses.A_BLINK + curses.color_pair(6),
-        "BLINK_BRIGHT_CYAN": curses.A_BLINK + curses.A_BOLD + curses.color_pair(6)
+        "BLINK_BRIGHT_CYAN": curses.A_BLINK + curses.A_BOLD + curses.color_pair(6),
+        "BLINK_DIM_CYAN": curses.A_BLINK + curses.A_DIM + curses.color_pair(6)
     }
 
 # function to refresh info in memory
@@ -413,7 +496,3 @@ def useItem(name):
 
     # return the message
     return message
-
-# function to exit the game
-def endGame():
-    sys.exit()
