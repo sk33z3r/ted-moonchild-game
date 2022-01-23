@@ -19,9 +19,28 @@
          | \ \__//--\|__/||____)  || )  __)|   /--\__|__
 ```
 
-## Notes
+## Play the latest code
 
-* 110 x 40 is the minimum terminal size
+1. [Install Docker](https://docs.docker.com/compose/install/) and `docker-compose`
+2. Clone this repo and change to it
+3. Fullscreen your terminal (for now this is necessary)
+4. Run `./test-run.sh local`
+5. Enter the password: `m00nch1ld`
+
+```shell
+$ git clone https://git.blackrookllc.com/ted-moonchild/moonchild-game.git
+$ cd ./moonchild-game
+$ ./test-run.sh local
+ted password: m00nch1ld
+```
+
+## FAQ
+
+* **110 x 40** is the minimum terminal size
+* Terminals are notoriously non-uniform. I won't be able to guarantee colors or even text input operations. I've noticed a few potential issues:
+  * Some terminals do not return a height,width with the `getmaxyx()` method. This means centering and resizing might not operate correctly either.
+  * Most terminals do not support `BACKSPACE` or `DELETE` when entering text input. So far `Ctrl+H` always works.
+  * Even `xterm` between OS implementations varies in behavior.
 
 ## Combat Turn Logic
 
