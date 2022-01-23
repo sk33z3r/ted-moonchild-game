@@ -9,18 +9,6 @@ import database as dbs
 
 class worldUI():
 
-    # available command definitions
-    BASE_COMMANDS = [ "save", "shop", "look", "take", "drop", "sell", "buy", "equip", "unequip", "quit", "exit", "help", "use" ]
-    USE_CMDS = [ "use", "try" ]
-    EAT_CMDS = [ "eat", "gobble", "consume" ]
-    DRINK_CMDS = [ "swallow", "gulp", "slurp", "drink" ]
-    SMOKE_CMDS = [ "smoke", "toke", "inhale" ]
-    DRUG_CMDS = [ "swallow", "snort", "lick" ]
-    ALL_COMMANDS = BASE_COMMANDS + EAT_CMDS + DRINK_CMDS + SMOKE_CMDS + DRUG_CMDS
-    LONG_DIRS = [ "north", "south", "east", "west", "up", "down" ]
-    SHORT_DIRS = [ "n", "s", "e", "w", "u", "d" ]
-    ROOM_WORDS = [ "here", "room", "around", "ground", "there", "floor", "area" ]
-
     # updates room visited and solved status
     def updateRoomStatus(what):
 
@@ -157,8 +145,12 @@ class worldUI():
 
             # if the dialogue is taking up the whole window, we need to clear it and start writing at the beginning again
             if y >= 15:
+
+                # first give a visual warning
                 eventWin.addstr(18, 4, ">>>>>", eng.c["BLINK_BRIGHT_YELLOW"])
                 sleep(speed)
+
+                # then reset
                 y = 1
                 eventWin.clear()
                 sleep(0.5)
@@ -258,12 +250,12 @@ class worldUI():
 
             # display the winnibego room events based on triggers
             if dbs.locationInfo["VISITED"] == 0:
-                worldUI.writeTimedEvents(3, "first")
+                worldUI.writeTimedEvents(eng.GAME_SPEED, "first")
                 worldUI.updateRoomStatus("VISITED")
             elif dbs.locationInfo["VISITED"] == 1 and dbs.locationInfo["SOLVED"] == 0:
                 worldUI.writeStaticEvents("unsolved")
             elif dbs.locationInfo["VISITED"] == 1 and dbs.locationInfo["SOLVED"] == 1 and key == True:
-                worldUI.writeTimedEvents(4, "key")
+                worldUI.writeTimedEvents(eng.GAME_SPEED, "key")
                 worldUI.updateRoomStatus("SOLVED")
             elif dbs.locationInfo["VISITED"] == 1 and dbs.locationInfo["SOLVED"] == 1 and key == False:
                 events = dbs.locationInfo["SOLVED_EVENTS"]
@@ -302,7 +294,7 @@ class worldUI():
             titleWin.addstr(0, 0, title, eng.c["BRIGHT"])
 
             # display the space travel room
-            worldUI.writeSpaceEvents(2, room)
+            worldUI.writeSpaceEvents((eng.GAME_SPEED - 2), room)
             worldUI.updateSectorStatus(room)
 
         # default to being a Planet
@@ -321,12 +313,12 @@ class worldUI():
 
             # display a normal room based on triggers
             if dbs.locationInfo["VISITED"] == 0:
-                worldUI.writeTimedEvents(3, "first")
+                worldUI.writeTimedEvents(eng.GAME_SPEED, "first")
                 worldUI.updateRoomStatus("VISITED")
             elif dbs.locationInfo["VISITED"] == 1 and dbs.locationInfo["SOLVED"] == 0:
                 worldUI.writeStaticEvents("unsolved")
             elif dbs.locationInfo["VISITED"] == 1 and dbs.locationInfo["SOLVED"] == 1 and key == True:
-                worldUI.writeTimedEvents(4, "key")
+                worldUI.writeTimedEvents(eng.GAME_SPEED, "key")
                 worldUI.updateRoomStatus("SOLVED")
             elif dbs.locationInfo["VISITED"] == 1 and dbs.locationInfo["SOLVED"] == 1 and key == False:
                 worldUI.writeStaticEvents("solved")
@@ -709,17 +701,44 @@ class worldUI():
             # otherwise print the shop info
             worldUI.writeLocation(dbs.ROOM, "shop", False)
 
-        # look (room|item)
+        # look (room|item|direction)
         elif cmd == "look":
 
             # with no specifics given, assume the player wants to refresh the room event
             if arg == None or arg in worldUI.ROOM_WORDS:
                 worldUI.writeLocation(dbs.ROOM, "room", False)
 
-            # if the arg is a direction, ignore it
-            elif arg in worldUI.LONG_DIRS or arg in worldUI.SHORT_DIRS:
-                # TODO add short descriptions for every direction so this can print something to the player
-                pass
+            # if the arg is a direction
+            elif arg in worldUI.LONG_DIRS or worldUI.SHORT_DIRS:
+
+                # link short names to long names
+                if arg in worldUI.SHORT_DIRS:
+                    if arg == "n":
+                        upper = "NORTH"
+                    if arg == "s":
+                        upper = "SOUTH"
+                    if arg == "e":
+                        upper = "EAST"
+                    if arg == "w":
+                        upper = "WEST"
+                    if arg == "u":
+                        upper = "UP"
+                    if arg == "d":
+                        upper = "DOWN"
+                    else:
+                        # if there isn't a matching shortname, then make the arg uppercase
+                        upper = arg.upper()
+
+                # check if the direction exists in the current room
+                try:
+                    roomInDirection = dbs.locations.find_one( { "NAME": dbs.locationInfo[upper] } )
+                # if it doesn't print something whimsical
+                # TODO make this dialogue a list and choose one at random
+                except:
+                    worldUI.writeMsg("Ted cops a feel on the wall, hoping for a hidden latch or some secret button. All he finds is disappointment.", eng.c["DIM_RED"])
+                # if it exists print a message with the shortdesc
+                else:
+                    worldUI.writeMsg(roomInDirection["SHORTDESC"][1], roomInDirection["SHORTDESC"][0])
 
             # if the arg matches an item on the ground, display the info
             elif itemOnGround != None:
@@ -933,7 +952,7 @@ class worldUI():
                 worldUI.writeMsg(message[0], message[1])
 
         # smoke item
-        elif cmd in worldUI.SMOKE_CMDS:
+        elif cmd in eng.SMOKE_CMDS:
 
             # if the item is in the player's inventory
             if itemInInv != None:
@@ -962,7 +981,7 @@ class worldUI():
                 worldUI.writeMsg("Ted doesn't even see that anywhere.", "RED")
 
         # eat item
-        elif cmd in worldUI.EAT_CMDS:
+        elif cmd in eng.EAT_CMDS:
 
             # if the item is in the player's inventory
             if itemInInv != None:
@@ -991,7 +1010,7 @@ class worldUI():
                 worldUI.writeMsg("Ted doesn't even see that anywhere.", "RED")
 
         # drink item
-        elif cmd in worldUI.DRINK_CMDS:
+        elif cmd in eng.DRINK_CMDS:
 
             # if the item is in the player's inventory
             if itemInInv != None:
@@ -1020,7 +1039,7 @@ class worldUI():
                 worldUI.writeMsg("Ted doesn't even see that anywhere.", "RED")
 
         # snort item
-        elif cmd in worldUI.DRUG_CMDS:
+        elif cmd in eng.DRUG_CMDS:
 
             # if the item is in the player's inventory
             if itemInInv != None:
@@ -1061,7 +1080,9 @@ class worldUI():
         elif cmd == "quit" or cmd == "exit":
             message = dbs.saveGame()
             worldUI.writeMsg(message[0], message[1])
-            eng.endGame()
+            sleep(2)
+            worldUI.clearAllScreens()
+            exitGame()
 
         # catch possible exceptions
         else:
@@ -1127,7 +1148,7 @@ class worldUI():
                 worldUI.writeMsg("{0} triggered an event!".format(item1), "BRIGHT_YELLOW")
                 sleep(1.5)
                 msgWin.clear()
-                worldUI.writeTimedEvents(4, "key")
+                worldUI.writeTimedEvents(eng.GAME_SPEED, "key")
                 worldUI.updateRoomStatus("SOLVED")
             elif item1 in dbs.locationInfo["EVENT_KEYS"] and reqs is False:
                 worldUI.writeMsg("Ted finds a way to use {0} here, but there might be something missing.".format(item1), "DIM_YELLOW")
@@ -1143,7 +1164,7 @@ class worldUI():
                 worldUI.writeMsg("Paying {0} FLOYDS triggered an event!".format(str(item2)), "BRIGHT_YELLOW")
                 sleep(1.5)
                 msgWin.clear()
-                worldUI.writeTimedEvents(4, "key")
+                worldUI.writeTimedEvents(eng.GAME_SPEED, "key")
                 worldUI.updateRoomStatus("SOLVED")
             else:
                 worldUI.writeMsg("Ted doesn't have enough FLOYDS for that".format(item1), "DIM_YELLOW")
@@ -1211,11 +1232,11 @@ class worldUI():
             pass
 
         # if the cmd is 'use', do runUseItem()
-        if args[0] in worldUI.USE_CMDS:
+        if args[0] in eng.USE_CMDS:
             worldUI.runUseItem(args)
 
         # if the cmd is in ALL_COMMANDS list, setup the arguments
-        elif args[0] in worldUI.ALL_COMMANDS:
+        elif args[0] in eng.ALL_COMMANDS:
             if len(args) == 3:
                 # if args has 3 items, then the last two should be considered 1 argument
                 worldUI.runAction(args[0], "{0} {1}".format(args[1], args[2]))
@@ -1229,8 +1250,14 @@ class worldUI():
                 raise Exception("CMD ERROR: Unexpected number of arguments from user input")
 
         # if the cmd is a direction, move
-        elif args[0] in worldUI.LONG_DIRS or args[0] in worldUI.SHORT_DIRS:
-            worldUI.moveDirection(args[0])
+        elif args[0] in eng.LONG_DIRS or eng.SHORT_DIRS or eng.MOVE_CMDS:
+
+            # i don't want to discourage trying new words to solve puzzles, so if the player enters "move direction",
+            # just ignore the first command and pass the direction along
+            if args[0] in eng.MOVE_CMDS:
+                worldUI.moveDirection(args[1])
+            else:
+                worldUI.moveDirection(args[0])
 
         # if anything else, let the player know we can't do anything with it
         else:
@@ -1246,6 +1273,26 @@ class worldUI():
         curses.curs_set(0)
         inputWin.clear()
         return userInput
+
+    # function to clear all screens
+    def clearAllScreens():
+
+        titleBorder.clear()
+        titleWin.clear()
+        statsBorder.clear()
+        statsWin.clear()
+        inputBorder.clear()
+        inputWin.clear()
+        msgBorder.clear()
+        msgWin.clear()
+        invBorder.clear()
+        invWin.clear()
+        eventBorder.clear()
+        eventWin.clear()
+        groundBorder.clear()
+        groundWin.clear()
+        exitBorder.clear()
+        exitWin.clear()
 
     # define the main world UI screen boundaries
     def build(stdscr):
@@ -1284,86 +1331,82 @@ class worldUI():
 
         # LOCATION
         # define the border
-        titleBorder = stdscr.subwin(eng.titleDims["border"][0], eng.titleDims["border"][1], eng.titleDims["border"][2], eng.titleDims["border"][3])
+        titleBorder = stdscr.subwin(eng.worldTitleDims["border"][0], eng.worldTitleDims["border"][1], eng.worldTitleDims["border"][2], eng.worldTitleDims["border"][3])
         titleBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
         titleBorder.immedok(True)
         titleBorder.addstr(0, 68, "[LOCATION]")
         # define the content area
-        titleWin = stdscr.subwin(eng.titleDims["content"][0], eng.titleDims["content"][1], eng.titleDims["content"][2], eng.titleDims["content"][3])
+        titleWin = stdscr.subwin(eng.worldTitleDims["content"][0], eng.worldTitleDims["content"][1], eng.worldTitleDims["content"][2], eng.worldTitleDims["content"][3])
         titleWin.immedok(True)
 
         # GROUND
         # define the border
-        groundBorder = stdscr.subwin(eng.groundDims["border"][0], eng.groundDims["border"][1], eng.groundDims["border"][2], eng.groundDims["border"][3])
+        groundBorder = stdscr.subwin(eng.worldGroundDims["border"][0], eng.worldGroundDims["border"][1], eng.worldGroundDims["border"][2], eng.worldGroundDims["border"][3])
         groundBorder.immedok(True)
         groundBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
         groundBorder.addstr(0, 40, "[GROUND]")
         # define the content area
-        groundWin = stdscr.subwin(eng.groundDims["content"][0], eng.groundDims["content"][1], eng.groundDims["content"][2], eng.groundDims["content"][3])
+        groundWin = stdscr.subwin(eng.worldGroundDims["content"][0], eng.worldGroundDims["content"][1], eng.worldGroundDims["content"][2], eng.worldGroundDims["content"][3])
         groundWin.immedok(True)
 
         # EXITS
         # define the border
-        exitBorder = stdscr.subwin(eng.exitDims["border"][0], eng.exitDims["border"][1], eng.exitDims["border"][2], eng.exitDims["border"][3])
+        exitBorder = stdscr.subwin(eng.worldExitDims["border"][0], eng.worldExitDims["border"][1], eng.worldExitDims["border"][2], eng.worldExitDims["border"][3])
         exitBorder.immedok(True)
         exitBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll)
         exitBorder.addstr(0, 20, "[EXITS]")
         # define the content area
-        exitWin = stdscr.subwin(eng.exitDims["content"][0], eng.exitDims["content"][1], eng.exitDims["content"][2], eng.exitDims["content"][3])
+        exitWin = stdscr.subwin(eng.worldExitDims["content"][0], eng.worldExitDims["content"][1], eng.worldExitDims["content"][2], eng.worldExitDims["content"][3])
         exitWin.immedok(True)
 
         # EVENTS / SHOP
         # define the border
-        eventBorder = stdscr.subwin(eng.eventDims["border"][0], eng.eventDims["border"][1], eng.eventDims["border"][2], eng.eventDims["border"][3])
+        eventBorder = stdscr.subwin(eng.worldEventDims["border"][0], eng.worldEventDims["border"][1], eng.worldEventDims["border"][2], eng.worldEventDims["border"][3])
         eventBorder.immedok(True)
         eventBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
         # define the content area
-        eventWin = stdscr.subwin(eng.eventDims["content"][0], eng.eventDims["content"][1], eng.eventDims["content"][2], eng.eventDims["content"][3])
+        eventWin = stdscr.subwin(eng.worldEventDims["content"][0], eng.worldEventDims["content"][1], eng.worldEventDims["content"][2], eng.worldEventDims["content"][3])
         eventWin.immedok(True)
 
         # PROMPT
         # define the border
-        rectangle(stdscr, eng.inputDims["border"][0], eng.inputDims["border"][1], eng.inputDims["border"][2], eng.inputDims["border"][3])
+        rectangle(stdscr, eng.worldInputDims["border"][0], eng.worldInputDims["border"][1], eng.worldInputDims["border"][2], eng.worldInputDims["border"][3])
         # define the content area
-        inputWin = stdscr.subwin(eng.inputDims["content"][0], eng.inputDims["content"][1], eng.inputDims["content"][2], eng.inputDims["content"][3])
+        inputWin = stdscr.subwin(eng.worldInputDims["content"][0], eng.worldInputDims["content"][1], eng.worldInputDims["content"][2], eng.worldInputDims["content"][3])
         inputWin.immedok(True)
         inputCmd = Textbox(inputWin, insert_mode=True)
         # place PROMPT in the input window
-        stdscr.addstr(eng.inputDims["prompt"][0], eng.inputDims["prompt"][1], eng.PROMPT, eng.c["BRIGHT_RED"])
+        stdscr.addstr(eng.worldInputDims["prompt"][0], eng.worldInputDims["prompt"][1], eng.PROMPT, eng.c["BRIGHT_RED"])
 
         # MESSAGES
         # define the border
-        msgBorder = stdscr.subwin(eng.msgDims["border"][0], eng.msgDims["border"][1], eng.msgDims["border"][2], eng.msgDims["border"][3])
+        msgBorder = stdscr.subwin(eng.worldMsgDims["border"][0], eng.worldMsgDims["border"][1], eng.worldMsgDims["border"][2], eng.worldMsgDims["border"][3])
         msgBorder.immedok(True)
         msgBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
         msgBorder.addstr(0, 83, "[MESSAGES]")
         # define the content area
-        msgWin = stdscr.subwin(eng.msgDims["content"][0], eng.msgDims["content"][1], eng.msgDims["content"][2], eng.msgDims["content"][3])
+        msgWin = stdscr.subwin(eng.worldMsgDims["content"][0], eng.worldMsgDims["content"][1], eng.worldMsgDims["content"][2], eng.worldMsgDims["content"][3])
         msgWin.immedok(True)
 
         # STATS
         # define the border
-        statsBorder = stdscr.subwin(eng.statDims["border"][0], eng.statDims["border"][1], eng.statDims["border"][2], eng.statDims["border"][3])
+        statsBorder = stdscr.subwin(eng.worldStatDims["border"][0], eng.worldStatDims["border"][1], eng.worldStatDims["border"][2], eng.worldStatDims["border"][3])
         statsBorder.immedok(True)
         statsBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
         statsBorder.addstr(0, 2, "[STATS]")
         # define the content area
-        statsWin = stdscr.subwin(eng.statDims["content"][0], eng.statDims["content"][1], eng.statDims["content"][2], eng.statDims["content"][3])
+        statsWin = stdscr.subwin(eng.worldStatDims["content"][0], eng.worldStatDims["content"][1], eng.worldStatDims["content"][2], eng.worldStatDims["content"][3])
         statsWin.immedok(True)
 
         # INVENTORY
         # define the border
-        invBorder = stdscr.subwin(eng.invDims["border"][0], eng.invDims["border"][1], eng.invDims["border"][2], eng.invDims["border"][3])
+        invBorder = stdscr.subwin(eng.worldInvDims["border"][0], eng.worldInvDims["border"][1], eng.worldInvDims["border"][2], eng.worldInvDims["border"][3])
         invBorder.immedok(True)
         invBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
         invBorder.addstr(0, 2, "[INVENTORY]")
         # define content area
-        invWin = stdscr.subwin(eng.invDims["content"][0], eng.invDims["content"][1], eng.invDims["content"][2], eng.invDims["content"][3])
+        invWin = stdscr.subwin(eng.worldInvDims["content"][0], eng.worldInvDims["content"][1], eng.worldInvDims["content"][2], eng.worldInvDims["content"][3])
         invWin.immedok(True)
 
         # run the world command loop
         worldUI.displayWorld()
-
-    # use curses wrapper in case of uncaught exceptions
-    def start():
-        curses.wrapper(worldUI.build)
