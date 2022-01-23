@@ -1,6 +1,7 @@
 [
     {
         "NAME": "Space",
+        "SHORTDESC": [ "DIM", "Ted stares in awe at the vastness of space." ],
         "MELVIN_EVENTS": {
             "0": [ "BRIGHT_CYAN", "TED: I'll never get tired of that view... leaving Zappa behind." ],
             "1": [ "DIM", "Ted feels free in the vastness of space. Just him, the Winnie, and every direction possible." ],

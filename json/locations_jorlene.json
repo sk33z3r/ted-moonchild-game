@@ -1,11 +1,18 @@
 [
     {
         "NAME": "Dagobar Lot",
+        "SHORTDESC": [ "DIM", "It's the planet's parking lot." ],
         "FIRST_EVENTS": {
-            "0": []
+            "0": [ "DIM", "Ted steps out onto the old stomping grounds' parking lot." ],
+            "1": [ "DIM", "There's a strange twinge of PTSD as memories start to flow about the last time Ted came to the Dagobar." ],
+            "2": [ "BRIGHT_CYAN", "TED: \"Last time I only made it out alive because of Grumm. I should be cautious here.\"" ],
+            "3": [ "DIM", "As usual, the bar is amped and lively. Suddenly a Whovian comes bursting through one of the front windows. They hit the ground, unconscious." ],
+            "4": [ "DIM", "Ted sees a rather muscular silhouette walk away from the window back to the bar." ],
+            "5": [ "BRIGHT_CYAN", "TED: \"Looks like the Dagobarron's here, better be REALLY careful.\"" ]
         },
         "UNSOLVED_EVENTS": {
-            "0": []
+            "0": [ "DIM", "The Dagobar is in full-swing. Faint sounds of breaking glass and grunting can be heard from the lot, as well as some sick breakdowns." ],
+            "1": [ "DIM", "Ted sees a dimly lit alley to the west of the bar's main entrance."]
         },
         "KEY_EVENTS": {
             "0": []
@@ -17,8 +24,6 @@
         "ADD_DIRS": {
             "0": []
         },
-        "NORTH": "Dagobar Entrance",
-        "WEST": "Dagobar Alley",
         "UP": "Winnibego",
         "PLANET": "Dagobar",
         "SECTOR": "Jorlene Sector",
@@ -28,11 +33,16 @@
     },
     {
         "NAME": "WMG Studios Lot",
+        "SHORTDESC": [ "DIM", "It's the planet's parking lot." ],
         "FIRST_EVENTS": {
-            "0": []
+            "0": [ "DIM", "This place is too fancy. There's a janitor bot on-duty 24/7 polishing the parking lot." ],
+            "1": [ "BRIGHT_CYAN", "TED: \"Godamn corporate studios. I'll burn this place to the ground before I'm done here.\""],
+            "2": [ "DIM", "Ted feels in his pocket to make sure he's got his lighter on him and smirks."],
+            "3": [ "DIM", "The entrance to WMG's lobby is up ahead, but there's not much else here. WMG has consumed the entire planet." ]
         },
         "UNSOLVED_EVENTS": {
-            "0": []
+            "0": [ "DIM", "Ted can see the entrance to WMG's lobby up ahead, but there's not much else here. WMG has consumed the entire planet." ],
+            "1": [ "DIM", "The janitor bot is diligently buffing away at Ted's Winnibego. At least it'll be clean when he leaves here." ]
         },
         "KEY_EVENTS": {
             "0": []
@@ -45,7 +55,6 @@
             "0": []
         },
         "UP": "Winnibego",
-        "NORTH": "WMG Lobby",
         "PLANET": "WMG Studios",
         "SECTOR": "Jorlene Sector",
         "GROUND": [],

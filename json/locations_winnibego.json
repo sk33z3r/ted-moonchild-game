@@ -1,6 +1,7 @@
 [
     {
         "NAME": "Winnibego",
+        "SHORTDESC": [ "DIM", "Ted's only true friend, the Winnie. They've been through a lot together." ],
         "FIRST_EVENTS": {
             "0": [ "DIM", "Ted's trusty steed, the ol' Winnie. It smells of dude and weed in here." ],
             "1": [ "DIM", "Ted takes the keys and turns the ignition. There's a flashing light on the console that reads:" ],

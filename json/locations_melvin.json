@@ -1,6 +1,7 @@
 [
     {
         "NAME": "EBGB Stage",
+        "SHORTDESC": [ "DIM", "A small, well-built stage with half a drum kit and some music gear. There are doors on either side of the stage." ],
         "FIRST_EVENTS": {
             "0": [ "DIM", "Ted finishes wrapping cables and tearing down the stage." ],
             "1": [ "BRIGHT_CYAN", "TED: \"I'm gettin' too old for this shit, but that was a damn fine show.\"" ],
@@ -9,22 +10,26 @@
             "4": [ "DIM", "Ted can hear faint bubbling from somewhere." ]
         },
         "UNSOLVED_EVENTS": {
-            "0": [ "DIM", "The bar is winding down for the night. Ted can hear faint bubbling from somewhere." ]
+            "0": [ "DIM", "The bar is winding down for the night. Ted can hear faint bubbling from somewhere." ],
+            "1": [ "DIM", "Ted can see the bathrooms to the left and backstage is to the right." ]
         },
         "KEY_EVENTS": {
             "0": [ "DIM", "Ted looks around and finds a strange latch on the floor under the drums. He shoves his screwdriver into a metal ring on the latch and pulls up hard." ],
-            "1": [ "DIM", "There's a loud snap as the screwdriver breaks, and a clunk underneath the stage. The whole drum kit begins to move and shift forward, revealing a stairway leading down into the basement." ],
+            "1": [ "DIM", "There's a loud snap as the screwdriver breaks, and a clunk underneath the stage. Everything on stage begins to shift as a trap door slides open, breaking bottles and revealing a stairway leading down into the basement." ],
             "2": [ "BRIGHT_CYAN", "TED: \"That sneaky bastard, OMFUG... I wonder what he's up to down there.\""],
-            "3": [ "DIM", "There's a dim, pulsating light and bubbling noises coming from the stairs." ]
+            "3": [ "DIM", "The bubbling noise seems to be coming from the trap door." ]
         },
         "SOLVED_EVENTS": {
             "0": [ "DIM", "The bar is winding down for the night." ],
-            "1": [ "DIM", "There's a dim, pulsating light and bubbling noises coming from the stairs." ]
+            "1": [ "DIM", "Ted can see the bathrooms to the left and backstage is to the right." ],
+            "2": [ "DIM", "A trap door is open where the drums usually sit." ]
         },
         "EVENT_KEYS": [ "Screwdriver" ],
         "ADD_DIRS": {
             "0": [ "DOWN", "EBGB Basement" ]
         },
+        "DEL_GROUND": [ "Neat Cables", "Empty Bottle" ],
+        "ADD_GROUND": [ "Messy Cables", "Broken Bottle" ],
         "NORTH": "EBGB Dance Floor",
         "EAST": "EBGB Backstage",
         "WEST": "EBGB Bathrooms",
@@ -36,6 +41,7 @@
     },
     {
         "NAME": "EBGB Basement",
+        "SHORTDESC": [ "DIM", "There's a dim, pulsating light and bubbling noises coming from the trap door stairs." ],
         "FIRST_EVENTS": {
             "0": [ "DIM", "Ted bashes in the door, startling OMFUG hunched over a table." ],
             "1": [ "DIM", "OMFUG turns around quickly, knocking over a flask filled with bubbling liquid. The table is covered in a chemistry contraption with liquid dripping slowly into a glass jar." ],
@@ -55,10 +61,11 @@
         "KEY_EVENTS": {
             "0": [ "BRIGHT_MAGENTA", "OMFUG: \"Well?\"" ],
             "1": [ "DIM", "Ted begrudgingly reaches into his pocket and pulls out the Prince Alert. He tosses it onto the broken glass of the flask OMFUG knocked over." ],
-            "2": [ "BRIGHT_MAGENTA", "OMFUG: \"What a dick. Here, take this damn card and get outta my bar. Your boys all got taken to different studios." ],
-            "3": [ "BRIGHT_MAGENTA", "I know Chaz got carried off to WMG Studios over in the Jorlene sector. They already got a whole thing for him!" ],
-            "4": [ "BRIGHT_MAGENTA", "For what it's worth, I hope you never find 'em all! Ha!\"" ],
-            "5": [ "DIM_YELLOW", "Boss Battle: OMFUG the Moonshiner will happen here." ]
+            "2": [ "BRIGHT_MAGENTA", "OMFUG: \"Dick. Your boys all got taken to different studios." ],
+            "3": [ "BRIGHT_MAGENTA", "Chaz got carried off to WMG over in the Jorlene sector. I hear Dr. D-Ray already got somethin' cookin'!" ],
+            "4": [ "BRIGHT_MAGENTA", "For what it's worth, I hope you never find 'em all! BAHAHA!" ],
+            "5": [ "BRIGHT_MAGENTA", "Now get the fuck outta my bar, Ted.\"" ],
+            "6": [ "DIM_YELLOW", "Boss Battle: OMFUG the Moonshiner will happen here." ]
         },
         "SOLVED_EVENTS": {
             "0": [ "DIM", "OMFUG lies passed out in a pool of his own sick. The distilling gear is still bubbling away." ]
@@ -74,6 +81,7 @@
     },
     {
         "NAME": "EBGB Dance Floor",
+        "SHORTDESC": [ "DIM", "The dance floor is still a mess from the show. Ted can also see a jukebox and the bar." ],
         "FIRST_EVENTS": {
             "0": [ "DIM", "Ted walks out onto the dance floor. There are two drunken hippies making out furiously. Ted tries to ignore them." ],
             "1": [ "DIM", "The bartender can be seen wiping down the bar; last call hasn't been announced." ]
@@ -106,6 +114,7 @@
     },
     {
         "NAME": "EBGB Backstage",
+        "SHORTDESC": [ "DIM", "You can almost smell the desperation coming from the door. Must be the green room." ],
         "FIRST_EVENTS": {
             "0": [ "DIM", "Ted finds himself trudging through a sea of beer cans, roaches, and used condoms. Lying on top of a case is a grungy white guitar that was used by the cover band." ],
             "1": [ "BRIGHT_CYAN", "TED: \"Dumb ass left his guitar.\"" ],
@@ -136,6 +145,7 @@
     },
     {
         "NAME": "EBGB Bathrooms",
+        "SHORTDESC": [ "DIM", "An unmarked door leading to the most vile place in the galaxy, EBGB's bathrooms." ],
         "FIRST_EVENTS": {
             "0": [ "DIM", "The smell of piss and shit from the hippies at the show tonight is overbearing." ],
             "1": [ "BRIGHT_CYAN", "TED: \"I swear I'm going to murder every hippy in the galaxy. Need to find the guys, first.\"" ],
@@ -169,6 +179,7 @@
     },
     {
         "NAME": "EBGB Bar",
+        "SHORTDESC": [ "DIM", "The bartender is still hanging out, maybe Ted can get snag some road beers." ],
         "FIRST_EVENTS": {
             "0": [ "DIM", "Ted sizes up the bartender. He's a large rotund individual from the planet Zappa. Best not to try anything stupid with him." ],
             "1": [ "BRIGHT_MAGENTA", "BONGO: \"Whatchoo won' Ted?\"" ],
@@ -199,6 +210,7 @@
     },
     {
         "NAME": "EBGB Jukebox",
+        "SHORTDESC": [ "DIM", "Ted sees a ratty looking jukebox over there." ],
         "FIRST_EVENTS": {
             "0": [ "DIM", "Ted needs to listen to some tunes, so he walks over to the ratty Jukebox that's probably been here for centuries." ],
             "1": [ "DIM", "There are 4 buttons, and a blinking slot with text that reads:" ],
@@ -230,6 +242,7 @@
     },
     {
         "NAME": "Zappa Lot",
+        "SHORTDESC": [ "DIM", "It's the planet's parking lot." ],
         "FIRST_EVENTS": {
             "0": [ "DIM", "Ted leaves EBGBs to find his sweet looking Winnibego in the parking lot." ],
             "1": [ "DIM", "There are two other ships parked here, one is real fancy lookin'. OMFUG must still be inside somewhere." ]
@@ -255,6 +268,7 @@
     },
     {
         "NAME": "The Trash Warrens",
+        "SHORTDESC": [ "DIM", "There's a constant outpouring of thin smoke from the alleyway." ],
         "FIRST_EVENTS": {
             "0": [ "DIM", "Ted finds himself in a dark alley with a layer of thick smoke. Lounging before him, on a mound of used condoms and empty Dark Matter Ale bottles, there's a rough looking buzzoid hobo smoking what looks to be a joint made of trash." ],
             "1": [ "BRIGHT_MAGENTA", "HOBO: \"What'll ya be havin', stranger?\"" ],
@@ -281,6 +295,7 @@
     },
     {
         "NAME": "Mactel 6 Lot",
+        "SHORTDESC": [ "DIM", "It's the planet's parking lot." ],
         "FIRST_EVENTS": {
             "0": [ "DIM", "As Ted exits the Winnie, he's hit with a stiff and pungent odor." ],
             "1": [ "BRIGHT_CYAN", "TED: \"Holy shit! What died on this planet?\"" ],
