@@ -1237,7 +1237,10 @@ class worldUI():
 
         # if the cmd is in ALL_COMMANDS list, setup the arguments
         elif args[0] in eng.ALL_COMMANDS:
-            if len(args) == 3:
+            if len(args) == 4:
+                # if args has 3 items, then the last two should be considered 1 argument
+                worldUI.runAction(args[0], "{0} {1} {2}".format(args[1], args[2], args[3]))
+            elif len(args) == 3:
                 # if args has 3 items, then the last two should be considered 1 argument
                 worldUI.runAction(args[0], "{0} {1}".format(args[1], args[2]))
             elif len(args) == 2:
@@ -1247,7 +1250,8 @@ class worldUI():
                 # if args has 1 item, then pass only the cmd
                 worldUI.runAction(args[0], None)
             else:
-                raise Exception("CMD ERROR: Unexpected number of arguments from user input")
+                worldUI.writeMsg("You entered too many words for that item, Ted. Try again.", "RED")
+                return
 
         # if the cmd is a direction, move
         elif args[0] in eng.LONG_DIRS or eng.SHORT_DIRS or eng.MOVE_CMDS:
