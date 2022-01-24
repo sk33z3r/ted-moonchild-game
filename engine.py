@@ -10,7 +10,7 @@ tb, bb = 0, 0
 tl, tr, ll, lr = 0, 0, 0, 0
 
 # available command definitions
-BASE_COMMANDS = [ "save", "shop", "look", "take", "drop", "sell", "buy", "equip", "unequip", "quit", "exit", "help", "use" ]
+BASE_COMMANDS = [ "save", "shop", "look", "take", "drop", "sell", "buy", "equip", "unequip", "quit", "exit", "help", "use", "fight", "battle" ]
 USE_CMDS = [ "use", "try" ]
 EAT_CMDS = [ "eat", "gobble", "consume" ]
 DRINK_CMDS = [ "swallow", "gulp", "slurp", "drink" ]
@@ -347,15 +347,19 @@ def tempInv():
 
 # function to buy and sell items
 def itemTransaction(item, dowhat):
+    
+    # setup item info
+    itemInfo = dbs.items.find_one( { "NAME": item } )
+    shortdesc = itemInfo["SHORTDESC"]
 
     # if sell is specified
     if dowhat == "sell":
 
         # reduce the value by 25%
-        val = round(dbs.items.find_one( { "NAME": item } )["VALUE"] * 0.75)
+        val = round(itemInfo["VALUE"] * 0.75)
 
         # set message text
-        message = [ "Ted sold {0} for {1} FLOYDS.".format(item, str(val)), "GREEN" ]
+        message = [ "Ted sold {0} for {1} FLOYDS.".format(shortdesc, str(val)), "GREEN" ]
 
         # updateplayer's FLOYDS and inventory
         dbs.updateStat("FLOYDS", val, "inc")
@@ -421,6 +425,7 @@ def useItem(name):
 
     # get item info
     itemInfo = dbs.items.find_one( { "NAME": name } )
+    shortdesc = itemInfo["SHORTDESC"]
 
     # figure out what the item is, and do the thing
     if itemInfo["TYPE"] in [ "drug", "food", "smoke", "drink" ]:
@@ -491,7 +496,7 @@ def useItem(name):
             raise Exception("ITEM ERROR: The item effect combo shouldn't exist")
 
         # setup the message
-        message = [ "Ted consumes the {0}! Effect: {1} {2}{3}\n{4}".format(name, stat, op, str(val), lvlMsg), "GREEN" ]
+        message = [ "Ted consumes the {0}! Effect: {1} {2}{3}\n{4}".format(shortdesc, stat, op, str(val), lvlMsg), "GREEN" ]
 
         # remove the item from inventory and write the new information to screen
         dbs.updateInv(name, "del")

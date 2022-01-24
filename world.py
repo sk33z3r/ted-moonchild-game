@@ -854,7 +854,7 @@ class worldUI():
                     dbs.setFX(itemInfo["NAME"])
                     worldUI.writeInv()
                     worldUI.writeStats()
-                    message = "Ted equipped {0}.".format(itemInfo["NAME"])
+                    message = "Ted equipped {0}.".format(itemInfo["SHORTDESC"])
                     worldUI.writeMsg(message, "CYAN")
 
                 # otherwise tell the player they can't equip it
@@ -894,7 +894,7 @@ class worldUI():
                     dbs.setFX("noFX")
                     worldUI.writeInv()
                     worldUI.writeStats()
-                    message = "Ted unequipped {0}.".format(itemInfo["NAME"])
+                    message = "Ted unequipped {0}.".format(itemInfo["SHORTDESC"])
                     worldUI.writeMsg(message, "CYAN")
 
                 # otherwise you can't unequip something that isn't equipped
@@ -1074,6 +1074,10 @@ class worldUI():
         elif cmd == "save":
             message = dbs.saveGame()
             worldUI.writeMsg(message[0], message[1])
+
+        # battle
+        elif cmd == "fight" or cmd == "battle":
+            battle.battleUI(screen)
 
         # help
         elif cmd == "help":
