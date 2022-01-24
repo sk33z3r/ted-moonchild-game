@@ -273,7 +273,7 @@ class worldUI():
             dirList = dbs.locationInfo["SECTOR_DIRS"][room]
 
             # for each direction, check and remove any existing directions in the db
-            for direction in worldUI.LONG_DIRS:
+            for direction in eng.LONG_DIRS:
                 if direction.upper() in dbs.locationInfo:
                     dbs.locations.update_one( { "NAME": "Space" }, { "$unset": { direction.upper() : "" } } )
 
@@ -523,6 +523,9 @@ class worldUI():
         # clear the window
         msgWin.clear()
 
+        # wrap the message text
+        msg = "\n".join(wrap(msg, 100))
+
         # display the message
         msgWin.addstr(0, 0, msg, eng.c[style])
 
@@ -628,7 +631,7 @@ class worldUI():
         msgWin.clear()
 
         # link short names to long names
-        if lower in worldUI.SHORT_DIRS:
+        if lower in eng.SHORT_DIRS:
             if lower == "n":
                 upper = "NORTH"
             if lower == "s":
@@ -705,14 +708,14 @@ class worldUI():
         elif cmd == "look":
 
             # with no specifics given, assume the player wants to refresh the room event
-            if arg == None or arg in worldUI.ROOM_WORDS:
+            if arg == None or arg in eng.ROOM_WORDS:
                 worldUI.writeLocation(dbs.ROOM, "room", False)
 
             # if the arg is a direction
-            elif arg in worldUI.LONG_DIRS or worldUI.SHORT_DIRS:
+            elif arg in eng.LONG_DIRS or arg in eng.SHORT_DIRS:
 
                 # link short names to long names
-                if arg in worldUI.SHORT_DIRS:
+                if arg in eng.SHORT_DIRS:
                     if arg == "n":
                         upper = "NORTH"
                     if arg == "s":
@@ -735,7 +738,7 @@ class worldUI():
                 # if it doesn't print something whimsical
                 # TODO make this dialogue a list and choose one at random
                 except:
-                    worldUI.writeMsg("Ted cops a feel on the wall, hoping for a hidden latch or some secret button. All he finds is disappointment.", eng.c["DIM_RED"])
+                    worldUI.writeMsg("Ted cops a feel on the wall, hoping for a hidden latch or some secret button. All he finds is disappointment.", "DIM_RED")
                 # if it exists print a message with the shortdesc
                 else:
                     worldUI.writeMsg(roomInDirection["SHORTDESC"][1], roomInDirection["SHORTDESC"][0])
@@ -1254,7 +1257,7 @@ class worldUI():
                 return
 
         # if the cmd is a direction, move
-        elif args[0] in eng.LONG_DIRS or eng.SHORT_DIRS or eng.MOVE_CMDS:
+        elif args[0] in eng.LONG_DIRS or args[0] in eng.SHORT_DIRS or args[0] in eng.MOVE_CMDS:
 
             # i don't want to discourage trying new words to solve puzzles, so if the player enters "move direction",
             # just ignore the first command and pass the direction along
@@ -1281,6 +1284,7 @@ class worldUI():
     # function to clear all screens
     def clearAllScreens():
 
+        screen.clear()
         titleBorder.clear()
         titleWin.clear()
         statsBorder.clear()
@@ -1323,6 +1327,9 @@ class worldUI():
         global begin_x
         global max_x
         global max_y
+        global screen
+
+        screen = stdscr
 
         # define max size
         max_x = 110
@@ -1388,7 +1395,7 @@ class worldUI():
         inputWin.immedok(True)
         inputCmd = Textbox(inputWin, insert_mode=True)
         # place PROMPT in the input window
-        stdscr.addstr(eng.worldInputDims["prompt"][0], eng.worldInputDims["prompt"][1], eng.PROMPT, eng.c["BRIGHT_RED"])
+        stdscr.addstr(eng.worldInputDims["prompt"][0], eng.worldInputDims["prompt"][1], eng.PROMPT, eng.c["RED"])
 
         # MESSAGES
         # define the border
