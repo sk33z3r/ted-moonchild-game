@@ -35,7 +35,7 @@
         "WEST": "EBGB Bathrooms",
         "PLANET": "Zappa",
         "SECTOR": "Melvin Sector",
-        "GROUND": [ "Empty Bottle", "Stack of Cables", "EBGB Drums" ],
+        "GROUND": [ "Empty Bottle", "Neat Cables", "EBGB Drums" ],
         "VISITED": 0,
         "SOLVED": 0
     },
