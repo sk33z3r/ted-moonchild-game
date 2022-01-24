@@ -3,28 +3,24 @@
         "NAME": "Punch",
         "HEROMIN": 2,
         "HEROMAX": 5,
-        "TYPE": "physical",
-        "LEVEL": 1
+        "TYPE": "physical"
     },
     {
         "NAME": "Headbang",
         "HEROMIN": 4,
         "HEROMAX": 8,
-        "TYPE": "physical",
-        "LEVEL": 2
+        "TYPE": "physical"
     },
     {
         "NAME": "Rising Force",
         "MPREQ": 5,
         "MAGDMG": 10,
-        "TYPE": "magic",
-        "LEVEL": 2
+        "TYPE": "magic"
     },
     {
         "NAME": "Purple Rain",
         "MPREQ": 8,
         "MAGDMG": 15,
-        "TYPE": "magic",
-        "LEVEL": 3
+        "TYPE": "magic"
     }
 ]

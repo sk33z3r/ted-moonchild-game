@@ -5,6 +5,8 @@
         "HPMAX": 50,
         "MPMAX": 15,
         "CRITBNS": 1,
+        "SP": 5,
+        "ABILITIES": [ "Punch" ],
         "MSG": [ "Welcome to Level 1!" ]
     },
     {
@@ -13,6 +15,8 @@
         "HPMAX": 100,
         "MPMAX": 25,
         "CRITBNS": 2,
+        "SP": 5,
+        "ABILITIES": [ "Rising Force", "Headbang" ],
         "MSG": [ "HP +, MP +!", "Ted learned new combat abilities: Headbang, Rising Force!" ]
     },
     {
@@ -21,6 +25,8 @@
         "HPMAX": 150,
         "MPMAX": 35,
         "CRITBNS": 2,
+        "SP": 5,
+        "ABILITIES": [ "Purple Rain" ],
         "MSG": [ "HP +, MP +!", "Ted learned new combat ability: Purple Rain!" ]
     },
     {
@@ -29,6 +35,8 @@
         "HPMAX": 200,
         "MPMAX": 50,
         "CRITBNS": 2,
+        "SP": 5,
+        "ABILITIES": [],
         "MSG": [ "HP +, MP +!" ]
     },
     {
@@ -37,6 +45,8 @@
         "HPMAX": 275,
         "MPMAX": 75,
         "CRITBNS": 3,
+        "SP": 5,
+        "ABILITIES": [],
         "MSG": [ "HP +, MP +!" ]
     },
     {
@@ -45,6 +55,8 @@
         "HPMAX": 350,
         "MPMAX": 100,
         "CRITBNS": 3,
+        "SP": 5,
+        "ABILITIES": [],
         "MSG": [ "HP +, MP +!" ]
     },
     {
@@ -53,6 +65,8 @@
         "HPMAX": 500,
         "MPMAX": 150,
         "CRITBNS": 3,
+        "SP": 5,
+        "ABILITIES": [],
         "MSG": [ "HP +, MP +!" ]
     },
     {
@@ -61,6 +75,8 @@
         "HPMAX": 650,
         "MPMAX": 225,
         "CRITBNS": 3,
+        "SP": 5,
+        "ABILITIES": [],
         "MSG": [ "HP +, MP +!" ]
     },
     {
@@ -69,6 +85,8 @@
         "HPMAX": 850,
         "MPMAX": 300,
         "CRITBNS": 4,
+        "SP": 5,
+        "ABILITIES": [],
         "MSG": [ "HP +, MP +!" ]
     },
     {
@@ -77,6 +95,8 @@
         "HPMAX": 1000,
         "MPMAX": 450,
         "CRITBNS": 4,
+        "SP": 5,
+        "ABILITIES": [],
         "MSG": [ "HP +, MP +!" ]
     },
     {
@@ -85,6 +105,8 @@
         "HPMAX": 1250,
         "MPMAX": 550,
         "CRITBNS": 4,
+        "SP": 5,
+        "ABILITIES": [],
         "MSG": [ "HP +, MP +!" ]
     },
     {
@@ -93,6 +115,8 @@
         "HPMAX": 1650,
         "MPMAX": 750,
         "CRITBNS": 4,
+        "SP": 5,
+        "ABILITIES": [],
         "MSG": [ "HP +, MP +!" ]
     },
     {
@@ -101,6 +125,8 @@
         "HPMAX": 2000,
         "MPMAX": 1000,
         "CRITBNS": 5,
+        "SP": 5,
+        "ABILITIES": [],
         "MSG": [ "HP +, MP +!" ]
     },
     {
@@ -109,6 +135,8 @@
         "HPMAX": 2500,
         "MPMAX": 1250,
         "CRITBNS": 5,
+        "SP": 5,
+        "ABILITIES": [],
         "MSG": [ "HP +, MP +!" ]
     },
     {
@@ -117,6 +145,8 @@
         "HPMAX": 3500,
         "MPMAX": 1750,
         "CRITBNS": 5,
+        "SP": 5,
+        "ABILITIES": [],
         "MSG": [ "HP +, MP +!" ]
     },
     {
@@ -125,6 +155,8 @@
         "HPMAX": 5000,
         "MPMAX": 2250,
         "CRITBNS": 5,
+        "SP": 5,
+        "ABILITIES": [],
         "MSG": [ "HP +, MP +!" ]
     },
     {
@@ -133,6 +165,8 @@
         "HPMAX": 7500,
         "MPMAX": 3500,
         "CRITBNS": 6,
+        "SP": 5,
+        "ABILITIES": [],
         "MSG": [ "HP +, MP +!" ]
     },
     {
@@ -141,6 +175,8 @@
         "HPMAX": 10000,
         "MPMAX": 5000,
         "CRITBNS": 6,
+        "SP": 5,
+        "ABILITIES": [],
         "MSG": [ "HP +, MP +!" ]
     },
     {
@@ -149,6 +185,8 @@
         "HPMAX": 12000,
         "MPMAX": 6000,
         "CRITBNS": 6,
+        "SP": 5,
+        "ABILITIES": [],
         "MSG": [ "HP +, MP +!" ]
     },
     {
@@ -157,6 +195,8 @@
         "HPMAX": 15000,
         "MPMAX": 8000,
         "CRITBNS": 6,
+        "SP": 5,
+        "ABILITIES": [],
         "MSG": [ "HP +, MP +!" ]
     }
 ]
