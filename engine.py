@@ -3,7 +3,6 @@ from os import system
 from time import sleep
 from natsort import natsorted
 import database as dbs
-import art
 
 # define border styles so they're easier to change later
 lb, rb = 0, 0
@@ -30,19 +29,26 @@ GAME_SPEED = 4
 # function to calculate section dimensions and starting points based on terminal size
 def calculateWindows(height, width, max_y, max_x, ui):
 
-    # define globals
-    global sectionDims
-    global titleDims
-    global groundDims
-    global exitDims
-    global eventDims
-    global inputDims
-    global msgDims
-    global statDims
-    global invDims
-    global helpDims
     global mainDims
     global mainInputDims
+    global worldTitleDims
+    global worldGroundDims
+    global worldExitDims
+    global worldEventDims
+    global worldInputDims
+    global worldMsgDims
+    global worldStatDims
+    global worldInvDims
+    global worldHelpDims
+    global battleTitleDims
+    global battleGroundDims
+    global battleExitDims
+    global battleEventDims
+    global battleInputDims
+    global battleMsgDims
+    global battleStatDims
+    global battleInvDims
+    global battleHelpDims
 
     # determine where curses needs to start the windows to be centered in the terminal
     initBegin_y = round((height - max_y) / 2)
@@ -60,7 +66,7 @@ def calculateWindows(height, width, max_y, max_x, ui):
                 "logo": [ 16, 80, initBegin_y, (initBegin_x + 1) ]
             },
             "input": {
-                "border": [ (initBegin_y + 25), (initBegin_x + 1), (initBegin_y + 27), (initBegin_x + 80) ],
+                "border": [ 3, 80, (initBegin_y + 27), (initBegin_x + 1) ],
                 "content": [ 1, 70, (initBegin_y + 26), (initBegin_x + len(PROMPT) + 3) ],
                 "prompt": [ (initBegin_y + 26), (initBegin_x + 3) ]
             }
