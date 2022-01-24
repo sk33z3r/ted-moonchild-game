@@ -1293,7 +1293,6 @@ class worldUI():
         titleWin.clear()
         statsBorder.clear()
         statsWin.clear()
-        inputBorder.clear()
         inputWin.clear()
         msgBorder.clear()
         msgWin.clear()
@@ -1314,7 +1313,6 @@ class worldUI():
         global titleWin
         global statsBorder
         global statsWin
-        global inputBorder
         global inputWin
         global inputCmd
         global msgBorder
