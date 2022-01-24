@@ -4,10 +4,11 @@
         "DESC": "A hideous bug like creature that smells of liquor and sewage.",
         "HP": 15,
         "MP": 10,
-        "ATTACKMIN": 1,
-        "ATTACKMAX": 3,
-        "CRITBNS": 1,
+        "ATTACKMIN": 2,
+        "ATTACKMAX": 5,
+        "CR": 0,
         "PLANETS": [ "Zappa", "Mactel 6" ],
+        "ITEMS": [ "Protection" ],
         "DIALOG": [ "It spits in your face!", "It flaps its pathetic wings with great force!" ]
     },
     {
@@ -15,10 +16,11 @@
         "DESC": "Ted isn't quite sure what to make of this round object that gargles at him.",
         "HP": 20,
         "MP": 15,
-        "ATTACKMIN": 2,
-        "ATTACKMAX": 5,
-        "CRITBNS": 2,
+        "ATTACKMIN": 4,
+        "ATTACKMAX": 8,
+        "CR": 1,
         "PLANETS": [ "Zappa" ],
+        "ITEMS": [ "ACiD", "Magic Mushies" ],
         "DIALOG": [ "It throws a dog-doo snow cone!", "It rubs yellow snow in your eye!" ]
     }
 ]

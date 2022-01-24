@@ -1,0 +1,45 @@
+[
+    {
+        "NAME": "Winnibego",
+        "SHORTDESC": [ "DIM", "Ted's only true friend, the Winnie. They've been through a lot together." ],
+        "FIRST_EVENTS": {
+            "0": [ "DIM", "Ted's trusty steed, the ol' Winnie. It smells of dude and weed in here." ],
+            "1": [ "DIM", "Ted takes the keys and turns the ignition. There's a flashing light on the console that reads:" ],
+            "2": [ "BLINK_BRIGHT_RED", "FUEL EMPTY" ],
+            "3": [ "BRIGHT_CYAN", "TED: \"Well shit. Maybe there's something in the bar I can use.\"" ]
+        },
+        "UNSOLVED_EVENTS": {
+            "0": [ "DIM", "Ted takes the keys and turns the ignition. There's a flashing light on the console that reads:" ],
+            "1": [ "BLINK_BRIGHT_RED", "FUEL EMPTY" ]
+        },
+        "KEY_EVENTS": {
+            "0": [ "DIM", "Ted pulls the Schnitmuckle out of his pocket. It's sticky and hard to handle, with lint stuck all over it." ],
+            "1": [ "DIM", "He walks up to the gas tank, and starts to feed the celestial shit blob into the tank. It takes a few minutes for it all to slide in, but eventually Ted can close the cap." ],
+            "2": [ "BRIGHT_CYAN", "TED: \"If this works, I shouldn't need fuel for a while...\"" ],
+            "3": [ "DIM", "Ted hops back into the Winnie's driver seat, takes the keys and turns the ignition. The Winnie spits and sputters, but fires right up after a couple seconds!" ],
+            "4": [ "BRIGHT_CYAN", "TED: Aha! Fuck you, Wiener Music Group. I'm comin' for ya, now!" ],
+            "5": [ "DIM", "The Winnibego creates a thunderous roar as its plasma thrusters light up brighter than ever. Ted peels out and leaves a streak of neon blue in Zappa's atmosphere as he rockets towards the Jorlene sector." ],
+            "6": [ "DIM", "As the Winnie rocks back and forth, violently, Ted hears a crashing noise in the floor behind him. An fx pedal fell from a cabinet and hit the ground." ]
+        },
+        "SOLVED_EVENTS": {
+            "0": [ "DIM", "Engines purr as the Winnie pilots into orbit around Planet {0}." ]
+        },
+        "EVENT_KEYS": [ "Winnibego Keys", "Schnitmuckle" ],
+        "ADD_GROUND": [ "Wormhole Delay" ],
+        "ADD_DIRS": {
+            "0": [ "UP", "Space" ]
+        },
+        "PLANET": "Traveling",
+        "PLANET_DIRS": {
+            "Zappa": [ "DOWN", "Zappa Lot" ],
+            "Mactel 6": [ "DOWN", "Mactel 6 Lot" ],
+            "The Dagobar": [ "DOWN", "Dagobar Lot" ],
+            "WMG Studios": [ "DOWN", "WMG Studios Lot" ]
+        },
+        "SECTOR": "Melvin Sector",
+        "DOWN": "Zappa Lot",
+        "GROUND": [],
+        "VISITED": 0,
+        "SOLVED": 0
+    }
+]

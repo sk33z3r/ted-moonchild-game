@@ -1,4 +1,4 @@
-# Ted Moonchild and the Roadies in Space
+# Ted Moonchild and the Roadies in Space in Python
 
 ```plaintext
           (         *       )     )     )          ) (   (   (
@@ -19,16 +19,28 @@
          | \ \__//--\|__/||____)  || )  __)|   /--\__|__
 ```
 
-## Notes
+## Play the latest code
 
-* 170 x 47 is base assumed max terminal size
-* Following commands entered into bash will show column and line size for terminal window.
-  * `tput cols`
-  * `tput lines`
-* Command line arguments:
-  * `python main.py [-d|--debug]` - Prints game calculations and results to console output.
-  * `python main.py [-nc|--nocolor]` - Turns off colorama styles.
-  * `python main.py [-w|--width] INT` - Specifies the terminal output width
+1. [Install Docker](https://docs.docker.com/compose/install/) and `docker-compose`
+2. Clone this repo and change to it
+3. Fullscreen your terminal (for now this is necessary)
+4. Run `./test-run.sh local`
+5. Enter the password: `m00nch1ld`
+
+```shell
+$ git clone https://git.blackrookllc.com/ted-moonchild/moonchild-game.git
+$ cd ./moonchild-game
+$ ./test-run.sh local
+ted password: m00nch1ld
+```
+
+## FAQ
+
+* **110 x 40** is the minimum terminal size
+* Terminals are notoriously non-uniform. I won't be able to guarantee colors or even text input operations. I've noticed a few potential issues:
+  * Some terminals do not return a height,width with the `getmaxyx()` method. This means centering and resizing might not operate correctly either.
+  * Most terminals do not support `BACKSPACE` or `DELETE` when entering text input. So far `Ctrl+H` always works.
+  * Even `xterm` between OS implementations varies in behavior.
 
 ## Combat Turn Logic
 
