@@ -1,13 +1,86 @@
 import os, curses, sys
 from curses.textpad import Textbox, rectangle
 from time import sleep
+from textwrap import wrap
 from natsort import natsorted
 import engine as eng
 import database as dbs
-import art
 from world import worldUI
+import art
 
 class main():
+
+    # function to display the logo
+    def displayLogo(delay):
+
+        # clear the main window
+        logoWin.clear()
+
+        # display the logo
+        top = art.LOGO["TOP"]
+        mid = art.LOGO["MID"]
+        low = art.LOGO["LOW"]
+
+        # set logo height
+        logoHeight = len(top) + len(mid) + len(low)
+        l = 0
+
+        # setup loop for the top
+        p = 0
+        while p < len(top) and l < logoHeight:
+            line = top[str(p)]
+            style = eng.c[line[0]]
+            logoWin.addstr(l, 5, line[1], style)
+            p += 1
+            l += 1
+
+        sleep(delay)
+
+        # reset loop for mid
+        p = 0
+        while p < len(mid) and l < logoHeight:
+            line = mid[str(p)]
+            style = eng.c[line[0]]
+            logoWin.addstr(l, 5, line[1], style)
+            p += 1
+            l += 1
+
+        sleep(delay)
+
+        # reset loop for low
+        p = 0
+        while p < len(low) and l < logoHeight:
+            line = low[str(p)]
+            style = eng.c[line[0]]
+            logoWin.addstr(l, 5, line[1], style)
+            p += 1
+            l += 1
+
+    # function to run the intro animation
+    def introAnimation():
+
+        # clear everything
+        main.clearAllScreens()
+        sleep(1)
+
+        # run the intro story
+        l, i = 3, 0
+        for line in art.INTRO:
+            logoWin.addstr(l, 0, "\n".join(wrap(art.INTRO[str(i)][1], 75)), eng.c[art.INTRO[str(i)][0]])
+
+            if len(art.INTRO[str(i)][1]) > 75:
+                l += 3
+                sleep(5)
+            else:
+                l += 2
+                sleep(3)
+
+            i += 1
+
+        # do the logo animation
+        main.displayLogo(2)
+
+        sleep(4)
 
     # function to print the exit message
     def exitGame():
@@ -17,6 +90,7 @@ class main():
         inputWin.clear()
 
         # TODO display logo and a message
+        main.displayLogo(0)
 
         # exit application
         sys.exit()
@@ -32,16 +106,16 @@ class main():
             mainWin.addstr(2, 18, "Watch the intro animation? (yes/no)", eng.c["CYAN"])
             choice = main.getCmd()
 
-            # if yes, run the intro
+            # TODO port animation to mongo and curses
             if choice == "yes" or choice == "y":
-                art.introAnimation()
+                main.introAnimation()
 
             # otherwise just start the game
             else:
                 pass
 
         # initiate the curses UI
-        worldUI.build()
+        worldUI.build(screen)
 
         # prep the exit screen
         main.exitGame()
@@ -89,14 +163,7 @@ class main():
     # function for the main menu
     def menu():
 
-        # clear the main window
-        logoWin.clear()
-
-        # display the logo
-        l = 0
-        while l < len(art.logo):
-            logoWin.addstr(l, 5, art.logo[str(l)][1], eng.c["YELLOW"])
-            l += 1
+        main.displayLogo(0)
 
         # main command input loop
         while True:
@@ -154,7 +221,7 @@ class main():
                     # otherwise try to match the name
                     elif slotName in slots:
                         dbs.loadGame(slotName)
-                        #main.startGame("load") # TODO enable startGame
+                        main.startGame("load") # TODO enable startGame
 
                     # if nothing works, tell the player
                     else:
@@ -180,7 +247,7 @@ class main():
 
                     # setup a new save slot then start the game
                     dbs.newGame(slotName)
-                    #main.startGame("new") # TODO enable startGame
+                    main.startGame("new") # TODO enable startGame
 
     def newGameMenu():
 
@@ -240,7 +307,7 @@ class main():
             else:
                 # otherwise create the new game and start
                 dbs.newGame(slotName)
-                #main.startGame("new") # TODO enable startGame
+                main.startGame("new") # TODO enable startGame
                 return
 
         # otherwise, if the slot exists
@@ -275,7 +342,7 @@ class main():
 
                     dbs.deleteSave(slotName, True)
                     dbs.newGame(newSlotName)
-                    #main.startGame("new") # TODO enable startGame
+                    main.startGame("new") # TODO enable startGame
 
                 else:
 
@@ -317,10 +384,10 @@ class main():
     # function to clear all screens
     def clearAllScreens():
 
+        screen.clear()
         logoWin.clear()
         mainBorder.clear()
         mainWin.clear()
-        inputBorder.clear()
         inputWin.clear()
 
     # function for the initial UI definitions
@@ -337,6 +404,9 @@ class main():
         global begin_x
         global max_x
         global max_y
+        global screen
+
+        screen = stdscr
 
         # define max size
         max_x = 80
@@ -366,13 +436,14 @@ class main():
 
         # PROMPT
         # define the border
-        rectangle(stdscr, eng.mainInputDims["border"][0], eng.mainInputDims["border"][1], eng.mainInputDims["border"][2], eng.mainInputDims["border"][3])
+        inputBorder = stdscr.subwin(eng.mainInputDims["border"][0], eng.mainInputDims["border"][1], eng.mainInputDims["border"][2], eng.mainInputDims["border"][3])
+        inputBorder.immedok(True)
         # define the content area
         inputWin = stdscr.subwin(eng.mainInputDims["content"][0], eng.mainInputDims["content"][1], eng.mainInputDims["content"][2], eng.mainInputDims["content"][3])
         inputWin.immedok(True)
         inputCmd = Textbox(inputWin, insert_mode=True)
         # place PROMPT in the input window
-        stdscr.addstr(eng.mainInputDims["prompt"][0], eng.mainInputDims["prompt"][1], eng.PROMPT, eng.c["BRIGHT_RED"])
+        stdscr.addstr(eng.mainInputDims["prompt"][0], eng.mainInputDims["prompt"][1], eng.PROMPT, eng.c["RED"])
 
         # run the menu
         main.menu()
