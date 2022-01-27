@@ -234,12 +234,12 @@ def getStats():
 def getEnemyInfo(name):
 
     # define globals
-    global enemyStats
+    global enemyInfo
     global challengeRatingStats
 
     # setup vars
-    enemyStats = enemies.find_one( { "NAME": name } )
-    challengeRatingStats = challenge_ratings.find_one( { "RATING": enemyStats["CR"] } )
+    enemyInfo = enemies.find_one( { "NAME": name } )
+    challengeRatingStats = challenge_ratings.find_one( { "RATING": enemyInfo["CR"] } )
 
 # function to get a dict from the player's stats
 def getPlayerDict():
@@ -250,6 +250,14 @@ def getPlayerDict():
 
     # setup the player dict
     calcs = {
+        "HP": {
+            "MAX": 0,
+            "CUR": 0
+        },
+        "MP": {
+            "MAX": 0,
+            "CUR": 0
+        },
         "ATK": {
             "BASE": 0,
             "BONUS": 0
@@ -272,6 +280,12 @@ def getPlayerDict():
         }
     }
 
+    # set current HP/MP and maxes
+    for s in [ "HP", "MP" ]:
+        smax = "{0}MAX".format(s)
+        calcs[s]["MAX"] = playerStats[smax]
+        calcs[s]["CUR"] = playerStats[s]
+
     # run through each stat
     for s in eng.STATS:
 
@@ -292,12 +306,33 @@ def getPlayerDict():
 def getEnemyDict():
 
     # run through each stat, setup dict for later
-    calcs = { "ATK": 0, "DEF": 0, "MOJO": 0, "LUK": 0, "ACC": 0 }
+    calcs = {
+        "HP": {
+            "MAX": 0,
+            "CUR": 0
+        },
+        "MP": {
+            "MAX": 0,
+            "CUR": 0
+        },
+        "ATK": 0,
+        "DEF": 0,
+        "MOJO": 0,
+        "LUK": 0,
+        "ACC": 0
+    }
+
+    # set HP/MP
+    for s in [ "HP", "MP" ]:
+        calcs[s]["MAX"] = enemyInfo[s]
+        calcs[s]["CUR"] = enemyInfo[s]
+
+    # set other stats
     for s in eng.STATS:
 
         # if the stat has a bonus value in the enemy's document, add it
-        if s in enemyStats:
-            c = challengeRatingStats[s] + enemyStats[s]
+        if s in enemyInfo:
+            c = challengeRatingStats[s] + enemyInfo[s]
 
         # otherwise just set the base CR stat
         else:

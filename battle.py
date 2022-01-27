@@ -116,11 +116,57 @@ class battleUI():
     # function to pick and print the initial stats for an encounter
     def initEnemy():
 
+        global enemyStats
+
         # TODO pick a random enemy (weighted) from the current planet
-        # TODO write the enemy's name onto the border
-        # TODO get stats and print them to the section
+        chosenEnemy = "Zappan"
+
+        # setup enemy stats
+        dbs.getEnemyInfo(chosenEnemy)
+
+        # write the enemy's name onto the border
+        displayName = " {0} ".format(chosenEnemy.upper())
+        x = 48 - len(displayName)
+        enemyStatsBorder.addstr(0, x, displayName, curses.A_REVERSE)
+
+        # load enemy stats into memory
+        enemyStats = dbs.getEnemyDict()
+
+        # display the enemy information
+        battleUI.writeEnemy(enemyStats)
+
+        # set the description to show at the bottom
+        y = 19
+
+        # print enemy shortdesc
+        description = "\n".join(wrap(dbs.enemyInfo["DESC"], 45))
+        enemyStatsWin.addstr(y, 0, description)
+
         # TODO get enemy art and print to screen
-        sleep(1)
+
+    def writeEnemy(enemyStats):
+
+        # setup the strings
+        hpString = "HP: {0}/{1}".format(enemyStats["HP"]["CUR"], enemyStats["HP"]["MAX"])
+        mpString = "MP: {0}/{1}".format(enemyStats["MP"]["CUR"], enemyStats["MP"]["MAX"])
+        atkString = "ATK: {0}".format(enemyStats["ATK"])
+        defString = "DEF: {0}".format(enemyStats["DEF"])
+        mojoString = "MOJO: {0}".format(enemyStats["MOJO"])
+        lukString = "LUK: {0}".format(enemyStats["LUK"])
+        accString = "ACC: {0}".format(enemyStats["ACC"])
+
+        # image placeholder
+        enemyImg = screen.derwin(15, 35, (begin_y + 4), (begin_x + 13))
+        enemyImg.bkgd("#", eng.c["DIM"])
+
+        # add each string
+        enemyStatsWin.addstr(1, 2, hpString, eng.c["RED"])
+        enemyStatsWin.addstr(1, 15, mpString, eng.c["BLUE"])
+        enemyStatsWin.addstr(3, 1, atkString, eng.c["DIM_YELLOW"])
+        enemyStatsWin.addstr(4, 1, defString, eng.c["DIM_YELLOW"])
+        enemyStatsWin.addstr(5, 0, mojoString, eng.c["DIM_YELLOW"])
+        enemyStatsWin.addstr(6, 1, lukString, eng.c["DIM_YELLOW"])
+        enemyStatsWin.addstr(7, 1, accString, eng.c["DIM_YELLOW"])
 
     def rewriteScreen():
 
@@ -134,6 +180,7 @@ class battleUI():
     def displayBattle():
 
         # write all data to the screen
+        battleUI.initEnemy()
         #battleUI.writeStats()
         #battleUI.writeInv()
         #battleUI.writeMenu()
@@ -198,6 +245,7 @@ class battleUI():
         global begin_x
         global max_x
         global max_y
+        global screen
 
         screen = stdscr
 
@@ -232,7 +280,7 @@ class battleUI():
         eventBorder = stdscr.subwin(eng.battleEventDims["border"][0], eng.battleEventDims["border"][1], eng.battleEventDims["border"][2], eng.battleEventDims["border"][3])
         eventBorder.immedok(True)
         eventBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
-        eventBorder.addstr(0, 36, "[BATTLE LOG]")
+        eventBorder.addstr(0, 36, " BATTLE LOG ", curses.A_REVERSE)
         # define the content area
         eventWin = stdscr.subwin(eng.battleEventDims["content"][0], eng.battleEventDims["content"][1], eng.battleEventDims["content"][2], eng.battleEventDims["content"][3])
         eventWin.immedok(True)
@@ -242,7 +290,7 @@ class battleUI():
         statsBorder = stdscr.subwin(eng.battleStatDims["border"][0], eng.battleStatDims["border"][1], eng.battleStatDims["border"][2], eng.battleStatDims["border"][3])
         statsBorder.immedok(True)
         statsBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
-        statsBorder.addstr(0, 2, "[TED MOONCHILD]")
+        statsBorder.addstr(0, 2, " TED MOONCHILD ", curses.A_REVERSE)
         # define the content area
         statsWin = stdscr.subwin(eng.battleStatDims["content"][0], eng.battleStatDims["content"][1], eng.battleStatDims["content"][2], eng.battleStatDims["content"][3])
         statsWin.immedok(True)
@@ -261,7 +309,7 @@ class battleUI():
         menuBorder = stdscr.subwin(eng.battleMenuDims["border"][0], eng.battleMenuDims["border"][1], eng.battleMenuDims["border"][2], eng.battleMenuDims["border"][3])
         menuBorder.immedok(True)
         menuBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
-        menuBorder.addstr(0, 35, "[BATTLE MENU]")
+        menuBorder.addstr(0, 35, " BATTLE MENU ", curses.A_REVERSE)
         # define the content area
         menuWin = stdscr.subwin(eng.battleMenuDims["content"][0], eng.battleMenuDims["content"][1], eng.battleMenuDims["content"][2], eng.battleMenuDims["content"][3])
         menuWin.immedok(True)
