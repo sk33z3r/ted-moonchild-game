@@ -258,7 +258,7 @@ def getPlayerDict():
             "BASE": 0,
             "BONUS": 0
         },
-        "MAG": {
+        "MOJO": {
             "BASE": 0,
             "BONUS": 0
         },
@@ -273,7 +273,7 @@ def getPlayerDict():
     }
 
     # run through each stat
-    for s in [ "ATK", "DEF", "MAG", "LUK", "ACC" ]:
+    for s in eng.STATS:
 
         # get the base value
         val = playerStats[s]
@@ -292,8 +292,8 @@ def getPlayerDict():
 def getEnemyDict():
 
     # run through each stat, setup dict for later
-    calcs = { "ATK": 0, "DEF": 0, "MAG": 0, "LUK": 0, "ACC": 0 }
-    for s in [ "ATK", "DEF", "MAG", "LUK", "ACC" ]:
+    calcs = { "ATK": 0, "DEF": 0, "MOJO": 0, "LUK": 0, "ACC": 0 }
+    for s in eng.STATS:
 
         # if the stat has a bonus value in the enemy's document, add it
         if s in enemyStats:

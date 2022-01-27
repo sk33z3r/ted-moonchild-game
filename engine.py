@@ -23,6 +23,9 @@ LONG_DIRS = [ "north", "south", "east", "west", "up", "down" ]
 SHORT_DIRS = [ "n", "s", "e", "w", "u", "d" ]
 ROOM_WORDS = [ "here", "room", "around", "ground", "floor", "area" ]
 
+# define stats
+STATS = [ "ATK", "DEF", "MOJO", "LUK", "ACC" ]
+
 # setup a game text speed
 GAME_SPEED = 4
 
@@ -270,7 +273,7 @@ def getEffectString(item):
 
     # otherwise build the string based on the EFFECT
     else:
-        if effectList[0] in [ "DEF", "ATK", "MAG", "LUK", "ACC" ]:
+        if effectList[0] in STATS:
             effectString = "[{0}{1}]".format(effectList[0], effectList[1])
         elif effectList[0] in [ "HP", "MP", "XP" ]:
             effectString = "[{0} {1}{2}]".format(effectList[0], effectList[2], str(effectList[1]))
@@ -466,7 +469,7 @@ def useItem(name):
             lvlMsg = gainXP(val)
 
         # otherwise, the effect should buff a stat in battle
-        elif stat in [ "MAG", "ATK", "DEF" ]:
+        elif stat in STATS:
             message = [ "TODO: use the item during battle", "MAGENTA" ]
             return message
 
