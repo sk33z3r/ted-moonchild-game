@@ -221,7 +221,7 @@ class main():
                     # otherwise try to match the name
                     elif slotName in slots:
                         dbs.loadGame(slotName)
-                        main.startGame("load") # TODO enable startGame
+                        main.startGame("load")
 
                     # if nothing works, tell the player
                     else:
@@ -247,7 +247,7 @@ class main():
 
                     # setup a new save slot then start the game
                     dbs.newGame(slotName)
-                    main.startGame("new") # TODO enable startGame
+                    main.startGame("new")
 
     def newGameMenu():
 
@@ -307,7 +307,7 @@ class main():
             else:
                 # otherwise create the new game and start
                 dbs.newGame(slotName)
-                main.startGame("new") # TODO enable startGame
+                main.startGame("new")
                 return
 
         # otherwise, if the slot exists
@@ -340,9 +340,17 @@ class main():
 
                 if newSlotName not in slots:
 
-                    dbs.deleteSave(slotName, True)
-                    dbs.newGame(newSlotName)
-                    main.startGame("new") # TODO enable startGame
+                    # if the delete operation is successful, run the game
+                    if dbs.deleteSave(slotName, True) == True:
+                        dbs.newGame(newSlotName)
+                        main.startGame("new")
+
+                    # otherwise print an error and return to the main menu
+                    else:
+                        mainWin.clear()
+                        mainWin.addstr(2, 14, "Something went wrong when deleting the old save.", eng.c["BRIGHT_RED"])
+                        sleep(2)
+                        return
 
                 else:
 
