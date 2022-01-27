@@ -14,13 +14,13 @@
     {
         "NAME": "Rising Force",
         "MPREQ": 5,
-        "MAGDMG": 10,
-        "TYPE": "magic"
+        "DMG": 10,
+        "TYPE": "mojo"
     },
     {
         "NAME": "Purple Rain",
         "MPREQ": 8,
-        "MAGDMG": 15,
-        "TYPE": "magic"
+        "DMG": 15,
+        "TYPE": "mojo"
     }
 ]

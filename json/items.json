@@ -8,7 +8,7 @@
         "VALUE": 0,
         "TYPE": "instrument",
         "BONUS": {
-            "MAG": 0,
+            "MOJO": 0,
             "ATK": 0,
             "LUK": 0,
             "ACC": 0,
@@ -29,7 +29,7 @@
         "VALUE": 50,
         "TYPE": "instrument",
         "BONUS": {
-            "MAG": 0,
+            "MOJO": 0,
             "ATK": 1,
             "LUK": 0,
             "ACC": 0,
@@ -61,7 +61,7 @@
         "VALUE": 100,
         "TYPE": "instrument",
         "BONUS": {
-            "MAG": 1,
+            "MOJO": 1,
             "ATK": 1,
             "LUK": 0,
             "ACC": -1,
@@ -83,7 +83,7 @@
         "VALUE": 0,
         "TYPE": "fx",
         "BONUS": {
-            "MAG": 0,
+            "MOJO": 0,
             "ATK": 0,
             "LUK": 0,
             "ACC": 0,
@@ -102,7 +102,7 @@
         "VALUE": 50,
         "TYPE": "fx",
         "BONUS": {
-            "MAG": 0,
+            "MOJO": 0,
             "ATK": 0,
             "LUK": 0,
             "ACC": 1,
@@ -127,7 +127,7 @@
         "VALUE": 100,
         "TYPE": "fx",
         "BONUS": {
-            "MAG": 1,
+            "MOJO": 1,
             "ATK": 1,
             "LUK": 1,
             "ACC": -1,
@@ -149,7 +149,7 @@
         "VALUE": 0,
         "TYPE": "head",
         "BONUS": {
-            "MAG": 0,
+            "MOJO": 0,
             "ATK": 0,
             "LUK": 0,
             "ACC": 0,
@@ -170,7 +170,7 @@
         "VALUE": 0,
         "TYPE": "head",
         "BONUS": {
-            "MAG": 0,
+            "MOJO": 0,
             "ATK": 0,
             "LUK": 1,
             "ACC": 0,
@@ -191,7 +191,7 @@
         "VALUE": 0,
         "TYPE": "head",
         "BONUS": {
-            "MAG": 1,
+            "MOJO": 1,
             "ATK": 1,
             "LUK": 1,
             "ACC": -1,
@@ -573,7 +573,7 @@
         "VALUE": 75,
         "TYPE": "drug",
         "EFFECT": [
-            "MAG",
+            "MOJO",
             "+"
         ],
         "DESCWORDS": [
@@ -636,7 +636,7 @@
         "VALUE": 150,
         "TYPE": "drug",
         "EFFECT": [
-            "MAG",
+            "MOJO",
             "++"
         ],
         "DESCWORDS": [

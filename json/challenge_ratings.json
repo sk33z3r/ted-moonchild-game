@@ -5,7 +5,7 @@
         "FLOYDS": [ 0, 5 ],
         "ATK": 3,
         "DEF": 3,
-        "MAG": 3,
+        "MOJO": 3,
         "LUK": 3,
         "ACC": 3,
         "CRITBNS": 0
@@ -16,7 +16,7 @@
         "FLOYDS": [ 5, 10 ],
         "ATK": 5,
         "DEF": 5,
-        "MAG": 5,
+        "MOJO": 5,
         "LUK": 5,
         "ACC": 5,
         "CRITBNS": 1
@@ -27,7 +27,7 @@
         "FLOYDS": [ 10, 20 ],
         "ATK": 7,
         "DEF": 7,
-        "MAG": 7,
+        "MOJO": 7,
         "LUK": 7,
         "ACC": 7,
         "CRITBNS": 1
@@ -38,7 +38,7 @@
         "FLOYDS": [ 20, 35 ],
         "ATK": 3,
         "DEF": 3,
-        "MAG": 3,
+        "MOJO": 3,
         "LUK": 3,
         "ACC": 3,
         "CRITBNS": 2
@@ -49,7 +49,7 @@
         "FLOYDS": [ 35, 50 ],
         "ATK": 3,
         "DEF": 3,
-        "MAG": 3,
+        "MOJO": 3,
         "LUK": 3,
         "ACC": 3,
         "CRITBNS": 2
@@ -60,7 +60,7 @@
         "FLOYDS": [ 50, 75 ],
         "ATK": 3,
         "DEF": 3,
-        "MAG": 3,
+        "MOJO": 3,
         "LUK": 3,
         "ACC": 3,
         "CRITBNS": 2
@@ -71,7 +71,7 @@
         "FLOYDS": [ 75, 110 ],
         "ATK": 3,
         "DEF": 3,
-        "MAG": 3,
+        "MOJO": 3,
         "LUK": 3,
         "ACC": 3,
         "CRITBNS": 2
@@ -82,7 +82,7 @@
         "FLOYDS": [ 110, 150 ],
         "ATK": 3,
         "DEF": 3,
-        "MAG": 3,
+        "MOJO": 3,
         "LUK": 3,
         "ACC": 3,
         "CRITBNS": 3
@@ -93,7 +93,7 @@
         "FLOYDS": [ 150, 200 ],
         "ATK": 3,
         "DEF": 3,
-        "MAG": 3,
+        "MOJO": 3,
         "LUK": 3,
         "ACC": 3,
         "CRITBNS": 3
@@ -104,7 +104,7 @@
         "FLOYDS": [ 200, 265 ],
         "ATK": 3,
         "DEF": 3,
-        "MAG": 3,
+        "MOJO": 3,
         "LUK": 3,
         "ACC": 3,
         "CRITBNS": 3
@@ -115,7 +115,7 @@
         "FLOYDS": [ 265, 325 ],
         "ATK": 3,
         "DEF": 3,
-        "MAG": 3,
+        "MOJO": 3,
         "LUK": 3,
         "ACC": 3,
         "CRITBNS": 3
@@ -126,7 +126,7 @@
         "FLOYDS": [ 325, 400 ],
         "ATK": 3,
         "DEF": 3,
-        "MAG": 3,
+        "MOJO": 3,
         "LUK": 3,
         "ACC": 3,
         "CRITBNS": 4
@@ -137,7 +137,7 @@
         "FLOYDS": [ 400, 500 ],
         "ATK": 3,
         "DEF": 3,
-        "MAG": 3,
+        "MOJO": 3,
         "LUK": 3,
         "ACC": 3,
         "CRITBNS": 4
@@ -148,7 +148,7 @@
         "FLOYDS": [ 500, 650 ],
         "ATK": 3,
         "DEF": 3,
-        "MAG": 3,
+        "MOJO": 3,
         "LUK": 3,
         "ACC": 3,
         "CRITBNS": 4
@@ -159,7 +159,7 @@
         "FLOYDS": [ 650, 850 ],
         "ATK": 3,
         "DEF": 3,
-        "MAG": 3,
+        "MOJO": 3,
         "LUK": 3,
         "ACC": 3,
         "CRITBNS": 4
@@ -170,7 +170,7 @@
         "FLOYDS": [ 850, 1000 ],
         "ATK": 3,
         "DEF": 3,
-        "MAG": 3,
+        "MOJO": 3,
         "LUK": 3,
         "ACC": 3,
         "CRITBNS": 5
@@ -181,7 +181,7 @@
         "FLOYDS": [ 1000, 1250 ],
         "ATK": 3,
         "DEF": 3,
-        "MAG": 3,
+        "MOJO": 3,
         "LUK": 3,
         "ACC": 3,
         "CRITBNS": 5
@@ -192,7 +192,7 @@
         "FLOYDS": [ 1250, 1650 ],
         "ATK": 3,
         "DEF": 3,
-        "MAG": 3,
+        "MOJO": 3,
         "LUK": 3,
         "ACC": 3,
         "CRITBNS": 5
@@ -203,7 +203,7 @@
         "FLOYDS": [ 1650, 2250 ],
         "ATK": 3,
         "DEF": 3,
-        "MAG": 3,
+        "MOJO": 3,
         "LUK": 3,
         "ACC": 3,
         "CRITBNS": 6
@@ -214,7 +214,7 @@
         "FLOYDS": [ 2250, 3500 ],
         "ATK": 3,
         "DEF": 3,
-        "MAG": 3,
+        "MOJO": 3,
         "LUK": 3,
         "ACC": 3,
         "CRITBNS": 6
@@ -225,7 +225,7 @@
         "FLOYDS": [ 3500, 5000 ],
         "ATK": 3,
         "DEF": 3,
-        "MAG": 3,
+        "MOJO": 3,
         "LUK": 3,
         "ACC": 3,
         "CRITBNS": 7
