@@ -5,9 +5,15 @@
         "SHORTDESC": "his fists",
         "LONGDESC": "Ted's manly fucking fists. They've beaten many faces into the ground.",
         "TAKEABLE": true,
-        "ATKBNS": 0,
         "VALUE": 0,
-        "TYPE": "weapon",
+        "TYPE": "instrument",
+        "BONUS": {
+            "MAG": 0,
+            "ATK": 0,
+            "LUK": 0,
+            "ACC": 0,
+            "DEF": 0
+        },
         "DESCWORDS": [
             "fists",
             "teds fists",
@@ -20,9 +26,15 @@
         "SHORTDESC": "the Squire Strat",
         "LONGDESC": "A beat up strat that used to be white. It gets the job done.",
         "TAKEABLE": true,
-        "ATKBNS": 1,
         "VALUE": 50,
-        "TYPE": "weapon",
+        "TYPE": "instrument",
+        "BONUS": {
+            "MAG": 0,
+            "ATK": 1,
+            "LUK": 0,
+            "ACC": 0,
+            "DEF": 0
+        },
         "DESCWORDS": [
             "chaz guitar",
             "chaz's guitar",
@@ -46,9 +58,15 @@
         "SHORTDESC": "the Epiphone SG",
         "LONGDESC": "Not quite a Gibson, but it looks fuckin' sweet.",
         "TAKEABLE": true,
-        "ATKBNS": 2,
         "VALUE": 100,
-        "TYPE": "weapon",
+        "TYPE": "instrument",
+        "BONUS": {
+            "MAG": 1,
+            "ATK": 1,
+            "LUK": 0,
+            "ACC": -1,
+            "DEF": 0
+        },
         "DESCWORDS": [
             "sg",
             "epiphone",
@@ -62,9 +80,15 @@
         "SHORTDESC": "the air",
         "LONGDESC": "Nothing but tone.",
         "TAKEABLE": true,
-        "ATKBNS": 0,
         "VALUE": 0,
         "TYPE": "fx",
+        "BONUS": {
+            "MAG": 0,
+            "ATK": 0,
+            "LUK": 0,
+            "ACC": 0,
+            "DEF": 0
+        },
         "DESCWORDS": [
             "nofx"
         ]
@@ -75,9 +99,15 @@
         "SHORTDESC": "the guitar pick",
         "LONGDESC": "The pick that Rip Curl threw into the crowd at EBGBs.",
         "TAKEABLE": true,
-        "ATKBNS": 1,
         "VALUE": 50,
         "TYPE": "fx",
+        "BONUS": {
+            "MAG": 0,
+            "ATK": 0,
+            "LUK": 0,
+            "ACC": 1,
+            "DEF": 0
+        },
         "DESCWORDS": [
             "pick",
             "guitar pick",
@@ -94,14 +124,84 @@
         "SHORTDESC": "the delay pedal",
         "LONGDESC": "Delay FX from another world. Use sparingly.",
         "TAKEABLE": true,
-        "ATKBNS": 2,
         "VALUE": 100,
         "TYPE": "fx",
+        "BONUS": {
+            "MAG": 1,
+            "ATK": 1,
+            "LUK": 1,
+            "ACC": -1,
+            "DEF": -2
+        },
         "DESCWORDS": [
             "delay",
             "delay pedal",
             "wormhole",
             "wormhole delay"
+        ]
+    },
+    {
+        "NAME": "Hair",
+        "GROUNDDESC": "Hair",
+        "SHORTDESC": "the hair",
+        "LONGDESC": "Ted's greasy, long, and braided hair. The mark of a true Roadie.",
+        "TAKEABLE": false,
+        "VALUE": 0,
+        "TYPE": "head",
+        "BONUS": {
+            "MAG": 0,
+            "ATK": 0,
+            "LUK": 0,
+            "ACC": 0,
+            "DEF": 0
+        },
+        "DESCWORDS": [
+            "hair",
+            "ted's hair",
+            "ted's hair"
+        ]
+    },
+    {
+        "NAME": "Ted's Bandana",
+        "GROUNDDESC": "Bandana",
+        "SHORTDESC": "the bandana",
+        "LONGDESC": "Ted never works a show without this bandana. It's almost become a part of his hair at this point.",
+        "TAKEABLE": true,
+        "VALUE": 0,
+        "TYPE": "head",
+        "BONUS": {
+            "MAG": 0,
+            "ATK": 0,
+            "LUK": 1,
+            "ACC": 0,
+            "DEF": 0
+        },
+        "DESCWORDS": [
+            "ted's bandana",
+            "teds bandana",
+            "bandana"
+        ]
+    },
+    {
+        "NAME": "Jimmy's Headband",
+        "GROUNDDESC": "Headband",
+        "SHORTDESC": "the headband",
+        "LONGDESC": "The headband that Jimmy Helix wore in the battle for the Wootzok sector. He gave it to Ted for jamming some sweet harmonies.",
+        "TAKEABLE": true,
+        "VALUE": 0,
+        "TYPE": "head",
+        "BONUS": {
+            "MAG": 1,
+            "ATK": 1,
+            "LUK": 1,
+            "ACC": -1,
+            "DEF": -2
+        },
+        "DESCWORDS": [
+            "jimmy's headband",
+            "headband",
+            "jimmy helix's headband",
+            "helix headband"
         ]
     },
     {
@@ -282,22 +382,6 @@
             "fart blob",
             "shit",
             "blob"
-        ]
-    },
-    {
-        "NAME": "Jimmy Helix's Headband",
-        "GROUNDDESC": "Headband",
-        "SHORTDESC": "the headband",
-        "LONGDESC": "The headband that Jimmy Helix wore in the battle for the Wootzok sector. He gave it to Ted for jamming some sweet harmonies.",
-        "TAKEABLE": true,
-        "VALUE": 0,
-        "DEFBNS": 2,
-        "TYPE": "head",
-        "DESCWORDS": [
-            "jimmy's headband",
-            "headband",
-            "jimmy helix's headband",
-            "helix headband"
         ]
     },
     {
