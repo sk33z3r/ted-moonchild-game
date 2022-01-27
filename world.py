@@ -6,6 +6,7 @@ from curses.textpad import Textbox, rectangle
 from random import randrange, choice
 import engine as eng
 import database as dbs
+from battle import battleUI
 
 class worldUI():
 
@@ -841,9 +842,9 @@ class worldUI():
 
                 itemInfo = dbs.items.find_one( { "NAME": itemInInv } )
 
-                # if the item is a weapon and not already equipped, equip it
-                if itemInfo["TYPE"] == "weapon" and itemInfo["NAME"] not in dbs.playerInv["EQUIPPED"]:
-                    dbs.setWeapon(itemInfo["NAME"])
+                # if the item is an instrument and not already equipped, equip it
+                if itemInfo["TYPE"] == "instrument" and itemInfo["NAME"] not in dbs.playerInv["EQUIPPED"]:
+                    dbs.setInstrument(itemInfo["NAME"])
                     worldUI.writeInv()
                     worldUI.writeStats()
                     message = "Ted equipped {0}.".format(itemInfo["NAME"])
@@ -852,6 +853,14 @@ class worldUI():
                 # if the item is an fx and not already equipped, equip it
                 elif itemInfo["TYPE"] == "fx" and itemInfo["NAME"] not in dbs.playerInv["EQUIPPED"]:
                     dbs.setFX(itemInfo["NAME"])
+                    worldUI.writeInv()
+                    worldUI.writeStats()
+                    message = "Ted equipped {0}.".format(itemInfo["SHORTDESC"])
+                    worldUI.writeMsg(message, "CYAN")
+
+                # if the item is head gear and not already equipped, equip it
+                elif itemInfo["TYPE"] == "head" and itemInfo["NAME"] not in dbs.playerInv["EQUIPPED"]:
+                    dbs.setHead(itemInfo["NAME"])
                     worldUI.writeInv()
                     worldUI.writeStats()
                     message = "Ted equipped {0}.".format(itemInfo["SHORTDESC"])
@@ -881,9 +890,9 @@ class worldUI():
 
                 itemInfo = dbs.items.find_one( { "NAME": itemInInv } )
 
-                # if the item is a weapon and equipped, reset to 'Fists'
-                if itemInfo["TYPE"] == "weapon" and itemInfo["NAME"] in dbs.playerInv["EQUIPPED"]:
-                    dbs.setWeapon("Fists")
+                # if the item is an instrument and equipped, reset to 'Fists'
+                if itemInfo["TYPE"] == "instrument" and itemInfo["NAME"] in dbs.playerInv["EQUIPPED"]:
+                    dbs.setInstrument("Fists")
                     worldUI.writeInv()
                     worldUI.writeStats()
                     message = "Ted unequipped {0}.".format(itemInfo["NAME"])
@@ -892,6 +901,14 @@ class worldUI():
                 # if the item is an fx and equipped, reset to 'noFX'
                 elif itemInfo["TYPE"] == "fx" and itemInfo["NAME"] in dbs.playerInv["EQUIPPED"]:
                     dbs.setFX("noFX")
+                    worldUI.writeInv()
+                    worldUI.writeStats()
+                    message = "Ted unequipped {0}.".format(itemInfo["SHORTDESC"])
+                    worldUI.writeMsg(message, "CYAN")
+
+                # if the item is head gear and equipped, reset to 'Hair'
+                elif itemInfo["TYPE"] == "head" and itemInfo["NAME"] in dbs.playerInv["EQUIPPED"]:
+                    dbs.setHead("Hair")
                     worldUI.writeInv()
                     worldUI.writeStats()
                     message = "Ted unequipped {0}.".format(itemInfo["SHORTDESC"])
@@ -1077,7 +1094,7 @@ class worldUI():
 
         # battle
         elif cmd == "fight" or cmd == "battle":
-            battle.battleUI(screen)
+            battleUI.build(screen)
 
         # help
         elif cmd == "help":

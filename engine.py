@@ -40,15 +40,11 @@ def calculateWindows(height, width, max_y, max_x, ui):
     global worldStatDims
     global worldInvDims
     global worldHelpDims
-    global battleTitleDims
-    global battleGroundDims
-    global battleExitDims
+    global battleEnemyDims
     global battleEventDims
-    global battleInputDims
-    global battleMsgDims
     global battleStatDims
     global battleInvDims
-    global battleHelpDims
+    global battleMenuDims
 
     # determine where curses needs to start the windows to be centered in the terminal
     initBegin_y = round((height - max_y) / 2)
@@ -132,55 +128,34 @@ def calculateWindows(height, width, max_y, max_x, ui):
     # battle section dimension map
     elif ui == "battle":
         battleSectionDims = {
-            "title": {
-                "border": [ 3, 80, initBegin_y, (initBegin_x + 1) ],
-                "content": [ 1, 76, (initBegin_y + 1), (initBegin_x + 3) ]
+            "enemy": {
+                "border": [ 24, 50, initBegin_y, (initBegin_x + 1) ],
+                "content": [ 22, 46, (initBegin_y + 1), (initBegin_x + 3) ]
             },
-            "ground": {
-                "border": [ 8, 50, (initBegin_y + 25), (initBegin_x + 1) ],
-                "content": [ 6, 46, (initBegin_y + 26), (initBegin_x + 3) ]
-            },
-            "exits": {
-                "border": [ 8, 29, (initBegin_y + 25), (initBegin_x + 52) ],
-                "content": [ 6, 25, (initBegin_y + 26), (initBegin_x + 53) ]
-            },
-            "events": {
-                "border": [ 22, 80, (initBegin_y + 3), (initBegin_x + 1) ],
-                "content": [ 20, 76, (initBegin_y + 4), (initBegin_x + 3) ]
-            },
-            "input": {
-                "border": [ (initBegin_y + 33), (initBegin_x + 1), (initBegin_y + 35), (initBegin_x + 80) ],
-                "content": [ 1, 72, (initBegin_y + 34), (initBegin_x + len(PROMPT) + 3) ],
-                "prompt": [ (initBegin_y + 34), (initBegin_x + 3) ]
-            },
-            "msg": {
-                "border": [ 4, 109, (initBegin_y + 36), (initBegin_x + 1) ],
-                "content": [ 2, 105, (initBegin_y + 37), (initBegin_x + 3) ]
+            "menu": {
+                "border": [ 12, 50, (initBegin_y + 24), (initBegin_x + 1) ],
+                "content": [ 10, 46, (initBegin_y + 25), (initBegin_x + 3) ]
             },
             "stats": {
-                "border": [ 9, 28, initBegin_y, (initBegin_x + 82) ],
-                "content": [ 7, 24, (initBegin_y + 1), (initBegin_x + 84) ]
+                "border": [ 18, 25, initBegin_y, (initBegin_x + 52) ],
+                "content": [ 16, 21, (initBegin_y + 1), (initBegin_x + 54) ]
             },
             "inventory": {
-                "border": [ 27, 28, (initBegin_y + 9), (initBegin_x + 82) ],
-                "content": [ 25, 24, (initBegin_y + 10), (initBegin_x + 84) ]
+                "border": [ 18, 26, initBegin_y, (initBegin_x + 76) ],
+                "content": [ 16, 22, (initBegin_y + 1), (initBegin_x + 78) ]
             },
-            "help": {
-                "border": [35, 55, (initBegin_y + 17), (initBegin_x + 27)],
-                "content": [33, 51, (initBegin_y + 18), (initBegin_x + 29)]
+            "events": {
+                "border": [18, 50, (initBegin_y + 18), (initBegin_x + 52) ],
+                "content": [ 16, 46, (initBegin_y + 19), (initBegin_x + 54) ]
             }
         }
 
-        # world section references
-        battleTitleDims = battleSectionDims["title"]
-        battleGroundDims = battleSectionDims["ground"]
-        battleExitDims = battleSectionDims["exits"]
+        # battle section references
+        battleEnemyDims = battleSectionDims["enemy"]
         battleEventDims = battleSectionDims["events"]
-        battleInputDims = battleSectionDims["input"]
-        battleMsgDims = battleSectionDims["msg"]
         battleStatDims = battleSectionDims["stats"]
         battleInvDims = battleSectionDims["inventory"]
-        battleHelpDims = battleSectionDims["help"]
+        battleMenuDims = battleSectionDims["menu"]
 
     # otherwise raise exception
     else:
@@ -284,14 +259,18 @@ def getEffectString(item):
 
     # if not, build string based on TYPE
     except KeyError:
-        if itemInfo["TYPE"] in [ "weapon", "fx" ]:
-            effectString = "[+{0}]".format(str(itemInfo["ATKBNS"]))
+        if itemInfo["TYPE"] == "instrument":
+            effectString = "[INST]"
+        elif itemInfo["TYPE"] == "fx":
+            effectString = "[FX]"
+        elif itemInfo["TYPE"] == "head":
+            effectString = "[HEAD]"
         else:
             effectString = ""
 
     # otherwise build the string based on the EFFECT
     else:
-        if effectList[0] in [ "DEF", "ATK", "MAG" ]:
+        if effectList[0] in [ "DEF", "ATK", "MAG", "LUK", "ACC" ]:
             effectString = "[{0}{1}]".format(effectList[0], effectList[1])
         elif effectList[0] in [ "HP", "MP", "XP" ]:
             effectString = "[{0} {1}{2}]".format(effectList[0], effectList[2], str(effectList[1]))
