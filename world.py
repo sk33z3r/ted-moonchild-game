@@ -231,7 +231,7 @@ class worldUI():
         # clear and setup the window
         eventBorder.clear()
         eventBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
-        eventBorder.addstr(0, 65, " ROOM EVENTS ", curses.A_REVERSE)
+        eventBorder.addstr(0, 65, " ROOM EVENTS ", eng.c["REVERSE_DIM"])
         worldUI.clearScreen()
 
         # if this is to be the Winnibego
@@ -337,7 +337,7 @@ class worldUI():
         # clear the EVENTS section first
         eventBorder.clear()
         eventBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
-        eventBorder.addstr(0, 66, " SHOP ITEMS ", curses.A_REVERSE)
+        eventBorder.addstr(0, 66, " SHOP ITEMS ", eng.c["REVERSE_DIM"])
         eventWin.clear()
 
         # get a list of items in the current shop
@@ -382,26 +382,25 @@ class worldUI():
         # clear the EVENTS section first
         eventBorder.clear()
         eventBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
-        eventBorder.addstr(0, 72, " HELP ", curses.A_REVERSE)
+        eventBorder.addstr(0, 72, " HELP ", eng.c["REVERSE_DIM"])
         eventWin.clear()
 
         # print the help text to screen
         eventWin.addstr(0, 0, "           Ted Moonchild and the Roadies in Space: The Commands", eng.c["BRIGHT_YELLOW"])
-        eventWin.addstr(1, 0, "----------------------------------------------------------------------------", eng.c["BRIGHT_YELLOW"])
-        eventWin.addstr(2, 0, "    Change rooms by entering a direction, or first letter of a direction", eng.c["DIM_YELLOW"])
-        eventWin.addstr(4, 0, "BASIC Commands:                           SHOP Commands:", eng.c["BRIGHT"])
+        eventWin.addstr(2, 0, "   Change rooms by typing a direction, or the first letter of a direction   ", eng.c["REVERSE_DIM_YELLOW"])
+        eventWin.addstr(4, 0, "BASIC Commands:                           SHOP Commands:", eng.c["MAGENTA"])
         eventWin.addstr(5, 0, "    save - save progress                  shop - display the room's stock", eng.c["DIM"])
         eventWin.addstr(6, 0, "    quit - save game and exit             sell - sell an item", eng.c["DIM"])
         eventWin.addstr(7, 0, "    help - this help message               buy - buy an item", eng.c["DIM"])
-        eventWin.addstr(9, 0, "ITEM Commands:                            CONSUME Commands:", eng.c["BRIGHT"])
+        eventWin.addstr(9, 0, "ITEM Commands:                            CONSUME Commands:", eng.c["MAGENTA"])
         eventWin.addstr(10, 0, "    look - look at an item or the room     eat - consume food for effects", eng.c["DIM"])
         eventWin.addstr(11, 0, "    take - take an item                  drink - drink for effects", eng.c["DIM"])
         eventWin.addstr(12, 0, "    drop - drop an item on the ground    smoke - smoke for effects", eng.c["DIM"])
         eventWin.addstr(13, 0, "   equip - equip an item                 snort - consume drugs for effects", eng.c["DIM"])
         eventWin.addstr(14, 0, " unequip - remove an equipped item", eng.c["DIM"])
         eventWin.addstr(15, 0, "     use - use a key item", eng.c["DIM"])
-        eventWin.addstr(17, 0, "    Some items can be combined:        (There are lots of alternate words", eng.c["DIM"])
-        eventWin.addstr(18, 0, "      use [item] with [item]               to consume items. Try some!)", eng.c["DIM"])
+        eventWin.addstr(17, 0, "    Some items can be combined:        (There are lots of alternate words   ", eng.c["DIM_GREEN"])
+        eventWin.addstr(18, 0, "      use [item] with [item]               to consume items. Try some!)     ", eng.c["DIM_GREEN"])
 
     # function to write the GROUND section
     def writeGround():
@@ -605,7 +604,7 @@ class worldUI():
 
         # print items from EQUIPPED
         if len(e) != 0:
-            invWin.addstr(s, 0, "[EQUIPMENT]-------------", eng.c["CYAN"])
+            invBorder.addstr((s + 1 ), 1, "  EQUIPMENT               ", eng.c["REVERSE_DIM_CYAN"])
             s += 2
             for item in set(e):
                 effectString = eng.getEffectString(item)
@@ -616,7 +615,7 @@ class worldUI():
 
         # print items from KEY_ITEMS
         if len(k) != 0:
-            invWin.addstr(s, 0, "[KEY ITEMS]-------------", eng.c["YELLOW"])
+            invBorder.addstr((s + 1), 1, "  KEY ITEMS               ", eng.c["REVERSE_DIM_YELLOW"])
             s += 2
             for item in set(k):
                 invWin.addstr(s, 1, item, eng.c["YELLOW"])
@@ -1372,7 +1371,7 @@ class worldUI():
         titleBorder = stdscr.subwin(eng.worldTitleDims["border"][0], eng.worldTitleDims["border"][1], eng.worldTitleDims["border"][2], eng.worldTitleDims["border"][3])
         titleBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
         titleBorder.immedok(True)
-        titleBorder.addstr(0, 68, " LOCATION ", curses.A_REVERSE)
+        titleBorder.addstr(0, 68, " LOCATION ", eng.c["REVERSE_DIM"])
         # define the content area
         titleWin = stdscr.subwin(eng.worldTitleDims["content"][0], eng.worldTitleDims["content"][1], eng.worldTitleDims["content"][2], eng.worldTitleDims["content"][3])
         titleWin.immedok(True)
@@ -1382,7 +1381,7 @@ class worldUI():
         groundBorder = stdscr.subwin(eng.worldGroundDims["border"][0], eng.worldGroundDims["border"][1], eng.worldGroundDims["border"][2], eng.worldGroundDims["border"][3])
         groundBorder.immedok(True)
         groundBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
-        groundBorder.addstr(0, 40, " GROUND ", curses.A_REVERSE)
+        groundBorder.addstr(0, 40, " GROUND ", eng.c["REVERSE_DIM"])
         # define the content area
         groundWin = stdscr.subwin(eng.worldGroundDims["content"][0], eng.worldGroundDims["content"][1], eng.worldGroundDims["content"][2], eng.worldGroundDims["content"][3])
         groundWin.immedok(True)
@@ -1392,7 +1391,7 @@ class worldUI():
         exitBorder = stdscr.subwin(eng.worldExitDims["border"][0], eng.worldExitDims["border"][1], eng.worldExitDims["border"][2], eng.worldExitDims["border"][3])
         exitBorder.immedok(True)
         exitBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll)
-        exitBorder.addstr(0, 20, " EXITS ", curses.A_REVERSE)
+        exitBorder.addstr(0, 20, " EXITS ", eng.c["REVERSE_DIM"])
         # define the content area
         exitWin = stdscr.subwin(eng.worldExitDims["content"][0], eng.worldExitDims["content"][1], eng.worldExitDims["content"][2], eng.worldExitDims["content"][3])
         exitWin.immedok(True)
@@ -1421,7 +1420,7 @@ class worldUI():
         msgBorder = stdscr.subwin(eng.worldMsgDims["border"][0], eng.worldMsgDims["border"][1], eng.worldMsgDims["border"][2], eng.worldMsgDims["border"][3])
         msgBorder.immedok(True)
         msgBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
-        msgBorder.addstr(0, 83, " MESSAGES ", curses.A_REVERSE)
+        msgBorder.addstr(0, 83, " MESSAGES ", eng.c["REVERSE_DIM"])
         # define the content area
         msgWin = stdscr.subwin(eng.worldMsgDims["content"][0], eng.worldMsgDims["content"][1], eng.worldMsgDims["content"][2], eng.worldMsgDims["content"][3])
         msgWin.immedok(True)
@@ -1431,7 +1430,7 @@ class worldUI():
         statsBorder = stdscr.subwin(eng.worldStatDims["border"][0], eng.worldStatDims["border"][1], eng.worldStatDims["border"][2], eng.worldStatDims["border"][3])
         statsBorder.immedok(True)
         statsBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
-        statsBorder.addstr(0, 2, " STATS ", curses.A_REVERSE)
+        statsBorder.addstr(0, 2, " STATS ", eng.c["REVERSE_DIM"])
         # define the content area
         statsWin = stdscr.subwin(eng.worldStatDims["content"][0], eng.worldStatDims["content"][1], eng.worldStatDims["content"][2], eng.worldStatDims["content"][3])
         statsWin.immedok(True)
@@ -1441,7 +1440,7 @@ class worldUI():
         invBorder = stdscr.subwin(eng.worldInvDims["border"][0], eng.worldInvDims["border"][1], eng.worldInvDims["border"][2], eng.worldInvDims["border"][3])
         invBorder.immedok(True)
         invBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
-        invBorder.addstr(0, 2, " INVENTORY ", curses.A_REVERSE)
+        invBorder.addstr(0, 2, " INVENTORY ", eng.c["REVERSE_DIM"])
         # define content area
         invWin = stdscr.subwin(eng.worldInvDims["content"][0], eng.worldInvDims["content"][1], eng.worldInvDims["content"][2], eng.worldInvDims["content"][3])
         invWin.immedok(True)

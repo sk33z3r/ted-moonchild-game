@@ -18,35 +18,34 @@ class battleUI():
     # funcion to clear and write the STATS section
     def writeStats():
 
-        # clear and refresh info
-        statsWin.clear()
-        eng.refreshInfo()
+        # setup the strings
+        hpString = "HP: {0}/{1}".format(playerBattleStats["HP"]["CUR"], playerBattleStats["HP"]["MAX"])
+        mpString = "MP: {0}/{1}".format(playerBattleStats["MP"]["CUR"], playerBattleStats["MP"]["MAX"])
+        atkString = "ATK: {0} +{1}".format(playerBattleStats["ATK"]["BASE"], playerBattleStats["ATK"]["BONUS"])
+        defString = "DEF: {0} +{1}".format(playerBattleStats["DEF"]["BASE"], playerBattleStats["DEF"]["BONUS"])
+        mojoString = "MOJO: {0} +{1}".format(playerBattleStats["MOJO"]["BASE"], playerBattleStats["MOJO"]["BONUS"])
+        lukString = "LUK: {0} +{1}".format(playerBattleStats["LUK"]["BASE"], playerBattleStats["LUK"]["BONUS"])
+        accString = "ACC: {0} +{1}".format(playerBattleStats["ACC"]["BASE"], playerBattleStats["ACC"]["BONUS"])
 
-        # put the stat values into a dict
-        stats = {
-            "hp": dbs.playerStats["HP"],
-            "hpmax": dbs.playerStats["HPMAX"],
-            "mp": dbs.playerStats["MP"],
-            "mpmax": dbs.playerStats["MPMAX"],
-            "lvl": dbs.playerStats["LVL"],
-            "xp": dbs.playerStats["XP"],
-            "floyds": dbs.playerStats["FLOYDS"],
-            "lvlReq": dbs.levels.find_one( { "LEVEL": dbs.playerStats["LVL"] + 1 } )["XPREQ"]
-        }
+        # add each stat string
+        statsWin.addstr(1, 6, hpString, eng.c["RED"])
+        statsWin.addstr(2, 6, mpString, eng.c["BLUE"])
+        statsWin.addstr(4, 5, atkString, eng.c["DIM_YELLOW"])
+        statsWin.addstr(5, 5, defString, eng.c["DIM_YELLOW"])
+        statsWin.addstr(6, 4, mojoString, eng.c["DIM_YELLOW"])
+        statsWin.addstr(7, 5, lukString, eng.c["DIM_YELLOW"])
+        statsWin.addstr(8, 5, accString, eng.c["DIM_YELLOW"])
 
-        # setup stat display
-        stat1 = 'HEALTH: {hp} / {hpmax}'.format(**stats)
-        stat2 = '  MOJO: {mp} / {mpmax}'.format(**stats)
-        stat3 = '   LVL: {lvl}'.format(**stats)
-        stat4 = '    XP: {xp} / {lvlReq}'.format(**stats)
-        stat5 = 'FLOYDS: {floyds}'.format(**stats)
+        # setup the strings
+        instString = "INST: {0}".format(dbs.equippedInstrument)
+        fxString = "FX: {0}".format(dbs.addedFX)
+        headString = "HEAD: {0}".format(dbs.equippedHead)
 
-        # print the strings to the stats wndow
-        statsWin.addstr(1, 2, stat1, eng.c["RED"])
-        statsWin.addstr(2, 2, stat2, eng.c["BLUE"])
-        statsWin.addstr(3, 2, stat3, eng.c["YELLOW"])
-        statsWin.addstr(4, 2, stat4, eng.c["YELLOW"])
-        statsWin.addstr(5, 2, stat5, eng.c["GREEN"])
+        # display the equipment strings
+        statsBorder.addstr(11, 1, "  EQUIPPED            ", eng.c["REVERSE_DIM_CYAN"])
+        statsWin.addstr(12, 1, instString, eng.c["DIM_CYAN"])
+        statsWin.addstr(13, 3, fxString, eng.c["DIM_CYAN"])
+        statsWin.addstr(14, 1, headString, eng.c["DIM_CYAN"])
 
     # function to clear and write the INVENTORY section
     def writeInv():
@@ -57,16 +56,7 @@ class battleUI():
 
         # get and sort all item lists individually
         i = list(dbs.playerInv["ITEMS"])
-        k = list(dbs.playerInv["KEY_ITEMS"])
-        e = list(dbs.playerInv["EQUIPPED"])
         i = natsorted(i)
-        k = natsorted(k)
-        e = natsorted(e)
-
-        # if there are no items, print a message
-        if len(i) == 0 and len(k) == 0 and len(e) == 0:
-            writeMsg("Ted doesn't have shit in his pockets!", "RED")
-            return
 
         # get a count of each item in the ITEMS list only
         itemCount = {}
@@ -77,34 +67,17 @@ class battleUI():
                 itemCount[item] = 1
 
         # set starting line in the window
-        s = 1
+        s = 2
+
+        # set header
+        invBorder.addstr(1, 1, "  BATTLE ITEMS           ", eng.c["REVERSE_DIM"])
 
         # print items from ITEMS with their item count
         if len(i) != 0:
             for item in set(i):
                 effectString = eng.getEffectString(item)
                 itemString = "{0}x {1} {2}".format(str(itemCount[item]), item, effectString)
-                invWin.addstr(s, 1, itemString)
-                s += 1
-            s += 1
-
-        # print items from EQUIPPED
-        if len(e) != 0:
-            invWin.addstr(s, 0, "[EQUIPMENT]-------------", eng.c["CYAN"])
-            s += 2
-            for item in set(e):
-                effectString = eng.getEffectString(item)
-                itemString = "{0} {1}".format(item, effectString)
-                invWin.addstr(s, 1, itemString, eng.c["CYAN"])
-                s += 1
-            s += 1
-
-        # print items from KEY_ITEMS
-        if len(k) != 0:
-            invWin.addstr(s, 0, "[KEY ITEMS]-------------", eng.c["YELLOW"])
-            s += 2
-            for item in set(k):
-                invWin.addstr(s, 1, item, eng.c["YELLOW"])
+                invWin.addstr(s, 0, itemString)
                 s += 1
 
     # function specifically to parse commands and run their relevant functions
@@ -116,7 +89,7 @@ class battleUI():
     # function to pick and print the initial stats for an encounter
     def initEnemy():
 
-        global enemyStats
+        global enemyBattleStats
 
         # TODO pick a random enemy (weighted) from the current planet
         chosenEnemy = "Zappan"
@@ -127,33 +100,33 @@ class battleUI():
         # write the enemy's name onto the border
         displayName = " {0} ".format(chosenEnemy.upper())
         x = 48 - len(displayName)
-        enemyStatsBorder.addstr(0, x, displayName, curses.A_REVERSE)
+        enemyStatsBorder.addstr(0, x, displayName, eng.c["REVERSE_DIM"])
 
         # load enemy stats into memory
-        enemyStats = dbs.getEnemyDict()
+        enemyBattleStats = dbs.getEnemyDict()
 
         # display the enemy information
-        battleUI.writeEnemy(enemyStats)
+        battleUI.writeEnemy(enemyBattleStats)
 
         # set the description to show at the bottom
         y = 19
 
         # print enemy shortdesc
-        description = "\n".join(wrap(dbs.enemyInfo["DESC"], 45))
+        description = "\n".join(wrap(dbs.enemyInfo["DESC"], 44))
         enemyStatsWin.addstr(y, 0, description)
 
         # TODO get enemy art and print to screen
 
-    def writeEnemy(enemyStats):
+    def writeEnemy(enemyBattleStats):
 
         # setup the strings
-        hpString = "HP: {0}/{1}".format(enemyStats["HP"]["CUR"], enemyStats["HP"]["MAX"])
-        mpString = "MP: {0}/{1}".format(enemyStats["MP"]["CUR"], enemyStats["MP"]["MAX"])
-        atkString = "ATK: {0}".format(enemyStats["ATK"])
-        defString = "DEF: {0}".format(enemyStats["DEF"])
-        mojoString = "MOJO: {0}".format(enemyStats["MOJO"])
-        lukString = "LUK: {0}".format(enemyStats["LUK"])
-        accString = "ACC: {0}".format(enemyStats["ACC"])
+        hpString = "HP: {0}/{1}".format(enemyBattleStats["HP"]["CUR"], enemyBattleStats["HP"]["MAX"])
+        mpString = "MP: {0}/{1}".format(enemyBattleStats["MP"]["CUR"], enemyBattleStats["MP"]["MAX"])
+        atkString = "ATK: {0}".format(enemyBattleStats["ATK"])
+        defString = "DEF: {0}".format(enemyBattleStats["DEF"])
+        mojoString = "MOJO: {0}".format(enemyBattleStats["MOJO"])
+        lukString = "LUK: {0}".format(enemyBattleStats["LUK"])
+        accString = "ACC: {0}".format(enemyBattleStats["ACC"])
 
         # image placeholder
         enemyImg = screen.derwin(15, 35, (begin_y + 4), (begin_x + 13))
@@ -173,16 +146,22 @@ class battleUI():
         # rewrites current data into their sections
         battleUI.writeInv()
         battleUI.writeStats()
-        battleUI.refreshEnemy()
+        battleUI.writeEnemy()
         battleUI.writeMenu()
 
     # function to initialize the UI and get user input
     def displayBattle():
 
+        # define globals
+        global playerBattleStats
+
+        # get stats
+        playerBattleStats = dbs.getPlayerDict()
+
         # write all data to the screen
         battleUI.initEnemy()
-        #battleUI.writeStats()
-        #battleUI.writeInv()
+        battleUI.writeStats()
+        battleUI.writeInv()
         #battleUI.writeMenu()
 
         # main command input loop
@@ -280,7 +259,7 @@ class battleUI():
         eventBorder = stdscr.subwin(eng.battleEventDims["border"][0], eng.battleEventDims["border"][1], eng.battleEventDims["border"][2], eng.battleEventDims["border"][3])
         eventBorder.immedok(True)
         eventBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
-        eventBorder.addstr(0, 36, " BATTLE LOG ", curses.A_REVERSE)
+        eventBorder.addstr(0, 2, " LOG ", eng.c["REVERSE_DIM"])
         # define the content area
         eventWin = stdscr.subwin(eng.battleEventDims["content"][0], eng.battleEventDims["content"][1], eng.battleEventDims["content"][2], eng.battleEventDims["content"][3])
         eventWin.immedok(True)
@@ -290,7 +269,7 @@ class battleUI():
         statsBorder = stdscr.subwin(eng.battleStatDims["border"][0], eng.battleStatDims["border"][1], eng.battleStatDims["border"][2], eng.battleStatDims["border"][3])
         statsBorder.immedok(True)
         statsBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
-        statsBorder.addstr(0, 2, " TED MOONCHILD ", curses.A_REVERSE)
+        statsBorder.addstr(0, 2, " TED MOONCHILD ", eng.c["REVERSE_DIM"])
         # define the content area
         statsWin = stdscr.subwin(eng.battleStatDims["content"][0], eng.battleStatDims["content"][1], eng.battleStatDims["content"][2], eng.battleStatDims["content"][3])
         statsWin.immedok(True)
@@ -309,7 +288,7 @@ class battleUI():
         menuBorder = stdscr.subwin(eng.battleMenuDims["border"][0], eng.battleMenuDims["border"][1], eng.battleMenuDims["border"][2], eng.battleMenuDims["border"][3])
         menuBorder.immedok(True)
         menuBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
-        menuBorder.addstr(0, 35, " BATTLE MENU ", curses.A_REVERSE)
+        menuBorder.addstr(0, 39, " ACTIONS ", eng.c["REVERSE_DIM"])
         # define the content area
         menuWin = stdscr.subwin(eng.battleMenuDims["content"][0], eng.battleMenuDims["content"][1], eng.battleMenuDims["content"][2], eng.battleMenuDims["content"][3])
         menuWin.immedok(True)

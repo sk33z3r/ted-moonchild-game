@@ -133,19 +133,19 @@ def calculateWindows(height, width, max_y, max_x, ui):
         battleSectionDims = {
             "enemy": {
                 "border": [ 24, 50, initBegin_y, (initBegin_x + 1) ],
-                "content": [ 22, 46, (initBegin_y + 1), (initBegin_x + 3) ]
+                "content": [ 22, 45, (initBegin_y + 1), (initBegin_x + 4) ]
             },
             "menu": {
                 "border": [ 12, 50, (initBegin_y + 24), (initBegin_x + 1) ],
                 "content": [ 10, 46, (initBegin_y + 25), (initBegin_x + 3) ]
             },
             "stats": {
-                "border": [ 18, 25, initBegin_y, (initBegin_x + 52) ],
-                "content": [ 16, 21, (initBegin_y + 1), (initBegin_x + 54) ]
+                "border": [ 18, 24, initBegin_y, (initBegin_x + 52) ],
+                "content": [ 16, 20, (initBegin_y + 1), (initBegin_x + 54) ]
             },
             "inventory": {
-                "border": [ 18, 26, initBegin_y, (initBegin_x + 76) ],
-                "content": [ 16, 22, (initBegin_y + 1), (initBegin_x + 78) ]
+                "border": [ 18, 27, initBegin_y, (initBegin_x + 75) ],
+                "content": [ 16, 23, (initBegin_y + 1), (initBegin_x + 77) ]
             },
             "events": {
                 "border": [18, 50, (initBegin_y + 18), (initBegin_x + 52) ],
@@ -205,42 +205,49 @@ def setStyles():
         "BLINK": curses.A_BLINK,
         "BLINK_BRIGHT": curses.A_BOLD + curses.A_BLINK,
         "BLINK_DIM": curses.A_DIM + curses.A_BLINK,
+        "REVERSE_DIM": curses.A_REVERSE + curses.A_DIM,
         "RED": curses.color_pair(1),
         "DIM_RED": curses.A_DIM + curses.color_pair(1),
         "BRIGHT_RED": curses.A_BOLD + curses.color_pair(1),
         "BLINK_RED": curses.A_BLINK + curses.color_pair(1),
         "BLINK_BRIGHT_RED": curses.A_BLINK + curses.A_BOLD + curses.color_pair(1),
         "BLINK_DIM_RED": curses.A_BLINK + curses.A_DIM + curses.color_pair(1),
+        "REVERSE_DIM_RED": curses.A_REVERSE + curses.A_DIM + curses.color_pair(1),
         "GREEN": curses.color_pair(2),
         "DIM_GREEN": curses.A_DIM + curses.color_pair(2),
         "BRIGHT_GREEN": curses.A_BOLD + curses.color_pair(2),
         "BLINK_GREEN": curses.A_BLINK + curses.color_pair(2),
         "BLINK_BRIGHT_GREEN": curses.A_BLINK + curses.A_BOLD + curses.color_pair(2),
         "BLINK_DIM_GREEN": curses.A_BLINK + curses.A_DIM + curses.color_pair(2),
+        "REVERSE_DIM_GREEN": curses.A_REVERSE + curses.A_DIM + curses.color_pair(2),
         "YELLOW": curses.color_pair(3),
         "DIM_YELLOW": curses.A_DIM + curses.color_pair(3),
         "BRIGHT_YELLOW": curses.A_BOLD + curses.color_pair(3),
         "BLINK_YELLOW": curses.A_BLINK + curses.color_pair(3),
         "BLINK_BRIGHT_YELLOW": curses.A_BLINK + curses.A_BOLD + curses.color_pair(3),
         "BLINK_DIM_YELLOW": curses.A_BLINK + curses.A_DIM + curses.color_pair(3),
+        "REVERSE_DIM_YELLOW": curses.A_REVERSE + curses.A_DIM + curses.color_pair(3),
         "BLUE": curses.color_pair(4),
         "DIM_BLUE": curses.A_DIM + curses.color_pair(4),
         "BRIGHT_BLUE": curses.A_BOLD + curses.color_pair(4),
         "BLINK_BLUE": curses.A_BLINK + curses.color_pair(4),
         "BLINK_BRIGHT_BLUE": curses.A_BLINK + curses.A_BOLD + curses.color_pair(4),
         "BLINK_DIM_BLUE": curses.A_BLINK + curses.A_DIM + curses.color_pair(4),
+        "REVERSE_DIM_BLUE": curses.A_REVERSE + curses.A_DIM + curses.color_pair(4),
         "MAGENTA": curses.color_pair(5),
         "DIM_MAGENTA": curses.A_DIM + curses.color_pair(5),
         "BRIGHT_MAGENTA": curses.A_BOLD + curses.color_pair(5),
         "BLINK_MAGENTA": curses.A_BLINK + curses.color_pair(5),
         "BLINK_BRIGHT_MAGENTA": curses.A_BLINK + curses.A_BOLD + curses.color_pair(5),
         "BLINK_DIM_MAGENTA": curses.A_BLINK + curses.A_DIM + curses.color_pair(5),
+        "REVERSE_DIM_MAGENTA": curses.A_REVERSE + curses.A_DIM + curses.color_pair(5),
         "CYAN": curses.color_pair(6),
         "DIM_CYAN": curses.A_DIM + curses.color_pair(6),
         "BRIGHT_CYAN": curses.A_BOLD + curses.color_pair(6),
         "BLINK_CYAN": curses.A_BLINK + curses.color_pair(6),
         "BLINK_BRIGHT_CYAN": curses.A_BLINK + curses.A_BOLD + curses.color_pair(6),
-        "BLINK_DIM_CYAN": curses.A_BLINK + curses.A_DIM + curses.color_pair(6)
+        "BLINK_DIM_CYAN": curses.A_BLINK + curses.A_DIM + curses.color_pair(6),
+        "REVERSE_DIM_CYAN": curses.A_REVERSE + curses.A_DIM + curses.color_pair(6)
     }
 
 # function to refresh info in memory
