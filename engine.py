@@ -131,12 +131,12 @@ def calculateWindows(height, width, max_y, max_x, ui):
     elif ui == "battle":
         battleSectionDims = {
             "enemy": {
-                "border": [ 24, 50, initBegin_y, (initBegin_x + 1) ],
-                "content": [ 22, 45, (initBegin_y + 1), (initBegin_x + 4) ]
+                "border": [ 25, 50, initBegin_y, (initBegin_x + 1) ],
+                "content": [ 23, 45, (initBegin_y + 1), (initBegin_x + 4) ]
             },
             "menu": {
-                "border": [ 12, 50, (initBegin_y + 24), (initBegin_x + 1) ],
-                "content": [ 10, 46, (initBegin_y + 25), (initBegin_x + 3) ]
+                "border": [ 11, 50, (initBegin_y + 25), (initBegin_x + 1) ],
+                "content": [ 9, 46, (initBegin_y + 26), (initBegin_x + 3) ]
             },
             "stats": {
                 "border": [ 18, 24, initBegin_y, (initBegin_x + 52) ],
@@ -282,7 +282,7 @@ def getEffectString(item):
         if effectList[0] in STATS:
             effectString = "{0}{1}".format(effectList[0], effectList[1])
         elif effectList[0] in [ "HP", "MP", "XP" ]:
-            effectString = "{0} {1}{2}".format(effectList[0], effectList[2], str(effectList[1]))
+            effectString = "{0} {2}{1}".format(effectList[0], effectList[2], str(effectList[1]))
 
     # return the whole string
     return effectString

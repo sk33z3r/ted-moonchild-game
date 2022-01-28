@@ -98,6 +98,26 @@ class battleUI():
                     invWin.addstr(s, 0, itemString, eng.c["DIM"])
                     s += 1
 
+    def writeMenu():
+
+        menuWin.clear()
+
+        menuWin.addstr(1, 2, "{0: ^20}".format(""), eng.c["REVERSE_DIM"])
+        menuWin.addstr(2, 2, "{0: ^20}".format("ATTACK"), eng.c["REVERSE_DIM"])
+        menuWin.addstr(3, 2, "{0: ^20}".format(""), eng.c["REVERSE_DIM"])
+
+        menuWin.addstr(5, 2, "{0: ^20}".format(""), eng.c["REVERSE_DIM"])
+        menuWin.addstr(6, 2, "{0: ^20}".format("MOJO ABILITIES"), eng.c["REVERSE_DIM"])
+        menuWin.addstr(7, 2, "{0: ^20}".format(""), eng.c["REVERSE_DIM"])
+
+        menuWin.addstr(1, 24, "{0: ^20}".format(""), eng.c["REVERSE_DIM"])
+        menuWin.addstr(2, 24, "{0: ^20}".format("USE ITEM"), eng.c["REVERSE_DIM"])
+        menuWin.addstr(3, 24, "{0: ^20}".format(""), eng.c["REVERSE_DIM"])
+
+        menuWin.addstr(5, 24, "{0: ^20}".format(""), eng.c["REVERSE_DIM"])
+        menuWin.addstr(6, 24, "{0: ^20}".format("ESCAPE"), eng.c["REVERSE_DIM"])
+        menuWin.addstr(7, 24, "{0: ^20}".format(""), eng.c["REVERSE_DIM"])
+
     # function specifically to parse commands and run their relevant functions
     def runAction(cmd, arg):
 
@@ -161,8 +181,8 @@ class battleUI():
             y += 1
 
         # add each string
-        enemyStatsWin.addstr(1, 2, hpString, eng.c["RED"])
-        enemyStatsWin.addstr(1, 15, mpString, eng.c["BLUE"])
+        enemyStatsWin.addstr(1, 15, hpString, eng.c["RED"])
+        enemyStatsWin.addstr(1, 28, mpString, eng.c["BLUE"])
         enemyStatsWin.addstr(3, 1, atkString, eng.c["DIM_YELLOW"])
         enemyStatsWin.addstr(4, 1, defString, eng.c["DIM_YELLOW"])
         enemyStatsWin.addstr(5, 0, mojoString, eng.c["DIM_YELLOW"])
@@ -190,7 +210,7 @@ class battleUI():
         battleUI.initEnemy()
         battleUI.writeStats()
         battleUI.writeInv()
-        #battleUI.writeMenu()
+        battleUI.writeMenu()
 
         # main command input loop
         while True:
