@@ -14,7 +14,7 @@ class battleUI():
 
         global eventLine
 
-        if eventLine >= 16:
+        if eventLine >= 15:
             eventWin.clear()
             eventLine = 1
 
