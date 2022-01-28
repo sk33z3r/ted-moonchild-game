@@ -86,15 +86,15 @@ class battleUI():
         s = 3
 
         # set header
-        invBorder.addstr(1, 1, "{0: ^25}".format("BATTLE ITEMS"), eng.c["REVERSE_DIM"])
-        invBorder.addstr(2, 1, "{0:>3} {1:<12} {2:<8}".format('#', 'Item', 'Effect '), eng.c["REVERSE_DIM"])
+        invBorder.addstr(1, 1, "{0: ^25}".format("BATTLE ITEMS"), eng.c["REVERSE_DIM_GREEN"])
+        invBorder.addstr(2, 1, "{0:>3} {1:<12} {2:<8}".format('#', 'Item', 'Effect '), eng.c["REVERSE_DIM_GREEN"])
 
         # print items from ITEMS with their item count
         if len(i) != 0:
             for item in set(i):
                 effectString = eng.getEffectString(item)
                 itemString = "{0:>2}x {1:<12} {2:<7}".format(str(itemCount[item]), item, effectString)
-                invWin.addstr(s, 0, itemString)
+                invWin.addstr(s, 0, itemString, eng.c["DIM"])
                 s += 1
 
     # function specifically to parse commands and run their relevant functions

@@ -593,7 +593,7 @@ class worldUI():
         # set starting line in the window
         s = 2
 
-        invBorder.addstr(1, 1, "{0: >3} {1: <12} {2: <9}".format('#', 'Item', 'Effect'), eng.c["REVERSE_DIM"])
+        invBorder.addstr(1, 1, "{0: >3} {1: <13} {2: <8}".format('#', 'Item', 'Effect'), eng.c["REVERSE_DIM"])
 
         # print items from ITEMS with their item count
         if len(i) != 0:
