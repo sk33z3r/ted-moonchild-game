@@ -152,7 +152,7 @@ class battleUI():
         # write the enemy's name onto the border
         displayName = " ENEMY: {0} ".format(chosenEnemy.upper())
         x = 48 - len(displayName)
-        enemyStatsBorder.addstr(0, x, displayName, eng.c["REVERSE_DIM"])
+        enemyStatsBorder.addstr(0, x, displayName, eng.c["DIM"])
 
         # load enemy stats into memory
         enemyBattleStats = dbs.getEnemyDict()
@@ -325,7 +325,7 @@ class battleUI():
         eventBorder = stdscr.subwin(eng.battleEventDims["border"][0], eng.battleEventDims["border"][1], eng.battleEventDims["border"][2], eng.battleEventDims["border"][3])
         eventBorder.immedok(True)
         eventBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
-        eventBorder.addstr(0, 2, " LOG ", eng.c["REVERSE_DIM"])
+        eventBorder.addstr(0, 2, " LOG ", eng.c["DIM"])
         # define the content area
         eventWin = stdscr.subwin(eng.battleEventDims["content"][0], eng.battleEventDims["content"][1], eng.battleEventDims["content"][2], eng.battleEventDims["content"][3])
         eventWin.immedok(True)
@@ -335,7 +335,7 @@ class battleUI():
         statsBorder = stdscr.subwin(eng.battleStatDims["border"][0], eng.battleStatDims["border"][1], eng.battleStatDims["border"][2], eng.battleStatDims["border"][3])
         statsBorder.immedok(True)
         statsBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
-        statsBorder.addstr(0, 2, " TED MOONCHILD ", eng.c["REVERSE_DIM"])
+        statsBorder.addstr(0, 2, " TED MOONCHILD ", eng.c["DIM"])
         # define the content area
         statsWin = stdscr.subwin(eng.battleStatDims["content"][0], eng.battleStatDims["content"][1], eng.battleStatDims["content"][2], eng.battleStatDims["content"][3])
         statsWin.immedok(True)
@@ -354,7 +354,7 @@ class battleUI():
         menuBorder = stdscr.subwin(eng.battleMenuDims["border"][0], eng.battleMenuDims["border"][1], eng.battleMenuDims["border"][2], eng.battleMenuDims["border"][3])
         menuBorder.immedok(True)
         menuBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
-        menuBorder.addstr(0, 39, " ACTIONS ", eng.c["REVERSE_DIM"])
+        menuBorder.addstr(0, 39, " ACTIONS ", eng.c["DIM"])
         # define the content area
         menuWin = stdscr.subwin(eng.battleMenuDims["content"][0], eng.battleMenuDims["content"][1], eng.battleMenuDims["content"][2], eng.battleMenuDims["content"][3])
         menuWin.immedok(True)
