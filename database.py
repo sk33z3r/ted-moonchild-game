@@ -217,7 +217,9 @@ def setFX(n):
 def getInventory():
 
     global playerInv
+    global playerEquip
     playerInv = player.find_one( { "SECTION": "inventory" } )
+    playerEquip = player.find_one( { "SECTION": "equipped" } )
 
 # function to store latest player info to memory
 def getStats():

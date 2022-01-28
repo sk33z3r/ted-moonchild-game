@@ -567,15 +567,16 @@ class worldUI():
 
         # clear and refresh info
         invWin.clear()
+        invBorder.clear()
+        invBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
+        invBorder.addstr(0, 2, " INVENTORY ", eng.c["REVERSE_DIM"])
         eng.refreshInfo()
 
         # get and sort all item lists individually
         i = list(dbs.playerInv["ITEMS"])
         k = list(dbs.playerInv["KEY_ITEMS"])
-        e = list(dbs.playerInv["EQUIPPED"])
         i = natsorted(i)
         k = natsorted(k)
-        e = natsorted(e)
 
         # if there are no items, print a message
         if len(i) == 0 and len(k) == 0 and len(e) == 0:
@@ -602,17 +603,6 @@ class worldUI():
                 s += 1
             s += 1
 
-        # print items from EQUIPPED
-        if len(e) != 0:
-            invBorder.addstr((s + 1 ), 1, "  EQUIPMENT               ", eng.c["REVERSE_DIM_CYAN"])
-            s += 2
-            for item in set(e):
-                effectString = eng.getEffectString(item)
-                itemString = "{0} {1}".format(item, effectString)
-                invWin.addstr(s, 1, itemString, eng.c["CYAN"])
-                s += 1
-            s += 1
-
         # print items from KEY_ITEMS
         if len(k) != 0:
             invBorder.addstr((s + 1), 1, "  KEY ITEMS               ", eng.c["REVERSE_DIM_YELLOW"])
@@ -620,6 +610,23 @@ class worldUI():
             for item in set(k):
                 invWin.addstr(s, 1, item, eng.c["YELLOW"])
                 s += 1
+
+        # print EQUIPPED header
+        s += 1
+        invBorder.addstr((s + 1), 1, "  EQUIPPED                ", eng.c["REVERSE_DIM_CYAN"])
+        s += 2
+
+        # setup strings
+        headString = "HEAD: {0}".format(dbs.playerEquip["HEAD"])
+        instString = "INST: {0}".format(dbs.playerEquip["INSTRUMENT"])
+        fxString = "FX: {0}".format(dbs.playerEquip["FX"])
+
+        # display the strings
+        invWin.addstr(s, 1, headString, eng.c["CYAN"])
+        s += 1
+        invWin.addstr(s, 1, instString, eng.c["CYAN"])
+        s += 1
+        invWin.addstr(s, 3, fxString, eng.c["CYAN"])
 
     # function to move the player from room to room
     def moveDirection(direction):

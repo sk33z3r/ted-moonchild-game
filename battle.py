@@ -43,9 +43,9 @@ class battleUI():
 
         # display the equipment strings
         statsBorder.addstr(11, 1, "  EQUIPPED            ", eng.c["REVERSE_DIM_CYAN"])
-        statsWin.addstr(12, 1, instString, eng.c["DIM_CYAN"])
-        statsWin.addstr(13, 3, fxString, eng.c["DIM_CYAN"])
-        statsWin.addstr(14, 1, headString, eng.c["DIM_CYAN"])
+        statsWin.addstr(12, 1, headString, eng.c["DIM_CYAN"])
+        statsWin.addstr(13, 1, instString, eng.c["DIM_CYAN"])
+        statsWin.addstr(14, 3, fxString, eng.c["DIM_CYAN"])
 
     # function to clear and write the INVENTORY section
     def writeInv():
