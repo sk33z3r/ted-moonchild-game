@@ -1,7 +1,6 @@
 import curses, sys
 from os import system
 from time import sleep
-from natsort import natsorted
 import database as dbs
 
 # define border styles so they're easier to change later
@@ -109,7 +108,7 @@ def calculateWindows(height, width, max_y, max_x, ui):
             },
             "inventory": {
                 "border": [ 27, 28, (initBegin_y + 9), (initBegin_x + 82) ],
-                "content": [ 25, 24, (initBegin_y + 10), (initBegin_x + 84) ]
+                "content": [ 25, 25, (initBegin_y + 10), (initBegin_x + 83) ]
             },
             "help": {
                 "border": [35, 55, (initBegin_y + 17), (initBegin_x + 27)],
@@ -145,7 +144,7 @@ def calculateWindows(height, width, max_y, max_x, ui):
             },
             "inventory": {
                 "border": [ 18, 27, initBegin_y, (initBegin_x + 75) ],
-                "content": [ 16, 23, (initBegin_y + 1), (initBegin_x + 77) ]
+                "content": [ 16, 24, (initBegin_y + 1), (initBegin_x + 76) ]
             },
             "events": {
                 "border": [18, 50, (initBegin_y + 18), (initBegin_x + 52) ],
@@ -270,20 +269,20 @@ def getEffectString(item):
     # if not, build string based on TYPE
     except KeyError:
         if itemInfo["TYPE"] == "instrument":
-            effectString = "[INST]"
+            effectString = "INST"
         elif itemInfo["TYPE"] == "fx":
-            effectString = "[FX]"
+            effectString = "FX"
         elif itemInfo["TYPE"] == "head":
-            effectString = "[HEAD]"
+            effectString = "HEAD"
         else:
             effectString = ""
 
     # otherwise build the string based on the EFFECT
     else:
         if effectList[0] in STATS:
-            effectString = "[{0}{1}]".format(effectList[0], effectList[1])
+            effectString = "{0}{1}".format(effectList[0], effectList[1])
         elif effectList[0] in [ "HP", "MP", "XP" ]:
-            effectString = "[{0} {1}{2}]".format(effectList[0], effectList[2], str(effectList[1]))
+            effectString = "{0} {1}{2}".format(effectList[0], effectList[2], str(effectList[1]))
 
     # return the whole string
     return effectString
@@ -329,14 +328,14 @@ def tempInv():
     for i in dbs.playerInv["EQUIPPED"]:
         inv.append(dbs.playerInv["EQUIPPED"][n])
         n += 1
-    inv = natsorted(inv)
+    inv.sort()
 
     # return the list
     return inv
 
 # function to buy and sell items
 def itemTransaction(item, dowhat):
-    
+
     # setup item info
     itemInfo = dbs.items.find_one( { "NAME": item } )
     shortdesc = itemInfo["SHORTDESC"]

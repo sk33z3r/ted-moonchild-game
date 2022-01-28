@@ -1,11 +1,11 @@
 import curses
 from textwrap import wrap
 from time import sleep
-from natsort import natsorted
 from curses.textpad import Textbox, rectangle
 from random import randrange, choice
 import engine as eng
 import database as dbs
+import art
 
 class battleUI():
 
@@ -19,22 +19,38 @@ class battleUI():
     def writeStats():
 
         # setup the strings
-        hpString = "HP: {0}/{1}".format(playerBattleStats["HP"]["CUR"], playerBattleStats["HP"]["MAX"])
-        mpString = "MP: {0}/{1}".format(playerBattleStats["MP"]["CUR"], playerBattleStats["MP"]["MAX"])
-        atkString = "ATK: {0} +{1}".format(playerBattleStats["ATK"]["BASE"], playerBattleStats["ATK"]["BONUS"])
-        defString = "DEF: {0} +{1}".format(playerBattleStats["DEF"]["BASE"], playerBattleStats["DEF"]["BONUS"])
-        mojoString = "MOJO: {0} +{1}".format(playerBattleStats["MOJO"]["BASE"], playerBattleStats["MOJO"]["BONUS"])
-        lukString = "LUK: {0} +{1}".format(playerBattleStats["LUK"]["BASE"], playerBattleStats["LUK"]["BONUS"])
-        accString = "ACC: {0} +{1}".format(playerBattleStats["ACC"]["BASE"], playerBattleStats["ACC"]["BONUS"])
+        hpString = "HP:   {0}/{1}".format(playerBattleStats["HP"]["CUR"], playerBattleStats["HP"]["MAX"])
+        mpString = "MP:   {0}/{1}".format(playerBattleStats["MP"]["CUR"], playerBattleStats["MP"]["MAX"])
+
+        # check if each bonus is negative or not, and adjust printout
+        atkBase = playerBattleStats["ATK"]["BASE"]
+        atkBns = playerBattleStats["ATK"]["BONUS"]
+        atkString = "{0:>6} {1:>2}{2:<+3} = {3:^2}".format("ATK:", atkBase, atkBns, (atkBase + atkBns))
+
+        defBase = playerBattleStats["DEF"]["BASE"]
+        defBns = playerBattleStats["DEF"]["BONUS"]
+        defString = "{0:>6} {1:>2}{2:<+3} = {3:^2}".format("DEF:", defBase, defBns, (defBase + defBns))
+
+        mojoBase = playerBattleStats["MOJO"]["BASE"]
+        mojoBns = playerBattleStats["MOJO"]["BONUS"]
+        mojoString = "{0:>6} {1:>2}{2:<+3} = {3:^2}".format("MOJO:", mojoBase, mojoBns, (atkBase + mojoBns))
+
+        lukBase = playerBattleStats["LUK"]["BASE"]
+        lukBns = playerBattleStats["LUK"]["BONUS"]
+        lukString = "{0:>6} {1:>2}{2:<+3} = {3:^2}".format("LUK:", lukBase, lukBns, (lukBase + lukBns))
+
+        accBase = playerBattleStats["ACC"]["BASE"]
+        accBns = playerBattleStats["ACC"]["BONUS"]
+        accString = "{0:>6} {1:>2}{2:<+3} = {3:^2}".format("ACC:", accBase, accBns, (accBase + accBns))
 
         # add each stat string
-        statsWin.addstr(1, 6, hpString, eng.c["RED"])
-        statsWin.addstr(2, 6, mpString, eng.c["BLUE"])
-        statsWin.addstr(4, 5, atkString, eng.c["DIM_YELLOW"])
-        statsWin.addstr(5, 5, defString, eng.c["DIM_YELLOW"])
-        statsWin.addstr(6, 4, mojoString, eng.c["DIM_YELLOW"])
-        statsWin.addstr(7, 5, lukString, eng.c["DIM_YELLOW"])
-        statsWin.addstr(8, 5, accString, eng.c["DIM_YELLOW"])
+        statsWin.addstr(1, 4, hpString, eng.c["RED"])
+        statsWin.addstr(2, 4, mpString, eng.c["BLUE"])
+        statsWin.addstr(4, 1, atkString, eng.c["DIM_YELLOW"])
+        statsWin.addstr(5, 1, defString, eng.c["DIM_YELLOW"])
+        statsWin.addstr(6, 1, mojoString, eng.c["DIM_YELLOW"])
+        statsWin.addstr(7, 1, lukString, eng.c["DIM_YELLOW"])
+        statsWin.addstr(8, 1, accString, eng.c["DIM_YELLOW"])
 
         # setup the strings
         instString = "INST: {0}".format(dbs.equippedInstrument)
@@ -43,9 +59,9 @@ class battleUI():
 
         # display the equipment strings
         statsBorder.addstr(11, 1, "  EQUIPPED            ", eng.c["REVERSE_DIM_CYAN"])
-        statsWin.addstr(12, 1, headString, eng.c["DIM_CYAN"])
-        statsWin.addstr(13, 1, instString, eng.c["DIM_CYAN"])
-        statsWin.addstr(14, 3, fxString, eng.c["DIM_CYAN"])
+        statsWin.addstr(12, 0, headString, eng.c["DIM_CYAN"])
+        statsWin.addstr(13, 0, instString, eng.c["DIM_CYAN"])
+        statsWin.addstr(14, 2, fxString, eng.c["DIM_CYAN"])
 
     # function to clear and write the INVENTORY section
     def writeInv():
@@ -56,7 +72,7 @@ class battleUI():
 
         # get and sort all item lists individually
         i = list(dbs.playerInv["ITEMS"])
-        i = natsorted(i)
+        i.sort()
 
         # get a count of each item in the ITEMS list only
         itemCount = {}
@@ -67,16 +83,17 @@ class battleUI():
                 itemCount[item] = 1
 
         # set starting line in the window
-        s = 2
+        s = 3
 
         # set header
-        invBorder.addstr(1, 1, "  BATTLE ITEMS           ", eng.c["REVERSE_DIM"])
+        invBorder.addstr(1, 1, "{0: ^25}".format("BATTLE ITEMS"), eng.c["REVERSE_DIM"])
+        invBorder.addstr(2, 1, "{0:>3} {1:<12} {2:<8}".format('#', 'Item', 'Effect '), eng.c["REVERSE_DIM"])
 
         # print items from ITEMS with their item count
         if len(i) != 0:
             for item in set(i):
                 effectString = eng.getEffectString(item)
-                itemString = "{0}x {1} {2}".format(str(itemCount[item]), item, effectString)
+                itemString = "{0:>2}x {1:<12} {2:<7}".format(str(itemCount[item]), item, effectString)
                 invWin.addstr(s, 0, itemString)
                 s += 1
 
@@ -92,7 +109,13 @@ class battleUI():
         global enemyBattleStats
 
         # TODO pick a random enemy (weighted) from the current planet
-        chosenEnemy = "Zappan"
+        availableEnemies = []
+
+        for e in dbs.enemies.find( { } ):
+            if dbs.PLANET in e["PLANETS"]:
+                availableEnemies.append(e["NAME"])
+
+        chosenEnemy = choice(availableEnemies)
 
         # setup enemy stats
         dbs.getEnemyInfo(chosenEnemy)
@@ -128,9 +151,15 @@ class battleUI():
         lukString = "LUK: {0}".format(enemyBattleStats["LUK"])
         accString = "ACC: {0}".format(enemyBattleStats["ACC"])
 
-        # image placeholder
-        enemyImg = screen.derwin(15, 35, (begin_y + 4), (begin_x + 13))
-        enemyImg.bkgd("#", eng.c["DIM"])
+        # display the enemy's image from the art module
+        y, l = 4, 0
+        enemyArt = art.ENEMIES[dbs.enemyInfo["NAME"]]
+
+        # print each line with style from the art dict
+        while l < len(enemyArt):
+            enemyStatsBorder.addstr(y, 13, enemyArt[str(l)][1], eng.c[enemyArt[str(l)][0]])
+            l += 1
+            y += 1
 
         # add each string
         enemyStatsWin.addstr(1, 2, hpString, eng.c["RED"])
@@ -295,3 +324,5 @@ class battleUI():
 
         # run the world command loop
         battleUI.displayBattle()
+
+        return

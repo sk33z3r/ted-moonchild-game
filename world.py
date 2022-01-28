@@ -1,7 +1,6 @@
 import curses
 from textwrap import wrap
 from time import sleep
-from natsort import natsorted
 from curses.textpad import Textbox, rectangle
 from random import randrange, choice
 import engine as eng
@@ -246,7 +245,7 @@ class worldUI():
 
             # setup the title window
             titleWin.clear()
-            title = "{0}: {1}".format(dbs.PLANET, dbs.ROOM)
+            title = "{0}, Planet {1}: {2}".format(dbs.SECTOR, dbs.PLANET, dbs.ROOM)
             titleWin.addstr(0, 0, title, eng.c["BRIGHT"])
 
             # display the winnibego room events based on triggers
@@ -309,7 +308,7 @@ class worldUI():
 
             # setup the title window
             titleWin.clear()
-            title = "{0}: {1}".format(dbs.PLANET, dbs.ROOM)
+            title = "{0}, Planet {1}: {2}".format(dbs.SECTOR, dbs.PLANET, dbs.ROOM)
             titleWin.addstr(0, 0, title, eng.c["BRIGHT"])
 
             # display a normal room based on triggers
@@ -549,18 +548,18 @@ class worldUI():
         }
 
         # setup stat display
-        stat1 = 'HEALTH: {hp} / {hpmax}'.format(**stats)
-        stat2 = '  MOJO: {mp} / {mpmax}'.format(**stats)
+        stat1 = 'HEALTH: {hp}/{hpmax}'.format(**stats)
+        stat2 = '  MOJO: {mp}/{mpmax}'.format(**stats)
         stat3 = '   LVL: {lvl}'.format(**stats)
-        stat4 = '    XP: {xp} / {lvlReq}'.format(**stats)
+        stat4 = '    XP: {xp}/{lvlReq}'.format(**stats)
         stat5 = 'FLOYDS: {floyds}'.format(**stats)
 
         # print the strings to the stats wndow
-        statsWin.addstr(1, 2, stat1, eng.c["RED"])
-        statsWin.addstr(2, 2, stat2, eng.c["BLUE"])
-        statsWin.addstr(3, 2, stat3, eng.c["YELLOW"])
-        statsWin.addstr(4, 2, stat4, eng.c["YELLOW"])
-        statsWin.addstr(5, 2, stat5, eng.c["GREEN"])
+        statsWin.addstr(1, 4, stat1, eng.c["RED"])
+        statsWin.addstr(2, 4, stat2, eng.c["BLUE"])
+        statsWin.addstr(3, 4, stat3, eng.c["YELLOW"])
+        statsWin.addstr(4, 4, stat4, eng.c["YELLOW"])
+        statsWin.addstr(5, 4, stat5, eng.c["GREEN"])
 
     # function to clear and write the INVENTORY section
     def writeInv():
@@ -575,8 +574,8 @@ class worldUI():
         # get and sort all item lists individually
         i = list(dbs.playerInv["ITEMS"])
         k = list(dbs.playerInv["KEY_ITEMS"])
-        i = natsorted(i)
-        k = natsorted(k)
+        i.sort()
+        k.sort()
 
         # if there are no items, print a message
         if len(i) == 0 and len(k) == 0 and len(e) == 0:
@@ -592,14 +591,16 @@ class worldUI():
                 itemCount[item] = 1
 
         # set starting line in the window
-        s = 1
+        s = 2
+
+        invBorder.addstr(1, 1, "{0: >3} {1: <12} {2: <9}".format('#', 'Item', 'Effect'), eng.c["REVERSE_DIM"])
 
         # print items from ITEMS with their item count
         if len(i) != 0:
             for item in set(i):
                 effectString = eng.getEffectString(item)
-                itemString = "{0}x {1} {2}".format(str(itemCount[item]), item, effectString)
-                invWin.addstr(s, 1, itemString)
+                itemString = "{0:>2}x {1:<13} {2:<7}".format(str(itemCount[item]), item, effectString)
+                invWin.addstr(s, 0, itemString)
                 s += 1
             s += 1
 
@@ -608,7 +609,7 @@ class worldUI():
             invBorder.addstr((s + 1), 1, "  KEY ITEMS               ", eng.c["REVERSE_DIM_YELLOW"])
             s += 2
             for item in set(k):
-                invWin.addstr(s, 1, item, eng.c["YELLOW"])
+                invWin.addstr(s, 2, item, eng.c["YELLOW"])
                 s += 1
 
         # print EQUIPPED header
@@ -622,11 +623,11 @@ class worldUI():
         fxString = "FX: {0}".format(dbs.playerEquip["FX"])
 
         # display the strings
-        invWin.addstr(s, 1, headString, eng.c["CYAN"])
+        invWin.addstr(s, 2, headString, eng.c["CYAN"])
         s += 1
-        invWin.addstr(s, 1, instString, eng.c["CYAN"])
+        invWin.addstr(s, 2, instString, eng.c["CYAN"])
         s += 1
-        invWin.addstr(s, 3, fxString, eng.c["CYAN"])
+        invWin.addstr(s, 4, fxString, eng.c["CYAN"])
 
     # function to move the player from room to room
     def moveDirection(direction):
