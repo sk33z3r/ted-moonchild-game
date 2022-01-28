@@ -5,7 +5,7 @@
         "HP": 15,
         "MP": 10,
         "CR": 0,
-        "PLANETS": [ "Zappa", "Mactel 6" ],
+        "PLANETS": [ "Zappa", "Mactel 6", "Dagobar", "WMG Studios" ],
         "ITEMS": [ "Protection" ],
         "DIALOG": [ "It spits in your face!", "It flaps its pathetic wings with great force!" ]
     },
@@ -30,6 +30,6 @@
         "CR": 4,
         "PLANETS": [ "Dagobar" ],
         "ITEMS": [ "DM Ale", "Whiskey" ],
-        "DIALOG": [ "It throws a dog-doo snow cone!", "It rubs yellow snow in your eye!" ]
+        "DIALOG": [ "It scats!", "It slams its fists into your gut!" ]
     }
 ]
