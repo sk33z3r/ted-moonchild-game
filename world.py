@@ -574,8 +574,10 @@ class worldUI():
         # get and sort all item lists individually
         i = list(dbs.playerInv["ITEMS"])
         k = list(dbs.playerInv["KEY_ITEMS"])
-        i.sort()
-        k.sort()
+
+        # sort the lists
+        i = sorted(i)
+        k = sorted(k)
 
         # if there are no items, print a message
         if len(i) == 0 and len(k) == 0 and len(e) == 0:

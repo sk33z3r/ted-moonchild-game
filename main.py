@@ -185,7 +185,7 @@ class main():
                     slots.append(s)
 
                 # sort the list
-                slots.sort()
+                slots = sorted(slots)
 
                 # if there any slots, show them and ask for input
                 if len(slots) > 1:
@@ -266,7 +266,9 @@ class main():
         slots = [ "_index" ]
         for s in os.listdir("./save-states"):
             slots.append(s)
-        slots.sort()
+
+        # sort the list
+        slots = sorted(slots)
 
         # if the entered name is back, return to main menu
         if slotName == "back":

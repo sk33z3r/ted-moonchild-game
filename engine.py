@@ -328,7 +328,9 @@ def tempInv():
     for i in dbs.playerInv["EQUIPPED"]:
         inv.append(dbs.playerInv["EQUIPPED"][n])
         n += 1
-    inv.sort()
+
+    # sort the list
+    inv = sorted(inv)
 
     # return the list
     return inv

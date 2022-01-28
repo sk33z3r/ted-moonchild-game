@@ -72,7 +72,7 @@ class battleUI():
 
         # get and sort all item lists individually
         i = list(dbs.playerInv["ITEMS"])
-        i.sort()
+        i = sorted(i)
 
         # get a count of each item in the ITEMS list only
         itemCount = {}
@@ -121,7 +121,7 @@ class battleUI():
         dbs.getEnemyInfo(chosenEnemy)
 
         # write the enemy's name onto the border
-        displayName = " {0} ".format(chosenEnemy.upper())
+        displayName = " ENEMY: {0} ".format(chosenEnemy.upper())
         x = 48 - len(displayName)
         enemyStatsBorder.addstr(0, x, displayName, eng.c["REVERSE_DIM"])
 
