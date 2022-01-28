@@ -2,7 +2,6 @@ import os, curses, sys
 from curses.textpad import Textbox, rectangle
 from time import sleep
 from textwrap import wrap
-from natsort import natsorted
 import engine as eng
 import database as dbs
 from world import worldUI
@@ -182,8 +181,11 @@ class main():
 
                 # for each folder in ./save-states, print the name and its index
                 slots = [ "_index" ]
-                for s in natsorted(os.listdir("./save-states")):
+                for s in os.listdir("./save-states"):
                     slots.append(s)
+
+                # sort the list
+                slots.sort()
 
                 # if there any slots, show them and ask for input
                 if len(slots) > 1:
