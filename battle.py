@@ -12,8 +12,16 @@ class battleUI():
     # function to write a message to the player
     def writeLog(msg, style):
 
+        global eventLine
+
+        if eventLine >= 16:
+            eventWin.clear()
+            eventLine = 1
+
         # display the message
-        eventWin.addstr(0, 0, msg, eng.c[style])
+        eventWin.addstr(eventLine, 0, msg, eng.c[style])
+
+        eventLine += 1
 
     # funcion to clear and write the STATS section
     def writeStats():
@@ -202,15 +210,25 @@ class battleUI():
 
         # define globals
         global playerBattleStats
+        global eventLine
 
         # get stats
         playerBattleStats = dbs.getPlayerDict()
+
+        # set the event starting line
+        eventLine = 1
 
         # write all data to the screen
         battleUI.initEnemy()
         battleUI.writeStats()
         battleUI.writeInv()
         battleUI.writeMenu()
+
+        t = 0
+        while t < 25:
+            battleUI.writeLog("Ted smashes the {0} for 10 damage!".format(dbs.enemyInfo["NAME"]), "RED")
+            sleep(0.5)
+            t += 1
 
         # main command input loop
         while True:
