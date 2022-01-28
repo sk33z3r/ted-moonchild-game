@@ -455,7 +455,6 @@
         "SHORTDESC": "the aya tea",
         "LONGDESC": "A thick, earthy brew that will show you the Universe as it's meant to be seen.",
         "TAKEABLE": true,
-        "BATTLE": true,
         "VALUE": 1000,
         "TYPE": "drink",
         "EFFECT": [
@@ -655,7 +654,6 @@
         "SHORTDESC": "the DMT",
         "LONGDESC": "A yellow, crystalized dust meant to be freebased. WARNING: launches a rocket.",
         "TAKEABLE": true,
-        "BATTLE": true,
         "VALUE": 500,
         "TYPE": "drug",
         "EFFECT": [

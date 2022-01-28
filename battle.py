@@ -92,10 +92,11 @@ class battleUI():
         # print items from ITEMS with their item count
         if len(i) != 0:
             for item in set(i):
-                effectString = eng.getEffectString(item)
-                itemString = "{0:>2}x {1:<12} {2:<7}".format(str(itemCount[item]), item, effectString)
-                invWin.addstr(s, 0, itemString, eng.c["DIM"])
-                s += 1
+                if "BATTLE" in dbs.items.find_one( { "NAME": item } ):
+                    effectString = eng.getEffectString(item)
+                    itemString = "{0:>2}x {1:<12} {2:<7}".format(str(itemCount[item]), item, effectString)
+                    invWin.addstr(s, 0, itemString, eng.c["DIM"])
+                    s += 1
 
     # function specifically to parse commands and run their relevant functions
     def runAction(cmd, arg):
@@ -137,8 +138,6 @@ class battleUI():
         # print enemy shortdesc
         description = "\n".join(wrap(dbs.enemyInfo["DESC"], 44))
         enemyStatsWin.addstr(y, 0, description)
-
-        # TODO get enemy art and print to screen
 
     def writeEnemy(enemyBattleStats):
 
