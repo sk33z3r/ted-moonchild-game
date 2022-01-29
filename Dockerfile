@@ -10,7 +10,7 @@ RUN pip install -r /requirements.txt
 
 FROM python:3-alpine AS run
 # add openssh and clean
-RUN apk add --update bash openssh \
+RUN apk add --update bash openssh jpeg \
 && rm  -rf /tmp/* /var/cache/apk/*
 # get compiled modules from pervious stage
 COPY --from=build /usr/local/lib/python3.10 /usr/local/lib/python3.10
