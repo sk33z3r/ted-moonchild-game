@@ -1,16 +1,23 @@
-FROM python:3-alpine
+FROM python:3-alpine AS build
 # upgrade pip
 RUN pip install --upgrade pip
 # add openssh and clean
+RUN apk add --update gcc libc-dev jpeg-dev zlib-dev \
+&& rm  -rf /tmp/* /var/cache/apk/*
+# install python modules
+ADD dockerfiles/requirements.txt /
+RUN pip install -r /requirements.txt
+
+FROM python:3-alpine AS run
+# add openssh and clean
 RUN apk add --update bash openssh \
 && rm  -rf /tmp/* /var/cache/apk/*
+# get compiled modules from pervious stage
+COPY --from=build /usr/local/lib/python3.10 /usr/local/lib/python3.10
 # add entrypoint script
 ADD dockerfiles/docker-entrypoint.sh /usr/local/bin
 # add sshd files
 ADD dockerfiles/ssh* /etc/ssh/
-# install python modules
-ADD dockerfiles/requirements.txt /
-RUN pip install -r /requirements.txt
 # add ted user
 RUN echo -e "m00nch1ld\nm00nch1ld" | adduser ted
 # add the python files for the game
