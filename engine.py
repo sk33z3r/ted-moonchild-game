@@ -47,8 +47,8 @@ def calculateWindows(height, width, max_y, max_x, ui):
     global battleMenuDims
 
     # determine where curses needs to start the windows to be centered in the terminal
-    initBegin_y = round((height - max_y) / 2)
-    initBegin_x = round((width - max_x) / 2)
+    initBegin_y = (height - max_y) // 2
+    initBegin_x = (width - max_x) // 2
 
     ### all tuples (height, width, begin_y, begin_x)
     ### input border tuple (uly, ulx, lry, lrx)

@@ -712,30 +712,29 @@ class worldUI():
                 if arg in eng.SHORT_DIRS:
                     if arg == "n":
                         upper = "NORTH"
-                    if arg == "s":
+                    elif arg == "s":
                         upper = "SOUTH"
-                    if arg == "e":
+                    elif arg == "e":
                         upper = "EAST"
-                    if arg == "w":
+                    elif arg == "w":
                         upper = "WEST"
-                    if arg == "u":
+                    elif arg == "u":
                         upper = "UP"
-                    if arg == "d":
+                    elif arg == "d":
                         upper = "DOWN"
-                    else:
-                        # if there isn't a matching shortname, then make the arg uppercase
-                        upper = arg.upper()
+                else:
+                    # if there isn't a matching shortname, then make the arg uppercase
+                    upper = arg.upper()
 
                 # check if the direction exists in the current room
-                try:
+                if upper in dbs.locationInfo:
                     roomInDirection = dbs.locations.find_one( { "NAME": dbs.locationInfo[upper] } )
-                # if it doesn't print something whimsical
-                # TODO make this dialogue a list and choose one at random
-                except:
-                    worldUI.writeMsg("Ted cops a feel on the wall, hoping for a hidden latch or some secret button. All he finds is disappointment.", "DIM_RED")
-                # if it exists print a message with the shortdesc
-                else:
                     worldUI.writeMsg(roomInDirection["SHORTDESC"][1], roomInDirection["SHORTDESC"][0])
+
+                # if it doesn't print something whimsical
+                else:
+                    # TODO make this dialogue a list and choose one at random
+                    worldUI.writeMsg("Ted cops a feel on the wall, hoping for a hidden latch or some secret button. All he finds is disappointment.", "RED")
 
             # if the arg matches an item on the ground, display the info
             elif itemOnGround != None:
