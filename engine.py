@@ -39,9 +39,7 @@ def calculateWindows(height, width, max_y, max_x, ui):
     global worldEventDims
     global worldInputDims
     global worldMsgDims
-    global worldStatDims
-    global worldInvDims
-    global worldHelpDims
+    global worldCharDims
     global battleEnemyDims
     global battleEventDims
     global battleStatDims
@@ -78,41 +76,33 @@ def calculateWindows(height, width, max_y, max_x, ui):
     elif ui == "world":
         worldSectionDims = {
             "title": {
-                "border": [ 3, 80, initBegin_y, (initBegin_x + 1) ],
-                "content": [ 1, 76, (initBegin_y + 1), (initBegin_x + 3) ]
-            },
-            "ground": {
-                "border": [ 8, 50, (initBegin_y + 25), (initBegin_x + 1) ],
-                "content": [ 6, 46, (initBegin_y + 26), (initBegin_x + 3) ]
-            },
-            "exits": {
-                "border": [ 8, 29, (initBegin_y + 25), (initBegin_x + 52) ],
-                "content": [ 6, 25, (initBegin_y + 26), (initBegin_x + 53) ]
+                "border": [ 3, 80, initBegin_y, initBegin_x ],
+                "content": [ 1, 77, (initBegin_y + 1), (initBegin_x + 2) ]
             },
             "events": {
-                "border": [ 22, 80, (initBegin_y + 3), (initBegin_x + 1) ],
-                "content": [ 20, 76, (initBegin_y + 4), (initBegin_x + 3) ]
+                "border": [ 24, 80, (initBegin_y + 3), initBegin_x ],
+                "content": [ 22, 77, (initBegin_y + 4), (initBegin_x + 2) ]
+            },
+            "ground": {
+                "border": [ 10, 50, (initBegin_y + 27), initBegin_x ],
+                "content": [ 8, 47, (initBegin_y + 28), (initBegin_x + 2) ]
+            },
+            "exits": {
+                "border": [ 10, 30, (initBegin_y + 27), (initBegin_x + 50) ],
+                "content": [ 8, 27, (initBegin_y + 28), (initBegin_x + 52) ]
             },
             "input": {
-                "border": [ (initBegin_y + 33), (initBegin_x + 1), (initBegin_y + 35), (initBegin_x + 80) ],
-                "content": [ 1, 72, (initBegin_y + 34), (initBegin_x + len(PROMPT) + 3) ],
-                "prompt": [ (initBegin_y + 34), (initBegin_x + 3) ]
+                "border": [ (initBegin_y + 37), initBegin_x, (initBegin_y + 39), (initBegin_x + 79) ],
+                "content": [ 1, 70, (initBegin_y + 38), (initBegin_x + len(PROMPT) + 3) ],
+                "prompt": [ (initBegin_y + 38), (initBegin_x + 2) ]
             },
             "msg": {
-                "border": [ 4, 109, (initBegin_y + 36), (initBegin_x + 1) ],
-                "content": [ 2, 105, (initBegin_y + 37), (initBegin_x + 3) ]
+                "border": [ 4, 111, (initBegin_y + 40), initBegin_x ],
+                "content": [ 2, 108, (initBegin_y + 41), (initBegin_x + 2) ]
             },
-            "stats": {
-                "border": [ 9, 28, initBegin_y, (initBegin_x + 82) ],
-                "content": [ 7, 24, (initBegin_y + 1), (initBegin_x + 84) ]
-            },
-            "inventory": {
-                "border": [ 27, 28, (initBegin_y + 9), (initBegin_x + 82) ],
-                "content": [ 25, 25, (initBegin_y + 10), (initBegin_x + 83) ]
-            },
-            "help": {
-                "border": [35, 55, (initBegin_y + 17), (initBegin_x + 27)],
-                "content": [33, 51, (initBegin_y + 18), (initBegin_x + 29)]
+            "character": {
+                "border": [ 40, 30, initBegin_y, (initBegin_x + 81) ],
+                "content": [ 38, 28, (initBegin_y + 1), (initBegin_x + 82) ]
             }
         }
 
@@ -123,9 +113,7 @@ def calculateWindows(height, width, max_y, max_x, ui):
         worldEventDims = worldSectionDims["events"]
         worldInputDims = worldSectionDims["input"]
         worldMsgDims = worldSectionDims["msg"]
-        worldStatDims = worldSectionDims["stats"]
-        worldInvDims = worldSectionDims["inventory"]
-        worldHelpDims = worldSectionDims["help"]
+        worldCharDims = worldSectionDims["character"]
 
     # battle section dimension map
     elif ui == "battle":
