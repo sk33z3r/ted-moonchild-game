@@ -2,15 +2,15 @@ FROM python:3-alpine AS build
 # upgrade pip
 RUN pip install --upgrade pip
 # add openssh and clean
-#RUN apk add --update gcc libc-dev jpeg-dev zlib-dev \
-#&& rm  -rf /tmp/* /var/cache/apk/*
+RUN apk add --update gcc libc-dev jpeg-dev zlib-dev \
+&& rm  -rf /tmp/* /var/cache/apk/*
 # install python modules
 ADD dockerfiles/requirements.txt /
 RUN pip install -r /requirements.txt
 
 FROM python:3-alpine AS run
 # add openssh and clean
-RUN apk add --update bash openssh \
+RUN apk add --update bash openssh jpeg \
 && rm  -rf /tmp/* /var/cache/apk/*
 # get compiled modules from pervious stage
 COPY --from=build /usr/local/lib/python3.10 /usr/local/lib/python3.10
