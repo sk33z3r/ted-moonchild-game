@@ -385,21 +385,56 @@ class worldUI():
         eventWin.clear()
 
         # print the help text to screen
-        eventWin.addstr(1, 0, "           TED MOONCHILD AND THE ROADIES IN SPACE: THE COMMANDS", eng.c["BRIGHT_YELLOW"])
-        eventWin.addstr(2, 0, "   CHANGE ROOMS BY TYPING A DIRECTION, OR THE FIRST LETTER OF A DIRECTION   ", eng.c["REVERSE_DIM_YELLOW"])
-        eventWin.addstr(4, 0, "BASIC Commands:                           SHOP Commands:", eng.c["MAGENTA"])
-        eventWin.addstr(5, 0, "    save - save progress                  shop - display the room's stock", eng.c["DIM"])
-        eventWin.addstr(6, 0, "    quit - save game and exit             sell - sell an item", eng.c["DIM"])
-        eventWin.addstr(7, 0, "    help - this help message               buy - buy an item", eng.c["DIM"])
-        eventWin.addstr(9, 0, "ITEM Commands:                            CONSUME Commands:", eng.c["MAGENTA"])
-        eventWin.addstr(10, 0, "    look - look at an item or the room     eat - consume food for effects", eng.c["DIM"])
-        eventWin.addstr(11, 0, "    take - take an item                  drink - drink for effects", eng.c["DIM"])
-        eventWin.addstr(12, 0, "    drop - drop an item on the ground    smoke - smoke for effects", eng.c["DIM"])
-        eventWin.addstr(13, 0, "   equip - equip an item                 snort - consume drugs for effects", eng.c["DIM"])
-        eventWin.addstr(14, 0, " unequip - remove an equipped item", eng.c["DIM"])
-        eventWin.addstr(15, 0, "     use - use a key item", eng.c["DIM"])
-        eventWin.addstr(18, 0, "    Some items can be combined:        (There are lots of alternate words   ", eng.c["DIM_GREEN"])
-        eventWin.addstr(19, 0, "      use [item] with [item]               to consume items. Try some!)     ", eng.c["DIM_GREEN"])
+        eventWin.addstr(1, 0, "{0: ^76}".format("TED MOONCHILD AND THE ROADIES IN SPACE: THE COMMANDS"), eng.c["BRIGHT_YELLOW"])
+        eventWin.addstr(3, 0, "{0: ^76}".format("CHANGE ROOMS BY TYPING A DIRECTION, OR THE FIRST LETTER OF A DIRECTION"), eng.c["REVERSE_DIM_MAGENTA"])
+        eventWin.addstr(4, 0, "{0: ^76}".format("TYPICAL COMMAND USAGE: [command] [item/room/direction]"), eng.c["REVERSE_DIM_MAGENTA"])
+
+        eventWin.addstr(6, 0, "{0: <38} {1: <38}".format("BASIC Commands", "SHOP Commands"), eng.c["MAGENTA"])
+
+        eventWin.addstr(7, 3, "{0: >4}:".format("save"))
+        eventWin.addstr(8, 3, "{0: >4}:".format("quit"))
+        eventWin.addstr(9, 3, "{0: >4}:".format("help"))
+        eventWin.addstr(7, 41, "{0: >4}:".format("shop"))
+        eventWin.addstr(8, 41, "{0: >4}:".format("sell"))
+        eventWin.addstr(9, 41, "{0: >4}:".format("buy"))
+
+        eventWin.addstr(7, 9, "{0: <24}".format("save progress"), eng.c["DIM"])
+        eventWin.addstr(8, 9, "{0: <24}".format("save game and exit"), eng.c["DIM"])
+        eventWin.addstr(9, 9, "{0: <24}".format("this help message"), eng.c["DIM"])
+        eventWin.addstr(7, 47, "{0: <24}".format("display the room's stock"), eng.c["DIM"])
+        eventWin.addstr(8, 47, "{0: <24}".format("sell an item"), eng.c["DIM"])
+        eventWin.addstr(9, 47, "{0: <24}".format("buy an item"), eng.c["DIM"])
+
+        eventWin.addstr(11, 0, "{0: <38} {1: <38}".format("ITEM Commands", "CONSUME Commands"), eng.c["MAGENTA"])
+
+        eventWin.addstr(12, 0, "{0: >7}:".format("look"))
+        eventWin.addstr(13, 0, "{0: >7}:".format("take"))
+        eventWin.addstr(14, 0, "{0: >7}:".format("drop"))
+        eventWin.addstr(15, 0, "{0: >7}:".format("equip"))
+        eventWin.addstr(16, 0, "{0: >7}:".format("unequip"))
+        eventWin.addstr(17, 0, "{0: >7}:".format("use"))
+        eventWin.addstr(12, 40, "{0: >5}:".format("eat"))
+        eventWin.addstr(13, 40, "{0: >5}:".format("drink"))
+        eventWin.addstr(14, 40, "{0: >5}:".format("smoke"))
+        eventWin.addstr(15, 40, "{0: >5}:".format("snort"))
+
+        eventWin.addstr(12, 9, "look at an item or the room", eng.c["DIM"])
+        eventWin.addstr(13, 9, "take an item", eng.c["DIM"])
+        eventWin.addstr(14, 9, "drop an item on the ground", eng.c["DIM"])
+        eventWin.addstr(15, 9, "equip an item", eng.c["DIM"])
+        eventWin.addstr(16, 9, "remove an equipped item", eng.c["DIM"])
+        eventWin.addstr(17, 9, "use a key item", eng.c["DIM"])
+        eventWin.addstr(12, 47, "consume food for effects", eng.c["DIM"])
+        eventWin.addstr(13, 47, "drink for effects", eng.c["DIM"])
+        eventWin.addstr(14, 47, "smoke for effects", eng.c["DIM"])
+        eventWin.addstr(15, 47, "consume drugs for effects", eng.c["DIM"])
+
+        eventWin.addstr(19, 0, "{0: ^36}".format("Some items can be combined:"), eng.c["DIM_YELLOW"])
+        eventWin.addstr(20, 0, "{0: ^36}".format("use [item] with [item]"), eng.c["DIM_YELLOW"])
+
+        eventWin.addstr(18, 37, "{0: ^38}".format("There are lots of alternate words"), eng.c["DIM_GREEN"])
+        eventWin.addstr(19, 37, "{0: ^38}".format("for consuming items. Try different"), eng.c["DIM_GREEN"])
+        eventWin.addstr(20, 37, "{0: ^38}".format("words with different items!"), eng.c["DIM_GREEN"])
 
     # function to write the GROUND section
     def writeGround():
@@ -733,8 +768,21 @@ class worldUI():
 
                 # if it doesn't print something whimsical
                 else:
-                    # TODO make this dialogue a list and choose one at random
-                    worldUI.writeMsg("Ted cops a feel on the wall, hoping for a hidden latch or some secret button. All he finds is disappointment.", "RED")
+
+                    # list of responses
+                    msgList = [
+                        "Ted cops a feel on the wall, hoping for a hidden latch or some secret button. All he finds is disappointment.",
+                        "Ted stares at nothing for a while.",
+                        "I don't think there's anything to look at in that direction, Ted.",
+                        "Why don't you take a look somewhere else, Ted?",
+                        "Oh, look! Nothing."
+                    ]
+
+                    # pick a response randomly and display it
+                    message = choice(msgList)
+                    worldUI.writeMsg(message, "RED")
+
+            # TODO allow player to look at a room by its name
 
             # if the arg matches an item on the ground, display the info
             elif itemOnGround != None:
