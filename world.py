@@ -699,14 +699,17 @@ class worldUI():
             # make sure to set the Winnibego's current planet before we move, just in case the player is stepping into the Winnie itself
             dbs.locations.update_one( { "NAME": "Winnibego" }, { "$set": { "PLANET": dbs.locations.find_one( { "NAME": dbs.ROOM } )["PLANET"] } } )
 
+            # set the new location
+            dbs.setLocation(dbs.locationInfo[upper])
+
             # if combat should happen, make it happen
             if combatCheck > 40:
                 # TODO combatMode().fight()
-                worldUI.writeLocation(dbs.locationInfo[upper], "room", False)
+                worldUI.writeLocation(dbs.locationInfo["NAME"], "room", False)
 
             # otherwise move to the new room
             else:
-                worldUI.writeLocation(dbs.locationInfo[upper], "room", False)
+                worldUI.writeLocation(dbs.locationInfo["NAME"], "room", False)
 
         # let the player know if the direction can't be found
         else:
@@ -762,9 +765,22 @@ class worldUI():
         # look (room|item|direction)
         elif cmd == "look":
 
+            # get a list of room names from the available exits in this room
+            exitNames = []
+            for direction in eng.LONG_DIRS:
+                try:
+                    exitNames.append(dbs.locationInfo[direction.upper()])
+                except:
+                    pass
+
             # with no specifics given, assume the player wants to refresh the room event
             if arg == None or arg in eng.ROOM_WORDS:
                 worldUI.writeLocation(dbs.ROOM, "room", False)
+
+            # if the arg is a name in available exits
+            elif arg in exitNames:
+                roomInDirection = dbs.locations.find_one( { "NAME": arg } )
+                worldUI.writeMsg(roomInDirection["SHORTDESC"][1], roomInDirection["SHORTDESC"][0])
 
             # if the arg is a direction
             elif arg in eng.LONG_DIRS or arg in eng.SHORT_DIRS:
