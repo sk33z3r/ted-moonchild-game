@@ -87,7 +87,7 @@ class main():
         # clear the screen and display the logo
         screen.clear()
 
-        # TODO display logo and a message
+        # display logo and a message
         main.displayLogo(0)
         mainWin.addstr(2, 0, "{0: ^76}".format("Thanks for ROCKING with Ted. See ya later, nerd!"), eng.c["RED"])
 
@@ -107,7 +107,7 @@ class main():
             mainWin.addstr(2, 0, "{0: ^76}".format("Watch the intro animation? (yes/no)"), eng.c["CYAN"])
             choice = main.getCmd()
 
-            # TODO port animation to mongo and curses
+            # display the intro if yes
             if choice == "yes" or choice == "y":
                 main.introAnimation()
 
