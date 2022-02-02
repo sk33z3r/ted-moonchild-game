@@ -697,13 +697,16 @@ class worldUI():
     # function to initialize the UI and get user input
     def displayWorld():
 
+        global exit_game
+
         # write all data to the screen
         worldUI.writeChar()
         worldUI.writeMsg("", "DIM")
         worldUI.writeLocation(dbs.ROOM, "room", False)
 
         # main command input loop
-        while True:
+        exit_game = False
+        while exit_game is False:
             userInput = worldUI.getCmd()
             worldUI.processCmd(userInput)
 
@@ -1130,11 +1133,14 @@ class worldUI():
 
         # exit
         elif cmd == "quit" or cmd == "exit":
+
+            global exit_game
+
             message = dbs.saveGame()
             worldUI.writeMsg(message[0], message[1])
             sleep(2)
             worldUI.clearAllScreens()
-            exitGame()
+            exit_game = True
 
         # catch possible exceptions
         else:
