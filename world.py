@@ -355,9 +355,9 @@ class worldUI():
 
             # set some vars
             itemInfo = dbs.items.find_one( { "NAME": item } )
-            nameString = "{0: <13}".format(itemInfo["NAME"])
-            effectString = "{0: <13}".format(eng.getEffectString(item))
-            floydsString = "{0: <7} {1: <5}".format("FLOYDS:", str(itemInfo["VALUE"]))
+            nameString = "{0: <14}".format(itemInfo["NAME"])
+            effectString = "{0: <14}".format(eng.getEffectString(item))
+            floydsString = "{0: <7} {1: <6}".format("FLOYDS:", str(itemInfo["VALUE"]))
 
             # print the name in bold
             eventWin.addstr(y, 0, nameString, eng.c["DIM"])
@@ -375,7 +375,7 @@ class worldUI():
             # wrap the LONGDESC to fit the window before displaying it
             l = 0
             while l < len(itemDesc):
-                eventWin.addstr(y, 13, "| {0: <60}".format(itemDesc[l]), eng.c["DIM"])
+                eventWin.addstr(y, 15, "{0: <60}".format(itemDesc[l]), eng.c["DIM"])
                 y += 1
                 l += 1
 
