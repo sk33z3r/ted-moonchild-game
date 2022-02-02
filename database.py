@@ -349,31 +349,53 @@ def getEnemyDict():
 # function to update ground items in a room
 def updateGround(item, action):
 
+    # check if we're in the winnie or not
+    if ROOM.lower() in [ "winnibego", "space" ] or ROOM.endswith("Sector"):
+        space = True
+    else:
+        space = False
+
     # if asked to delete, remove item from ground
     if action == "del":
 
         # set the groundList
-        groundList = list(locations.find_one( { "NAME": ROOM } )["GROUND"])
+        if space is True:
+            groundList = list(playerInv["WINNIE"])
+        else:
+            groundList = list(locations.find_one( { "NAME": ROOM } )["GROUND"])
 
         # if the item is in the ground list, remove it
         if item in groundList:
             groundList.remove(item)
 
             # set the update list as the new value
-            locations.update_one( { "NAME": ROOM }, { "$set": { "GROUND": groundList } } )
+            if space is True:
+                player.update_one( { "SECTION": "inventory" }, { "$set": { "WINNIE": groundList } } )
+            else:
+                locations.update_one( { "NAME": ROOM }, { "$set": { "GROUND": groundList } } )
 
     # if asked to add, add the item to the ground
     elif action == "add":
 
         # set a temp ground list and add the item
-        groundTemp = list(locationInfo["GROUND"])
-        groundTemp.append(item)
+        if space is True:
+            groundList = list(playerInv["WINNIE"])
+        else:
+            groundList = list(locationInfo["GROUND"])
+
+        groundList.append(item)
 
         # set the new value as the list
-        locations.update_one( { "NAME": ROOM }, { "$set": { "GROUND": groundTemp } } )
+        if space is True:
+            player.update_one( { "SECTION": "inventory" }, { "$set": { "WINNIE": groundList } } )
+        else:
+            locations.update_one( { "NAME": ROOM }, { "$set": { "GROUND": groundList } } )
 
         # set a new list from the database
-        groundList = list(locations.find_one( { "NAME": ROOM } )["GROUND"])
+        if space is True:
+            groundList = list(player.find_one( { "SECTION": "inventory" } )["WINNIE"])
+        else:
+            groundList = list(locations.find_one( { "NAME": ROOM } )["GROUND"])
 
         # if the item doesn't exist for some reason, raise an exception
         if item not in groundList:

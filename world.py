@@ -12,6 +12,12 @@ class worldUI():
     # updates room visited and solved status
     def updateRoomStatus(what):
 
+        # check if we're in the winnie or not
+        if dbs.ROOM.lower() in [ "winnibego", "space" ] or dbs.ROOM.endswith("Sector"):
+            space = True
+        else:
+            space = False
+
         # set the VISITED value
         if what == "VISITED":
             status = dbs.locationInfo["VISITED"]
@@ -25,12 +31,18 @@ class worldUI():
             # add an item to the ground if specified
             if "ADD_GROUND" in dbs.locationInfo:
                 for item in dbs.locationInfo["ADD_GROUND"]:
-                    dbs.locations.update_one( { "NAME": dbs.ROOM }, { "$push": { "GROUND" : item } } )
+                    if space is True:
+                        dbs.player.update_one( { "SECTION": "inventory" }, { "$push": { "WINNIE" : item } } )
+                    else:
+                        dbs.locations.update_one( { "NAME": dbs.ROOM }, { "$push": { "GROUND" : item } } )
 
             # remove an item from the ground if specified
             if "DEL_GROUND" in dbs.locationInfo:
                 for item in dbs.locationInfo["DEL_GROUND"]:
-                    dbs.locations.update_one( { "NAME": dbs.ROOM }, { "$pull": { "GROUND" : item } } )
+                    if space is True:
+                        dbs.player.update_one( { "SECTION": "inventory" }, { "$pull": { "WINNIE" : item } } )
+                    else:
+                        dbs.locations.update_one( { "NAME": dbs.ROOM }, { "$pull": { "GROUND" : item } } )
 
             # add a direction to the room if specified
             if "ADD_DIRS" in dbs.locationInfo:
@@ -90,7 +102,7 @@ class worldUI():
 
             # if the dialogue is taking up the whole window, we need to clear it and start writing at the beginning again
             if y >= 15:
-                eventWin.addstr(21, 4, ">>>>>", eng.c["BLINK_BRIGHT_YELLOW"])
+                eventWin.addstr(20, 70, ">>>>>", eng.c["BLINK_BRIGHT_YELLOW"])
                 sleep(speed)
                 y = 1
                 eventWin.clear()
@@ -437,10 +449,16 @@ class worldUI():
         eventWin.addstr(20, 37, "{0: ^38}".format("words with different items!"), eng.c["DIM_GREEN"])
 
     # function to write the GROUND section
-    def writeGround():
+    def writeGround(where):
 
         # set the list of items on the ground
-        groundList = list(dbs.locationInfo["GROUND"])
+        # if this is the winnie, we need to grab special inventory
+        if where.lower() in [ "winnibego", "space" ] or where.endswith("Sector"):
+            groundList = list(dbs.playerInv["WINNIE"])
+
+        # otherwise get the room's ground items
+        else:
+            groundList = list(dbs.locationInfo["GROUND"])
 
         # if there are no items, clear the window, otherwise print a list of items
         if len(groundList) == 0:
@@ -521,7 +539,7 @@ class worldUI():
         eventWin.clear()
 
         # make sure GROUND and EXITS are still visible
-        worldUI.writeGround()
+        worldUI.writeGround(room)
         worldUI.writeDirs()
 
         # if this is to be a room
@@ -715,8 +733,13 @@ class worldUI():
 
         # setup the environment
         inv = eng.tempInv()
-        itemOnGround = eng.getFirstItemMatchingDesc(arg, dbs.locationInfo["GROUND"])
         itemInInv = eng.getFirstItemMatchingDesc(arg, inv)
+
+        # check if we're in the winnie or not
+        if dbs.ROOM.lower() in [ "winnibego", "space" ] or dbs.ROOM.endswith("Sector"):
+            itemOnGround = eng.getFirstItemMatchingDesc(arg, dbs.playerInv["WINNIE"])
+        else:
+            itemOnGround = eng.getFirstItemMatchingDesc(arg, dbs.locationInfo["GROUND"])
 
         # some times an item might not be in the SHOP, let's make sure to catch the exception
         try:
@@ -832,7 +855,7 @@ class worldUI():
                     dbs.updateGround(itemInfo["NAME"], "del") # remove from ground
                     dbs.updateInv(itemInfo["NAME"], "add") # add to inventory
                     worldUI.writeChar()
-                    worldUI.writeGround()
+                    worldUI.writeGround(dbs.locationInfo["NAME"])
                     message = "Ted grabs {0}.".format(itemInfo["SHORTDESC"])
                     worldUI.writeMsg(message, "DIM")
 
@@ -865,7 +888,7 @@ class worldUI():
                     dbs.updateGround(itemInfo["NAME"], "add") # remove from ground
                     dbs.updateInv(itemInfo["NAME"], "del") # add to inventory
                     worldUI.writeChar()
-                    worldUI.writeGround()
+                    worldUI.writeGround(dbs.locationInfo["NAME"])
                     message = "Ted drops {0}.".format(itemInfo["SHORTDESC"])
                     worldUI.writeMsg(message, "DIM")
 
@@ -1268,7 +1291,7 @@ class worldUI():
 
         # rewrites current data into their sections
         worldUI.writeChar()
-        worldUI.writeGround()
+        worldUI.writeGround(dbs.locationInfo["NAME"])
         worldUI.writeDirs()
 
     # process the raw command received
