@@ -19,7 +19,7 @@ class battleUI():
             eventLine = 1
 
         # display the message
-        eventWin.addstr(eventLine, 0, msg, eng.c[style])
+        eventWin.addstr(eventLine, 1, msg, eng.c[style])
 
         eventLine += 1
 
@@ -135,12 +135,14 @@ class battleUI():
     # function to pick and print the initial stats for an encounter
     def initEnemy():
 
+        # define globals
         global enemyBattleStats
 
-        # TODO pick a random enemy (weighted) from the current planet
+        # setup enemy name list and weights from the planets db
         enemies = dbs.planets.find_one( { "PLANET": dbs.PLANET } )["ENEMY"]["NAMES"]
         weights = dbs.planets.find_one( { "PLANET": dbs.PLANET } )["ENEMY"]["WEIGHTS"]
 
+        # choose a random enemy based on the weights
         chosenEnemy = choices(enemies, weights=weights)
 
         # setup enemy stats
@@ -208,6 +210,7 @@ class battleUI():
         # define globals
         global playerBattleStats
         global eventLine
+        global exit_battle
 
         # get stats
         playerBattleStats = dbs.getPlayerDict()
@@ -222,18 +225,21 @@ class battleUI():
         battleUI.writeMenu()
 
         t = 0
-        while t < 25:
+        while t < 6:
             battleUI.writeLog("Ted smashes the {0} for 10 damage!".format(dbs.enemyInfo["NAME"]), "RED")
             sleep(0.5)
             t += 1
 
         # main command input loop
-        while True:
+        exit_battle = False
+        while exit_battle is False:
             userInput = battleUI.getCmd()
-            #battleUI.processCmd(userInput)
+            battleUI.processCmd(userInput)
 
     # process the raw command received
     def processCmd(userInput):
+
+        global exit_battle
 
         # if it's empty, go back to the loop
         if userInput == "" or userInput == None:
@@ -249,10 +255,14 @@ class battleUI():
         except ValueError:
             pass
 
+        if userInput == "done":
+            exit_battle = True
+
     # wait for user input
     def getCmd():
 
         sleep(5)
+        return "done"
 
     # function to clear all screens
     def clearAllScreens():
@@ -292,8 +302,8 @@ class battleUI():
         screen = stdscr
 
         # define max size
-        max_x = 110
-        max_y = 40
+        max_x = 101
+        max_y = 36
 
         # get current terminal size and setup UI positions
         height, width = stdscr.getmaxyx()
@@ -359,4 +369,6 @@ class battleUI():
         # run the world command loop
         battleUI.displayBattle()
 
-        return
+        battleUI.clearAllScreens()
+
+        return True

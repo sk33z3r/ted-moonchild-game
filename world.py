@@ -699,7 +699,9 @@ class worldUI():
 
             # if combat should happen, make it happen
             if combatCheck > 40 and dbs.locationInfo["BATTLES"] is True:
-                # TODO combatMode().fight()
+
+                battleUI.build(screen)
+                worldUI.rewriteUI()
                 worldUI.writeLocation(dbs.locationInfo["NAME"], "room", False)
 
             # otherwise move to the new room
@@ -709,22 +711,6 @@ class worldUI():
         # let the player know if the direction can't be found
         else:
             worldUI.writeMsg("Ted can't walk through walls.", "RED")
-
-    # function to initialize the UI and get user input
-    def displayWorld():
-
-        global exit_game
-
-        # write all data to the screen
-        worldUI.writeChar()
-        worldUI.writeMsg("", "DIM")
-        worldUI.writeLocation(dbs.ROOM, "room", False)
-
-        # main command input loop
-        exit_game = False
-        while exit_game is False:
-            userInput = worldUI.getCmd()
-            worldUI.processCmd(userInput)
 
     # function specifically to parse commands and run their relevant functions
     def runAction(cmd, arg):
@@ -1157,7 +1143,10 @@ class worldUI():
 
         # battle
         elif cmd == "fight" or cmd == "battle":
-            battleUI.build(screen)
+
+            global exit_battle
+
+            exit_battle = battleUI.build(screen)
 
         # help
         elif cmd == "help":
@@ -1303,6 +1292,38 @@ class worldUI():
         worldUI.writeGround(dbs.locationInfo["NAME"])
         worldUI.writeDirs()
 
+    # function to initialize the UI and get user input
+    def displayWorld():
+
+        global exit_game
+        global exit_battle
+
+        # write all data to the screen
+        worldUI.writeChar()
+        worldUI.writeMsg("", "DIM")
+        worldUI.writeLocation(dbs.ROOM, "room", False)
+
+        # set initial state of when to change to each UI
+        exit_battle = False
+        exit_game = False
+
+        # main command input loop
+        while exit_game is False:
+            userInput = worldUI.getCmd()
+            worldUI.processCmd(userInput)
+
+            # if we just exited a battle, we need to redraw the screen sections
+            if exit_battle is True:
+
+                # write all data to the screen
+                worldUI.rewriteUI()
+                worldUI.writeChar()
+                worldUI.writeMsg("", "DIM")
+                worldUI.writeLocation(dbs.ROOM, "room", False)
+
+                # reset battle status
+                exit_battle = False
+
     # process the raw command received
     def processCmd(userInput):
 
@@ -1384,6 +1405,40 @@ class worldUI():
         groundWin.clear()
         exitBorder.clear()
         exitWin.clear()
+
+    def rewriteUI():
+
+        # refresh info in memory
+        eng.refreshInfo()
+
+        # LOCATION
+        titleBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
+        titleBorder.addstr(0, 68, " LOCATION ", eng.c["DIM"])
+
+        # GROUND
+        groundBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
+        groundBorder.addstr(0, 40, " GROUND ", eng.c["DIM"])
+
+        # EXITS
+        exitBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll)
+        exitBorder.addstr(0, 21, " EXITS ", eng.c["DIM"])
+
+        # EVENTS / SHOP
+        eventBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
+
+        # PROMPT
+        # define the border
+        rectangle(screen, eng.worldInputDims["border"][0], eng.worldInputDims["border"][1], eng.worldInputDims["border"][2], eng.worldInputDims["border"][3])
+        # place PROMPT in the input window
+        screen.addstr(eng.worldInputDims["prompt"][0], eng.worldInputDims["prompt"][1], eng.PROMPT, eng.c["RED"])
+
+        # MESSAGES
+        msgBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
+        msgBorder.addstr(0, 83, " MESSAGES ", eng.c["DIM"])
+
+        # CHARACTER
+        charBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
+        charBorder.addstr(0, 2, " TED MOONCHILD ", eng.c["DIM"])
 
     # define the main world UI screen boundaries
     def build(stdscr):
