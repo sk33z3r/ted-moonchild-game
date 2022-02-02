@@ -346,37 +346,44 @@ class worldUI():
         shopItems = dbs.locationInfo["SHOP"]
 
         # set the starting line for text
-        y = 0
+        y = 1
 
         # for each item in the rooms SHOP list
         for item in shopItems:
 
+            beginning = y
+
             # set some vars
             itemInfo = dbs.items.find_one( { "NAME": item } )
-            effectString = eng.getEffectString(item)
-            nameString = "{0} {1}".format(itemInfo["NAME"], effectString)
+            nameString = "{0: <13}".format(itemInfo["NAME"])
+            effectString = "{0: <13}".format(eng.getEffectString(item))
+            floydsString = "{0: <7} {1: <5}".format("FLOYDS:", str(itemInfo["VALUE"]))
 
             # print the name in bold
-            eventWin.addstr(y, 0, nameString, eng.c["BRIGHT"])
-
-            # move to next line
+            eventWin.addstr(y, 0, nameString, eng.c["DIM"])
             y += 1
+            eventWin.addstr(y, 0, effectString, eng.c["DIM_YELLOW"])
+            y += 1
+            eventWin.addstr(y, 0, floydsString, eng.c["DIM_GREEN"])
+
+            # move back to first line
+            y = beginning
+
+            # wrap the description text to fit
+            itemDesc = wrap(itemInfo["LONGDESC"], 60)
 
             # wrap the LONGDESC to fit the window before displaying it
-            eventWin.addstr(y, 0, '\n'.join(wrap(itemInfo["LONGDESC"], 75)), eng.c["DIM"])
+            l = 0
+            while l < len(itemDesc):
+                eventWin.addstr(y, 13, "| {0: <60}".format(itemDesc[l]), eng.c["DIM"])
+                y += 1
+                l += 1
 
             # add empty lines appropriately if the above string is long enough
-            if len(itemInfo["LONGDESC"]) < 76:
-                y += 1
+            if len(itemInfo["LONGDESC"]) > 180:
+                y += 3
             else:
                 y += 2
-
-            # display the value in green
-            floydsString = "[FLOYDS: {0}]".format(str(itemInfo["VALUE"]))
-            eventWin.addstr(y, 0, floydsString, eng.c["GREEN"])
-
-            # add newline between items
-            y += 2
 
     # function to write the HELP screen in the EVENTS section
     def writeHelp():
