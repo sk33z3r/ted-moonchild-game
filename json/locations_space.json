@@ -39,6 +39,7 @@
         "NORTH": "Zappa Lot",
         "SOUTH": "Mactel 6 Lot",
         "UP": "Jorlene Sector",
+        "BATTLES": false,
         "MELVIN": 0,
         "JORLENE": 0
     }

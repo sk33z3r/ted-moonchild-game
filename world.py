@@ -703,7 +703,7 @@ class worldUI():
             dbs.setLocation(dbs.locationInfo[upper])
 
             # if combat should happen, make it happen
-            if combatCheck > 40:
+            if combatCheck > 40 and dbs.locationInfo["BATTLES"] is True:
                 # TODO combatMode().fight()
                 worldUI.writeLocation(dbs.locationInfo["NAME"], "room", False)
 

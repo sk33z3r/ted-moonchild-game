@@ -37,6 +37,7 @@
         "SECTOR": "Melvin Sector",
         "GROUND": [ "Empty Bottle", "Neat Cables", "EBGB Drums" ],
         "VISITED": 0,
+        "BATTLES": true,
         "SOLVED": 0
     },
     {
@@ -77,6 +78,7 @@
         "SECTOR": "Melvin Sector",
         "GROUND": [ "EBGB Moonshine" ],
         "VISITED": 0,
+        "BATTLES": true,
         "SOLVED": 0
     },
     {
@@ -110,6 +112,7 @@
         "SECTOR": "Melvin Sector",
         "GROUND": [ "Guitar Pick", "Drumstick Tip" ],
         "VISITED": 0,
+        "BATTLES": true,
         "SOLVED": 0
     },
     {
@@ -141,6 +144,7 @@
         "SECTOR": "Melvin Sector",
         "GROUND": [ "Squire Strat", "Used Condom", "Chaz's Note" ],
         "VISITED": 0,
+        "BATTLES": true,
         "SOLVED": 0
     },
     {
@@ -175,6 +179,7 @@
         "SECTOR": "Melvin Sector",
         "GROUND": [ "Lit Joint" ],
         "VISITED": 0,
+        "BATTLES": true,
         "SOLVED": 0
     },
     {
@@ -206,6 +211,7 @@
         "SECTOR": "Melvin Sector",
         "GROUND": [],
         "VISITED": 0,
+        "BATTLES": true,
         "SOLVED": 0
     },
     {
@@ -238,6 +244,7 @@
         "SECTOR": "Melvin Sector",
         "GROUND": [],
         "VISITED": 0,
+        "BATTLES": true,
         "SOLVED": 0
     },
     {
@@ -264,6 +271,7 @@
         "SECTOR": "Melvin Sector",
         "GROUND": [],
         "VISITED": 0,
+        "BATTLES": true,
         "SOLVED": 0
     },
     {
@@ -291,6 +299,7 @@
         "SECTOR": "Melvin Sector",
         "GROUND": [],
         "VISITED": 0,
+        "BATTLES": true,
         "SOLVED": 0
     },
     {
@@ -319,6 +328,7 @@
         "SECTOR": "Melvin Sector",
         "GROUND": [],
         "VISITED": 0,
+        "BATTLES": true,
         "SOLVED": 0
     }
 ]

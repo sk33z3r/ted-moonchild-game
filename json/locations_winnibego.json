@@ -38,6 +38,7 @@
         },
         "SECTOR": "Melvin Sector",
         "DOWN": "Zappa Lot",
+        "BATTLES": false,
         "VISITED": 0,
         "SOLVED": 0
     }

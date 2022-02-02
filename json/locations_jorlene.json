@@ -29,6 +29,7 @@
         "SECTOR": "Jorlene Sector",
         "GROUND": [],
         "VISITED": 0,
+        "BATTLES": true,
         "SOLVED": 0
     },
     {
@@ -59,6 +60,7 @@
         "SECTOR": "Jorlene Sector",
         "GROUND": [],
         "VISITED": 0,
+        "BATTLES": true,
         "SOLVED": 0
     }
 ]
