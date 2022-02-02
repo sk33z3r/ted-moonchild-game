@@ -14,7 +14,7 @@ USE_CMDS = [ "use", "try" ]
 EAT_CMDS = [ "eat", "gobble", "consume" ]
 DRINK_CMDS = [ "swallow", "gulp", "slurp", "drink" ]
 SMOKE_CMDS = [ "smoke", "toke", "inhale" ]
-DRUG_CMDS = [ "swallow", "snort", "lick" ]
+DRUG_CMDS = [ "swallow", "snort", "lick", "freebase" ]
 BATTLE_COMMANDS = [ "attack", "mojo", "magic", "hit" ]
 MOVE_CMDS = [ "move", "walk", "run", "shimmy", "slide" ]
 ALL_COMMANDS = BASE_COMMANDS + EAT_CMDS + DRINK_CMDS + SMOKE_CMDS + DRUG_CMDS
@@ -26,7 +26,7 @@ ROOM_WORDS = [ "here", "room", "around", "ground", "floor", "area" ]
 STATS = [ "ATK", "DEF", "MOJO", "LUK", "ACC" ]
 
 # setup a game text speed
-GAME_SPEED = 4
+GAME_SPEED = 0
 
 # function to calculate section dimensions and starting points based on terminal size
 def calculateWindows(height, width, max_y, max_x, ui):
@@ -241,7 +241,7 @@ def setStyles():
 def refreshInfo():
     dbs.getInventory()
     dbs.getStats()
-    dbs.getLocation()
+    dbs.updateLocation()
 
 # get the effects string for inventory and shop printouts
 def getEffectString(item):

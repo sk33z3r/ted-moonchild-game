@@ -102,7 +102,7 @@ class worldUI():
 
             # if the dialogue is taking up the whole window, we need to clear it and start writing at the beginning again
             if y >= 15:
-                eventWin.addstr(20, 70, ">>>>>", eng.c["BLINK_BRIGHT_YELLOW"])
+                eventWin.addstr(20, 65, ">>>>>", eng.c["BLINK_BRIGHT_YELLOW"])
                 sleep(speed)
                 y = 1
                 eventWin.clear()
@@ -126,13 +126,13 @@ class worldUI():
                 sleep(speed)
             if len(eventString) > 75 and len(eventString) < 150:
                 y += 3
-                sleep((speed + 2))
+                sleep((speed * 2))
             elif len(eventString) > 150 and len(eventString) < 225:
                 y += 4
-                sleep((speed + 3))
+                sleep((speed * 3))
             elif len(eventString) > 225 and len(eventString) < 300:
                 y += 5
-                sleep((speed + 4))
+                sleep((speed * 4))
 
     # display FIRST and KEY events to the EVENTS section
     def writeTimedEvents(speed, what):
@@ -159,7 +159,7 @@ class worldUI():
             if y >= 15:
 
                 # first give a visual warning
-                eventWin.addstr(20, 70, ">>>>>", eng.c["BLINK_BRIGHT_YELLOW"])
+                eventWin.addstr(20, 65, ">>>>>", eng.c["BLINK_BRIGHT_YELLOW"])
                 sleep(speed)
 
                 # then reset
@@ -185,13 +185,13 @@ class worldUI():
                 sleep(speed)
             if len(eventString) > 75 and len(eventString) < 150:
                 y += 3
-                sleep((speed + 2))
+                sleep((speed * 2))
             elif len(eventString) > 150 and len(eventString) < 225:
                 y += 4
-                sleep((speed + 4))
+                sleep((speed * 3))
             elif len(eventString) > 225 and len(eventString) < 300:
                 y += 5
-                sleep((speed + 6))
+                sleep((speed * 4))
 
     # display SOLVED and UNSOLVED events
     def writeStaticEvents(what):
@@ -248,9 +248,6 @@ class worldUI():
         # if this is to be the Winnibego
         if where == "winnibego":
 
-            # set the new room data
-            dbs.setLocation(room)
-
             # setup DOWN direction
             dbs.locations.update_one( { "NAME": "Winnibego" }, { "$set": { dbs.locationInfo["PLANET_DIRS"][dbs.PLANET][0] : dbs.locationInfo["PLANET_DIRS"][dbs.PLANET][1] } } )
             eng.refreshInfo()
@@ -278,9 +275,6 @@ class worldUI():
         # if this is to be Space
         elif where == "space":
 
-            # set new room data
-            dbs.setSpaceLocation(room)
-
             # get a list of directions that need to be displayed for this sector
             dirList = dbs.locationInfo["SECTOR_DIRS"][room]
 
@@ -306,14 +300,11 @@ class worldUI():
             titleWin.addstr(0, 0, title, eng.c["BRIGHT"])
 
             # display the space travel room
-            worldUI.writeSpaceEvents((eng.GAME_SPEED - 2), room)
+            worldUI.writeSpaceEvents((eng.GAME_SPEED), room)
             worldUI.updateSectorStatus(room)
 
         # default to being a Planet
         elif where == "planet":
-
-            # set new room data
-            dbs.setLocation(room)
 
             # refresh new data
             eng.refreshInfo()
@@ -697,10 +688,14 @@ class worldUI():
         if upper in dbs.locationInfo:
 
             # make sure to set the Winnibego's current planet before we move, just in case the player is stepping into the Winnie itself
-            dbs.locations.update_one( { "NAME": "Winnibego" }, { "$set": { "PLANET": dbs.locations.find_one( { "NAME": dbs.ROOM } )["PLANET"] } } )
+            dbs.locations.update_one( { "NAME": "Winnibego" }, { "$set": { "PLANET": dbs.PLANET } } )
+            dbs.locations.update_one( { "NAME": "Space" }, { "$set": { "SECTOR": dbs.SECTOR } } )
 
             # set the new location
-            dbs.setLocation(dbs.locationInfo[upper])
+            if dbs.locationInfo[upper].endswith("Sector"):
+                dbs.setSpaceLocation(dbs.locationInfo[upper])
+            else:
+                dbs.setLocation(dbs.locationInfo[upper])
 
             # if combat should happen, make it happen
             if combatCheck > 40 and dbs.locationInfo["BATTLES"] is True:
@@ -823,8 +818,6 @@ class worldUI():
                     # pick a response randomly and display it
                     message = choice(msgList)
                     worldUI.writeMsg(message, "RED")
-
-            # TODO allow player to look at a room by its name
 
             # if the arg matches an item on the ground, display the info
             elif itemOnGround != None:
