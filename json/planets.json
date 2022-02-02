@@ -1,0 +1,34 @@
+[
+    {
+        "PLANET": "Zappa",
+        "SECTOR": "Melvin Sector",
+        "ENEMIES": {
+            "NAME": [ "Buzzoid" ],
+            "WEIGHT": [ 100 ]
+        }
+    },
+    {
+        "PLANET": "Mactel 6",
+        "SECTOR": "Melvin Sector",
+        "ENEMIES": {
+            "NAME": [ "Buzzoid" ],
+            "WEIGHT": [ 100 ]
+        }
+    },
+    {
+        "PLANET": "Dagobar",
+        "SECTOR": "Jorlene Sector",
+        "ENEMIES": {
+            "NAME": [ "Buzzoid" ],
+            "WEIGHT": [ 100 ]
+        }
+    },
+    {
+        "PLANET": "WMG Studios",
+        "SECTOR": "Jorlene Sector",
+        "ENEMIES": {
+            "NAME": [ "Buzzoid" ],
+            "WEIGHT": [ 100 ]
+        }
+    }
+]

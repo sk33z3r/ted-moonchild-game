@@ -29,14 +29,13 @@
         "ADD_DIRS": {
             "0": [ "UP", "Space" ]
         },
-        "PLANET": "Traveling",
+        "PLANET": "Zappa",
         "PLANET_DIRS": {
             "Zappa": [ "DOWN", "Zappa Lot" ],
             "Mactel 6": [ "DOWN", "Mactel 6 Lot" ],
             "Dagobar": [ "DOWN", "Dagobar Lot" ],
             "WMG Studios": [ "DOWN", "WMG Studios Lot" ]
         },
-        "SECTOR": "Melvin Sector",
         "DOWN": "Zappa Lot",
         "BATTLES": false,
         "VISITED": 0,

@@ -22,7 +22,7 @@
             "1": [ "BRIGHT", "CURRENT LOCATION: {0}"],
             "2": [ "BLINK_BRIGHT_BLUE", "WHERE DO YOU WANT TO GO?" ]
         },
-        "PLANET": "Traveling",
+        "SECTOR": "Melvin Sector",
         "SECTOR_DIRS": {
             "Melvin Sector": {
                 "0": [ "NORTH", "Zappa Lot" ],
@@ -35,7 +35,6 @@
                 "2": [ "DOWN", "Melvin Sector"]
             }
         },
-        "SECTOR": "Melvin Sector",
         "NORTH": "Zappa Lot",
         "SOUTH": "Mactel 6 Lot",
         "UP": "Jorlene Sector",

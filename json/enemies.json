@@ -5,7 +5,6 @@
         "HP": 15,
         "MP": 10,
         "CR": 0,
-        "PLANETS": [ "Zappa", "Mactel 6", "Dagobar", "WMG Studios" ],
         "ITEMS": [ "Protection" ],
         "DIALOG": [ "It spits in your face!", "It flaps its pathetic wings with great force!" ]
     },

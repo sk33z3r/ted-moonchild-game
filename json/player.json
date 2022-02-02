@@ -1,9 +1,9 @@
 [
     {
         "SECTION": "location",
-        "NAME": "EBGB Stage",
+        "ROOM": "EBGB Stage",
         "PLANET": "Zappa",
-        "SECTOR": "Melvin"
+        "SECTOR": "Melvin Sector"
     },
     {
         "SECTION": "stats",
