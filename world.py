@@ -159,7 +159,7 @@ class worldUI():
             if y >= 15:
 
                 # first give a visual warning
-                eventWin.addstr(21, 4, ">>>>>", eng.c["BLINK_BRIGHT_YELLOW"])
+                eventWin.addstr(20, 70, ">>>>>", eng.c["BLINK_BRIGHT_YELLOW"])
                 sleep(speed)
 
                 # then reset
