@@ -15,7 +15,6 @@
         "MP": 15,
         "DEF": 1,
         "CR": 1,
-        "PLANETS": [ "Zappa" ],
         "ITEMS": [ "ACiD", "Magic Mushies" ],
         "DIALOG": [ "It throws a dog-doo snow cone!", "It rubs yellow snow in your eye!" ]
     },
@@ -27,7 +26,6 @@
         "DEF": 2,
         "MOJO": 2,
         "CR": 4,
-        "PLANETS": [ "Dagobar" ],
         "ITEMS": [ "DM Ale", "Whiskey" ],
         "DIALOG": [ "It scats!", "It slams its fists into your gut!" ]
     }

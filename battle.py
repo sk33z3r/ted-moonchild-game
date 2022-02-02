@@ -2,7 +2,7 @@ import curses
 from textwrap import wrap
 from time import sleep
 from curses.textpad import Textbox, rectangle
-from random import randrange, choice
+from random import randrange, choice, choices
 import engine as eng
 import database as dbs
 import art
@@ -138,19 +138,16 @@ class battleUI():
         global enemyBattleStats
 
         # TODO pick a random enemy (weighted) from the current planet
-        availableEnemies = []
+        enemies = dbs.planets.find_one( { "PLANET": dbs.PLANET } )["ENEMY"]["NAMES"]
+        weights = dbs.planets.find_one( { "PLANET": dbs.PLANET } )["ENEMY"]["WEIGHTS"]
 
-        for e in dbs.enemies.find( { } ):
-            if dbs.PLANET in e["PLANETS"]:
-                availableEnemies.append(e["NAME"])
-
-        chosenEnemy = choice(availableEnemies)
+        chosenEnemy = choices(enemies, weights=weights)
 
         # setup enemy stats
-        dbs.getEnemyInfo(chosenEnemy)
+        dbs.getEnemyInfo(chosenEnemy[0])
 
         # write the enemy's name onto the border
-        displayName = " ENEMY: {0} ".format(chosenEnemy.upper())
+        displayName = " ENEMY: {0} ".format(chosenEnemy[0].upper())
         x = 48 - len(displayName)
         enemyStatsBorder.addstr(0, x, displayName, eng.c["DIM"])
 
