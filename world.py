@@ -375,7 +375,7 @@ class worldUI():
             # add newline between items
             y += 2
 
-    # function to write the SHOP menu in the EVENTS section
+    # function to write the HELP screen in the EVENTS section
     def writeHelp():
 
         # clear the EVENTS section first
@@ -1445,7 +1445,7 @@ class worldUI():
         msgBorder = stdscr.subwin(eng.worldMsgDims["border"][0], eng.worldMsgDims["border"][1], eng.worldMsgDims["border"][2], eng.worldMsgDims["border"][3])
         msgBorder.immedok(True)
         msgBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
-        msgBorder.addstr(0, 82, " MESSAGES ", eng.c["DIM"])
+        msgBorder.addstr(0, 83, " MESSAGES ", eng.c["DIM"])
         # define the content area
         msgWin = stdscr.subwin(eng.worldMsgDims["content"][0], eng.worldMsgDims["content"][1], eng.worldMsgDims["content"][2], eng.worldMsgDims["content"][3])
         msgWin.immedok(True)
