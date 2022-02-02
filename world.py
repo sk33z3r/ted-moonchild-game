@@ -766,10 +766,10 @@ class worldUI():
         elif cmd == "look":
 
             # get a list of room names from the available exits in this room
-            exitNames = []
+            exits = {}
             for direction in eng.LONG_DIRS:
                 try:
-                    exitNames.append(dbs.locationInfo[direction.upper()])
+                    exits[dbs.locationInfo[direction.upper()].lower()] = direction.upper()
                 except:
                     pass
 
@@ -778,8 +778,8 @@ class worldUI():
                 worldUI.writeLocation(dbs.ROOM, "room", False)
 
             # if the arg is a name in available exits
-            elif arg in exitNames:
-                roomInDirection = dbs.locations.find_one( { "NAME": arg } )
+            elif arg in exits.keys():
+                roomInDirection = dbs.locations.find_one( { "NAME": dbs.locationInfo[exits[arg]] } )
                 worldUI.writeMsg(roomInDirection["SHORTDESC"][1], roomInDirection["SHORTDESC"][0])
 
             # if the arg is a direction
