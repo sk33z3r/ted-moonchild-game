@@ -184,7 +184,7 @@
     },
     {
         "NAME": "EBGB Bar",
-        "SHORTDESC": [ "DIM", "The bartender is still hanging out, maybe Ted can get snag some road beers." ],
+        "SHORTDESC": [ "DIM", "The bartender is still hanging out, maybe Ted can snag some road beers." ],
         "FIRST_EVENTS": {
             "0": [ "DIM", "Ted sizes up the bartender. He's a large rotund individual from the planet Zappa. Best not to try anything stupid with him." ],
             "1": [ "BRIGHT_MAGENTA", "BONGO: \"Whatchoo won' Ted?\"" ],
