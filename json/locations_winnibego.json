@@ -38,7 +38,6 @@
         },
         "SECTOR": "Melvin Sector",
         "DOWN": "Zappa Lot",
-        "GROUND": [ "Ted's Bandana" ],
         "VISITED": 0,
         "SOLVED": 0
     }

@@ -6,14 +6,16 @@
             "0": [ "BRIGHT_CYAN", "TED: I'll never get tired of that view... leaving Zappa behind." ],
             "1": [ "DIM", "Ted feels free in the vastness of space. Just him, the Winnie, and every direction possible." ],
             "2": [ "DIM", "Ted boots up the NavMaster 2200. It's not the latest model, but it gets Ted from point A to point B. There's a flashing blue message on-screen:" ],
-            "3": [ "BLINK_BRIGHT_BLUE", "WHERE DO YOU WANT TO GO?" ]
+            "3": [ "BRIGHT", "CURRENT LOCATION: {0}"],
+            "4": [ "BLINK_BRIGHT_BLUE", "WHERE DO YOU WANT TO GO?" ]
         },
         "JORLENE_EVENTS": {
             "0": [ "BRIGHT_CYAN", "TED: Ahh, the Jorlene Sector. Fuck this place." ],
             "1": [ "DIM", "Ted starts to have flashbacks of an especially fiery gig at The Dagobar. He quickly shrugs it off and remembers that Chaz needs his help." ],
             "2": [ "BRIGHT_CYAN", "TED: Let's see what you have to say for yourself, Dr. D-Ray."],
             "3": [ "DIM", "There's a flashing blue message on the NavMaster 2200's screen:" ],
-            "4": [ "BLINK_BRIGHT_BLUE", "WHERE DO YOU WANT TO GO?" ]
+            "4": [ "BRIGHT", "CURRENT LOCATION: {0}"],
+            "5": [ "BLINK_BRIGHT_BLUE", "WHERE DO YOU WANT TO GO?" ]
         },
         "DEFAULT_EVENTS": {
             "0": [ "DIM", "There's a message on the NavMaster 2200's screen:" ],
@@ -37,7 +39,6 @@
         "NORTH": "Zappa Lot",
         "SOUTH": "Mactel 6 Lot",
         "UP": "Jorlene Sector",
-        "GROUND": [],
         "MELVIN": 0,
         "JORLENE": 0
     }
