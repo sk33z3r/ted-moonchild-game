@@ -27,49 +27,49 @@ class battleUI():
     def writeStats():
 
         # setup the strings
-        hpString = "HP:   {0}/{1}".format(playerBattleStats["HP"]["CUR"], playerBattleStats["HP"]["MAX"])
-        mpString = "MP:   {0}/{1}".format(playerBattleStats["MP"]["CUR"], playerBattleStats["MP"]["MAX"])
+        hpString = "{0: >5} {1: >4} / {2: <6}".format("HP:", playerBattleStats["HP"]["CUR"], playerBattleStats["HP"]["MAX"])
+        mpString = "{0: >5} {1: >4} / {2: <6}".format("MP:", playerBattleStats["MP"]["CUR"], playerBattleStats["MP"]["MAX"])
 
         # check if each bonus is negative or not, and adjust printout
         atkBase = playerBattleStats["ATK"]["BASE"]
         atkBns = playerBattleStats["ATK"]["BONUS"]
-        atkString = "{0:>6} {1:>2}{2:<+3} = {3:^2}".format("ATK:", atkBase, atkBns, (atkBase + atkBns))
+        atkString = "{0:>5} {1:>3}{2:<+4} = {3:^4}".format("ATK:", atkBase, atkBns, (atkBase + atkBns))
 
         defBase = playerBattleStats["DEF"]["BASE"]
         defBns = playerBattleStats["DEF"]["BONUS"]
-        defString = "{0:>6} {1:>2}{2:<+3} = {3:^2}".format("DEF:", defBase, defBns, (defBase + defBns))
+        defString = "{0:>5} {1:>3}{2:<+4} = {3:^4}".format("DEF:", defBase, defBns, (defBase + defBns))
 
         mojoBase = playerBattleStats["MOJO"]["BASE"]
         mojoBns = playerBattleStats["MOJO"]["BONUS"]
-        mojoString = "{0:>6} {1:>2}{2:<+3} = {3:^2}".format("MOJO:", mojoBase, mojoBns, (atkBase + mojoBns))
+        mojoString = "{0:>5} {1:>3}{2:<+4} = {3:^4}".format("MOJO:", mojoBase, mojoBns, (atkBase + mojoBns))
 
         lukBase = playerBattleStats["LUK"]["BASE"]
         lukBns = playerBattleStats["LUK"]["BONUS"]
-        lukString = "{0:>6} {1:>2}{2:<+3} = {3:^2}".format("LUK:", lukBase, lukBns, (lukBase + lukBns))
+        lukString = "{0:>5} {1:>3}{2:<+4} = {3:^4}".format("LUK:", lukBase, lukBns, (lukBase + lukBns))
 
         accBase = playerBattleStats["ACC"]["BASE"]
         accBns = playerBattleStats["ACC"]["BONUS"]
-        accString = "{0:>6} {1:>2}{2:<+3} = {3:^2}".format("ACC:", accBase, accBns, (accBase + accBns))
+        accString = "{0:>5} {1:>3}{2:<+4} = {3:^4}".format("ACC:", accBase, accBns, (accBase + accBns))
 
         # add each stat string
-        statsWin.addstr(1, 4, hpString, eng.c["RED"])
-        statsWin.addstr(2, 4, mpString, eng.c["BLUE"])
-        statsWin.addstr(4, 1, atkString, eng.c["DIM_YELLOW"])
-        statsWin.addstr(5, 1, defString, eng.c["DIM_YELLOW"])
-        statsWin.addstr(6, 1, mojoString, eng.c["DIM_YELLOW"])
-        statsWin.addstr(7, 1, lukString, eng.c["DIM_YELLOW"])
-        statsWin.addstr(8, 1, accString, eng.c["DIM_YELLOW"])
+        statsWin.addstr(1, 0, hpString, eng.c["RED"])
+        statsWin.addstr(2, 0, mpString, eng.c["BLUE"])
+        statsWin.addstr(4, 0, atkString, eng.c["DIM_YELLOW"])
+        statsWin.addstr(5, 0, defString, eng.c["DIM_YELLOW"])
+        statsWin.addstr(6, 0, mojoString, eng.c["DIM_YELLOW"])
+        statsWin.addstr(7, 0, lukString, eng.c["DIM_YELLOW"])
+        statsWin.addstr(8, 0, accString, eng.c["DIM_YELLOW"])
 
         # setup the strings
-        instString = "INST: {0}".format(dbs.equippedInstrument)
-        fxString = "FX: {0}".format(dbs.addedFX)
-        headString = "HEAD: {0}".format(dbs.equippedHead)
+        instString = "{0: >5} {1: ^14}".format("INST:", dbs.equippedInstrument)
+        fxString = "{0: >5} {1: ^14}".format("FX:", dbs.addedFX)
+        headString = "{0: >5} {1: ^14}".format("HEAD:", dbs.equippedHead)
 
         # display the equipment strings
-        statsBorder.addstr(11, 1, "  EQUIPPED            ", eng.c["REVERSE_DIM_CYAN"])
+        statsBorder.addstr(11, 1, "{0: ^22}".format("EQUIPPED"), eng.c["REVERSE_DIM_CYAN"])
         statsWin.addstr(12, 0, headString, eng.c["DIM_CYAN"])
         statsWin.addstr(13, 0, instString, eng.c["DIM_CYAN"])
-        statsWin.addstr(14, 2, fxString, eng.c["DIM_CYAN"])
+        statsWin.addstr(14, 0, fxString, eng.c["DIM_CYAN"])
 
     # function to clear and write the INVENTORY section
     def writeInv():
@@ -95,7 +95,7 @@ class battleUI():
 
         # set header
         invBorder.addstr(1, 1, "{0: ^25}".format("BATTLE ITEMS"), eng.c["REVERSE_DIM_GREEN"])
-        invBorder.addstr(2, 1, "{0: >3} {1: <12} {2: <8}".format('#', 'Item', 'Effect'), eng.c["REVERSE_DIM_GREEN"])
+        invBorder.addstr(2, 1, "{0: >3} {1: <12} {2: <8}".format('#', 'ITEM', 'EFFECT'), eng.c["REVERSE_DIM_GREEN"])
 
         # print items from ITEMS with their item count
         if len(i) != 0:
