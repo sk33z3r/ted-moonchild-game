@@ -458,14 +458,35 @@ class worldUI():
         else:
             groundList = list(dbs.locationInfo["GROUND"])
 
+        count = len(groundList)
+        cap = 10
+        capacity = " WINNIBEGO STORAGE: {0}/{1} ".format(count, cap)
+
         # if there are no items, clear the window, otherwise print a list of items
         if len(groundList) == 0:
             groundWin.clear()
+            groundBorder.clear()
+            groundBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
+
+            if dbs.ROOM in [ "Winnibego", "Space" ]:
+                x = 48 - len(capacity)
+                groundBorder.addstr(0, x, capacity, eng.c["DIM"])
+            else:
+                groundBorder.addstr(0, 40, " GROUND ", eng.c["DIM"])
+
             pass
 
         # otherwise get to printin'
         else:
             groundWin.clear()
+            groundBorder.clear()
+            groundBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
+
+            if dbs.ROOM in [ "Winnibego", "Space" ]:
+                x = 48 - len(capacity)
+                groundBorder.addstr(0, x, capacity, eng.c["DIM"])
+            else:
+                groundBorder.addstr(0, 40, " GROUND ", eng.c["DIM"])
 
             # get a count of each item in the ITEMS list only
             itemCount = {}
@@ -474,14 +495,6 @@ class worldUI():
                     itemCount[item] += 1
                 else:
                     itemCount[item] = 1
-
-            if dbs.ROOM in [ "Winnibego", "Space" ]:
-                count = len(groundList)
-                cap = 10
-                capacity = " STORAGE CAPACITY: {0}/{1} ".format(count, cap)
-                x = 48 - len(capacity)
-
-                groundBorder.addstr(9, x, capacity, eng.c["REVERSE_DIM"])
 
             # set starting rows and columns in the window
             y, x, l = 1, 1, 0
