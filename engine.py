@@ -1,7 +1,25 @@
-import curses, sys
+import curses, sys, argparse
 from os import system
 from time import sleep
 import database as dbs
+
+# check for command line arguments
+parser = argparse.ArgumentParser()
+parser.add_argument("-d", "--debug", help="Turn on some extra messages and enable fight command.", action="store_true")
+parser.add_argument("-s", "--speed", nargs=1, help="Set a custom game speed for animations.", type=int)
+args = parser.parse_args()
+
+# debug check
+if args.debug:
+    DEBUG = True
+else:
+    DEBUG = False
+
+# setup a game text speed
+if args.speed:
+    GAME_SPEED = int(args.speed[0])
+else:
+    GAME_SPEED = 4
 
 # define border styles so they're easier to change later
 lb, rb = 0, 0
@@ -24,9 +42,6 @@ ROOM_WORDS = [ "here", "room", "around", "ground", "floor", "area" ]
 
 # define stats
 STATS = [ "ATK", "DEF", "MOJO", "LUK", "ACC" ]
-
-# setup a game text speed
-GAME_SPEED = 0
 
 # function to calculate section dimensions and starting points based on terminal size
 def calculateWindows(height, width, max_y, max_x, ui):

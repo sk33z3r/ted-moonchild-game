@@ -1198,11 +1198,13 @@ class worldUI():
             worldUI.writeMsg(message[0], message[1])
 
         # battle
-        elif cmd == "fight" or cmd == "battle":
+        elif cmd in [ "fight", "battle" ]:
 
-            global exit_battle
-
-            exit_battle = battleUI.build(screen)
+            # only run the command if debug is enabled
+            if eng.DEBUG is True:
+                battleUI.build(screen)
+            else:
+                worldUI.writeMsg("Ted doesn't understand what you want to do.", "RED")
 
         # help
         elif cmd == "help":
