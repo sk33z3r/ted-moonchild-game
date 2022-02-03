@@ -70,16 +70,31 @@ class Menu(object):
                 if exit_battle is True:
                     break
 
-            if key == curses.KEY_MOUSE:
+            # define clickable areas
+            elif key == curses.KEY_MOUSE:
                 _, mx, my, _, _ = curses.getmouse()
-                battleUI.writeLog("You clicked the mouse at: {0}, {1}".format(mx, my), "CYAN")
+
+                if 50 <= mx <= 69 and 35 <= my <= 37:
+                    self.position = 0
+                    self.items[0][1]()
+                elif 50 <= mx <= 69 and 39 <= my <= 41 and len(self.items) > 1:
+                    self.position = 1
+                    self.items[1][1]()
+                elif 72 <= mx <= 91 and 35 <= my <= 37 and len(self.items) > 2:
+                    self.position = 2
+                    self.items[2][1]()
+                elif 72 <= mx <= 91 and 39 <= my <= 41 and len(self.items) > 3:
+                    self.position = 3
+                    self.items[3][1]()
+                    if exit_battle is True:
+                        break
 
             # if it's a number, try to move to that position
-            if key in [ ord("1"), ord("2"), ord("3"), ord("4") ] and int(chr(key)) <= len(self.items):
+            elif key in [ ord("1"), ord("2"), ord("3"), ord("4") ] and int(chr(key)) <= len(self.items):
                 self.position = int(chr(key)) - 1
 
             # if it's HOME or BACKSPACE, return to the previous menu
-            if key in [ curses.KEY_BACKSPACE, curses.KEY_HOME, 27 ]:
+            elif key in [ curses.KEY_BACKSPACE, curses.KEY_HOME, 27 ]:
                 break
 
             # Define where UP takes you from each position
