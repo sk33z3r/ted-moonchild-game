@@ -26,7 +26,7 @@ The dump process for saving a game is as follows:
 The import process for a loaded game is as follows:
 
 1. Drop any databases matching the name of the game to be loaded.
-2. Find the matching directort in `./save-states`.
+2. Find the matching directory in `./save-states`.
 3. Iterate the folder of json to import a new collection per file.
 
 ## Schemas
@@ -264,7 +264,7 @@ Each document in the collection is defined by the following json:
 
 #### Winnibego Files
 
-There are two files, `_winnibego` and `_space`, that are specifically for the Winnibego and its scenes and have slightly different mechanics than regular rooms. These are still ultimately stored in the `locations` collection. The data stored in these documents is more or less immutable. There should be no reason to duplicate these documents for any reason, only additions to them.
+There are two files, `_winnibego` and `_space`, that are specifically for the Winnibego and its scenes and have slightly different mechanics than regular rooms. These are still ultimately stored in the `locations` collection. The data stored in these documents is more or less immutable. There should be no reason to duplicate these documents for any reason, only additions to them. The structure for each location is largely the same as other locations. Look into each file to see how it is laid out.
 
 * Winnibego has a storage mechanism, so the user can store equipment or other items to free up inventory space if needed, and change their battle strategy with a cache of gear. This inventory is stored in the `player` collection.
 * Whenever the Winnibego travels to a new planet, the DOWN direction has to change and so there is a special array for this.
@@ -272,97 +272,6 @@ There are two files, `_winnibego` and `_space`, that are specifically for the Wi
 * Each sector visited has a different set of available directions, so there is a special array to handle this.
 
 *All fields are required.*
-
-```json
-// locations_winnibego.json
-{
-    "NAME": "Winnibego",
-    "SHORTDESC": [ "DIM", "Ted's only true friend, the Winnie. They've been through a lot together." ],
-    "FIRST_EVENTS": {
-        "0": [ "DIM", "Ted's trusty steed, the ol' Winnie. It smells of dude and weed in here." ],
-        "1": [ "DIM", "Ted takes the keys and turns the ignition. There's a flashing light on the console that reads:" ],
-        "2": [ "BLINK_BRIGHT_RED", "FUEL EMPTY" ],
-        "3": [ "BRIGHT_CYAN", "TED: \"Well shit. Maybe there's something in the bar I can use.\"" ]
-    },
-    "UNSOLVED_EVENTS": {
-        "0": [ "DIM", "Ted takes the keys and turns the ignition. There's a flashing light on the console that reads:" ],
-        "1": [ "BLINK_BRIGHT_RED", "FUEL EMPTY" ]
-    },
-    "KEY_EVENTS": {
-        "0": [ "DIM", "Ted pulls the Schnitmuckle out of his pocket. It's sticky and hard to handle, with lint stuck all over it." ],
-        "1": [ "DIM", "He walks up to the gas tank, and starts to feed the celestial shit blob into the tank. It takes a few minutes for it all to slide in, but eventually Ted can close the cap." ],
-        "2": [ "BRIGHT_CYAN", "TED: \"If this works, I shouldn't need fuel for a while...\"" ],
-        "3": [ "DIM", "Ted hops back into the Winnie's driver seat, takes the keys and turns the ignition. The Winnie spits and sputters, but fires right up after a couple seconds!" ],
-        "4": [ "BRIGHT_CYAN", "TED: Aha! Fuck you, Wiener Music Group. I'm comin' for ya, now!" ],
-        "5": [ "DIM", "The Winnibego creates a thunderous roar as its plasma thrusters light up brighter than ever. Ted peels out and leaves a streak of neon blue in Zappa's atmosphere as he rockets towards the Jorlene sector." ],
-        "6": [ "DIM", "As the Winnie rocks back and forth, violently, Ted hears a crashing noise in the floor behind him. An fx pedal fell from a cabinet and hit the ground." ]
-    },
-    "SOLVED_EVENTS": {
-        "0": [ "DIM", "Engines purr as the Winnie pilots into orbit around Planet {0}." ]
-    },
-    "EVENT_KEYS": [ "Winnibego Keys", "Schnitmuckle" ],
-    "ADD_GROUND": [ "Wormhole Delay" ],
-    "ADD_DIRS": {
-        "0": [ "UP", "Space" ]
-    },
-    "PLANET": "Zappa",
-    "PLANET_DIRS": {
-        "Zappa": [ "DOWN", "Zappa Lot" ],
-        "Mactel 6": [ "DOWN", "Mactel 6 Lot" ],
-        "Dagobar": [ "DOWN", "Dagobar Lot" ],
-        "WMG Studios": [ "DOWN", "WMG Studios Lot" ]
-    },
-    "DOWN": "Zappa Lot",
-    "BATTLES": false,
-    "VISITED": 0,
-    "SOLVED": 0
-}
-
-// locations_space.json
-{
-    "NAME": "Space",
-    "SHORTDESC": [ "DIM", "Ted stares in awe at the vastness of space." ],
-    "MELVIN_EVENTS": {
-        "0": [ "BRIGHT_CYAN", "TED: I'll never get tired of that view... leaving Zappa behind." ],
-        "1": [ "DIM", "Ted feels free in the vastness of space. Just him, the Winnie, and every direction possible." ],
-        "2": [ "DIM", "Ted boots up the NavMaster 2200. It's not the latest model, but it gets Ted from point A to point B. There's a flashing blue message on-screen:" ],
-        "3": [ "BRIGHT", "CURRENT LOCATION: {0}"],
-        "4": [ "BLINK_BRIGHT_BLUE", "WHERE DO YOU WANT TO GO?" ]
-    },
-    "JORLENE_EVENTS": {
-        "0": [ "BRIGHT_CYAN", "TED: Ahh, the Jorlene Sector. Fuck this place." ],
-        "1": [ "DIM", "Ted starts to have flashbacks of an especially fiery gig at The Dagobar. He quickly shrugs it off and remembers that Chaz needs his help." ],
-        "2": [ "BRIGHT_CYAN", "TED: Let's see what you have to say for yourself, Dr. D-Ray."],
-        "3": [ "DIM", "There's a flashing blue message on the NavMaster 2200's screen:" ],
-        "4": [ "BRIGHT", "CURRENT LOCATION: {0}"],
-        "5": [ "BLINK_BRIGHT_BLUE", "WHERE DO YOU WANT TO GO?" ]
-    },
-    "DEFAULT_EVENTS": {
-        "0": [ "DIM", "There's a message on the NavMaster 2200's screen:" ],
-        "1": [ "BRIGHT", "CURRENT LOCATION: {0}"],
-        "2": [ "BLINK_BRIGHT_BLUE", "WHERE DO YOU WANT TO GO?" ]
-    },
-    "SECTOR": "Melvin Sector",
-    "SECTOR_DIRS": {
-        "Melvin Sector": {
-            "0": [ "NORTH", "Zappa Lot" ],
-            "1": [ "SOUTH", "Mactel 6 Lot" ],
-            "2": [ "UP", "Jorlene Sector" ]
-        },
-        "Jorlene Sector": {
-            "0": [ "EAST", "Dagobar Lot" ],
-            "1": [ "SOUTH", "WMG Studios Lot"],
-            "2": [ "DOWN", "Melvin Sector"]
-        }
-    },
-    "NORTH": "Zappa Lot",
-    "SOUTH": "Mactel 6 Lot",
-    "UP": "Jorlene Sector",
-    "BATTLES": false,
-    "MELVIN": 0,
-    "JORLENE": 0
-}
-```
 
 ### Planets
 
