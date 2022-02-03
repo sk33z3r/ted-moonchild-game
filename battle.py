@@ -59,6 +59,8 @@ class Menu(object):
 
             if key in [curses.KEY_ENTER, ord("\n")]:
                 self.items[self.position][1]()
+                if exit_battle is True:
+                    break
 
             if key in [curses.KEY_BACKSPACE, curses.KEY_HOME]:
                 break
@@ -291,6 +293,7 @@ class battleUI():
         global playerBattleStats
         global eventLine
         global exit_battle
+        global next_turn
 
         # get stats
         playerBattleStats = dbs.getPlayerDict()
@@ -298,13 +301,24 @@ class battleUI():
         # set the event starting line
         eventLine = 1
 
+        # set initial states
+        exit_battle = False
+
+        # decide who goes first
+        rand = randrange(1, 100)
+        if rand > 50:
+            next_turn = "enemy"
+            battleUI.writeLog("The enemy flanked you, Ted!", "DIM_RED")
+        else:
+            next_turn = "ted"
+            battleUI.writeLog("You beat 'em to the punch, Ted!", "DIM_GREEN")
+
         # write all data to the screen
         battleUI.initEnemy()
         battleUI.writeStats()
         battleUI.writeInv()
 
         # main command input loop
-        exit_battle = False
         while exit_battle is False:
             battleUI.runMenu()
 
@@ -317,10 +331,64 @@ class battleUI():
     def chooseItem():
         battleUI.writeLog("Item Menu coming soon!", "YELLOW")
 
-    def exitBattle():
+    def escape():
+
         global exit_battle
-        exit_battle = True
-        return
+        global next_turn
+
+        # roll to see if the escape attempt is successful
+        rand = randrange(1, 100)
+        if rand >= 75:
+            attempt = True
+        else:
+            attempt = False
+
+        # if it fails, display a message and return to battle
+        if attempt is False:
+            battleUI.writeLog("Ted tripped when he tried to run!", "RED")
+            exit_battle = False
+            next_turn = "enemy"
+
+        # if it succeeds, display a message and pause
+        elif attempt is True:
+            battleUI.writeLog("Ted is gettin' the fuck outta here!", "YELLOW")
+
+            # if the player doesn't have any FLOYDS, don't bother trying to drop any
+            if dbs.playerStats["FLOYDS"] != 0:
+
+                # roll to see if the player loses any FLOYDS
+                rand = randrange(1, 100)
+                if rand >= 60:
+                    drop_floyds = True
+                else:
+                    drop_floyds = False
+
+                # if it fails, exit battle
+                if drop_floyds is False:
+                    battleUI.writeLog("Ted managed to hang onto all his coin.", "GREEN")
+                    sleep(2)
+                    exit_battle = True
+
+                # if it succeeds, how many will they lose
+                elif drop_floyds is True:
+
+                    # pick an amount to remove
+                    rand = randrange(0, 100)
+
+                    # try to remove the FLOYDS from player
+                    if dbs.floydsTransaction(rand, "dec") is True:
+                        # print a message if they still have some FLOYDS left
+                        battleUI.writeLog("Ted dropped {0} FLOYDS on the way out!".format(str(rand)), "YELLOW")
+                    else:
+                        # if not, set FLOYDS to 0 and tell the player about it
+                        dbs.floydsTransaction(0, "set")
+                        battleUI.writeLog("Ted lost his FLOYDS on the way out!".format(str(rand)), "YELLOW")
+
+            # pause
+            sleep (3)
+
+            # exit battle
+            exit_battle = True
 
     # wait for user input
     def runMenu():
@@ -346,7 +414,7 @@ class battleUI():
             ("ATTACK", attack_menu.display),
             ("MOJO ABILITIES", mojo_menu.display),
             ("USE ITEM", battleUI.chooseItem),
-            ("ESCAPE", battleUI.exitBattle)
+            ("ESCAPE", battleUI.escape)
         ]
         main_menu = Menu(main_menu_items, screen)
 
@@ -388,6 +456,8 @@ class battleUI():
         global max_x
         global max_y
         global screen
+        global next_turn
+        global exit_battle
 
         screen = stdscr
 
@@ -456,6 +526,7 @@ class battleUI():
         # run the world command loop
         battleUI.displayBattle()
 
+        # clear screens before changing UIs
         battleUI.clearAllScreens()
 
         return True
