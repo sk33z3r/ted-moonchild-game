@@ -475,6 +475,14 @@ class worldUI():
                 else:
                     itemCount[item] = 1
 
+            if dbs.ROOM in [ "Winnibego", "Space" ]:
+                count = len(groundList)
+                cap = 10
+                capacity = " STORAGE CAPACITY: {0}/{1} ".format(count, cap)
+                x = 48 - len(capacity)
+
+                groundBorder.addstr(10, x, capacity, eng.c["DIM"])
+
             # set starting rows and columns in the window
             y, x, l = 1, 1, 0
 
@@ -888,19 +896,29 @@ class worldUI():
                 # if it's a key item, tell the player not to drop it
                 if itemInfo["TYPE"] == "key":
                     worldUI.writeMsg("You don't wanna drop that, Ted. You might need it later!", "YELLOW")
+                    return
 
                 # if it's equipped, tell the player they need to unequip first
                 elif itemInInv in dbs.playerInv["EQUIPPED"]:
                     worldUI.writeMsg("You have to let go of that before you can drop it, Ted!", "CYAN")
+                    return
 
-                # otherwise drop the item
-                else:
-                    dbs.updateGround(itemInfo["NAME"], "add") # remove from ground
-                    dbs.updateInv(itemInfo["NAME"], "del") # add to inventory
-                    worldUI.writeChar()
-                    worldUI.writeGround(dbs.locationInfo["NAME"])
-                    message = "Ted drops {0}.".format(itemInfo["SHORTDESC"])
-                    worldUI.writeMsg(message, "DIM")
+                elif dbs.ROOM in [ "Winnibego", "Space" ]:
+                    if len(list(dbs.playerInv["WINNIE"])) == 10:
+                        worldUI.writeMsg("There's too much shit in the Winnie, Ted. Clean this place up, will ya!", "RED")
+                        return
+
+                elif len(list(dbs.locationInfo["GROUND"])) == 10:
+                    worldUI.writeMsg("There's too many items on the ground, Ted.", "RED")
+                    return
+
+                # drop the item
+                dbs.updateGround(itemInfo["NAME"], "add") # remove from ground
+                dbs.updateInv(itemInfo["NAME"], "del") # add to inventory
+                worldUI.writeChar()
+                worldUI.writeGround(dbs.locationInfo["NAME"])
+                message = "Ted drops {0}.".format(itemInfo["SHORTDESC"])
+                worldUI.writeMsg(message, "DIM")
 
             # let the player know if the item can't be found anywhere
             else:
