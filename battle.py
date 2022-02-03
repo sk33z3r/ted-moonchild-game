@@ -12,7 +12,8 @@ class Menu(object):
     def __init__(self, items, stdscr):
         self.window = stdscr.subwin(eng.battleMenuDims["content"][0], eng.battleMenuDims["content"][1], eng.battleMenuDims["content"][2], eng.battleMenuDims["content"][3])
         self.window.immedok(True)
-        self.window.keypad(1)
+        self.window.keypad(True)
+        curses.mousemask(1)
         self.panel = panel.new_panel(self.window)
         self.panel.hide()
         panel.update_panels()
@@ -25,17 +26,22 @@ class Menu(object):
         self.panel.show()
         self.window.clear()
 
+        # main menu loop
         while True:
             self.window.refresh()
             curses.doupdate()
             pos = 1
             for index, item in enumerate(self.items):
 
+                # define the style for active and inactive buttons
                 if index == self.position:
+                    # active
                     style = "REVERSE"
                 else:
+                    # inactive
                     style = "REVERSE_DIM"
 
+                # define each button's position
                 if pos == 1:
                     self.window.addstr(1, 2, "{0: ^20}".format(""), eng.c[style])
                     self.window.addstr(2, 2, "{0: ^20}".format(item[0]), eng.c[style])
@@ -59,21 +65,25 @@ class Menu(object):
             key = self.window.getch()
 
             # if it's ENTER, run the command at the current position
-            if key in [curses.KEY_ENTER, ord("\n"), ord(" ")]:
+            if key in [ curses.KEY_ENTER, ord("\n"), ord(" "), 343 ]:
                 self.items[self.position][1]()
                 if exit_battle is True:
                     break
+
+            if key == curses.KEY_MOUSE:
+                _, mx, my, _, _ = curses.getmouse()
+                battleUI.writeLog("You clicked the mouse at: {0}, {1}".format(mx, my), "CYAN")
 
             # if it's a number, try to move to that position
             if key in [ ord("1"), ord("2"), ord("3"), ord("4") ] and int(chr(key)) <= len(self.items):
                 self.position = int(chr(key)) - 1
 
             # if it's HOME or BACKSPACE, return to the previous menu
-            if key in [curses.KEY_BACKSPACE, curses.KEY_HOME]:
+            if key in [ curses.KEY_BACKSPACE, curses.KEY_HOME, 27 ]:
                 break
 
             # Define where UP takes you from each position
-            elif key == curses.KEY_UP:
+            elif key in [ curses.KEY_UP, ord("w"), ord("W") ]:
                 if self.position == 0:
                     self.position = 0
                 elif self.position == 1:
@@ -84,7 +94,7 @@ class Menu(object):
                     self.position = 2
 
             # Define where LEFT takes you from each position
-            elif key == curses.KEY_LEFT:
+            elif key in [ curses.KEY_LEFT, ord("a"), ord("A") ]:
                 if self.position == 0:
                     self.position = 0
                 elif self.position == 1:
@@ -95,7 +105,7 @@ class Menu(object):
                     self.position = 1
 
             # Define where DOWN takes you from each position
-            elif key == curses.KEY_DOWN:
+            elif key in [ curses.KEY_DOWN, ord("s"), ord("S") ]:
                 if self.position == 0 and len(self.items) > 1:
                     self.position = 1
                 elif self.position == 1:
@@ -106,7 +116,7 @@ class Menu(object):
                     self.position = 3
 
             # Define where RIGHT takes you from each position
-            elif key == curses.KEY_RIGHT:
+            elif key in [ curses.KEY_RIGHT, ord("d"), ord("D") ]:
                 if self.position == 0 and len(self.items) > 2:
                     self.position = 2
                 elif self.position == 1 and len(self.items) > 3:
@@ -116,6 +126,7 @@ class Menu(object):
                 elif self.position == 3:
                     self.position = 3
 
+        # clear and hide the panel when the loop exits
         self.window.clear()
         self.panel.hide()
         panel.update_panels()
