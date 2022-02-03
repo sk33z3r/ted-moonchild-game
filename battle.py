@@ -47,13 +47,13 @@ class Menu(object):
                     self.window.addstr(2, 2, "{0: ^20}".format(item[0]), eng.c[style])
                     self.window.addstr(3, 2, "{0: ^20}".format(""), eng.c[style])
                 elif pos == 2:
-                    self.window.addstr(5, 2, "{0: ^20}".format(""), eng.c[style])
-                    self.window.addstr(6, 2, "{0: ^20}".format(item[0]), eng.c[style])
-                    self.window.addstr(7, 2, "{0: ^20}".format(""), eng.c[style])
-                elif pos == 3:
                     self.window.addstr(1, 24, "{0: ^20}".format(""), eng.c[style])
                     self.window.addstr(2, 24, "{0: ^20}".format(item[0]), eng.c[style])
                     self.window.addstr(3, 24, "{0: ^20}".format(""), eng.c[style])
+                elif pos == 3:
+                    self.window.addstr(5, 2, "{0: ^20}".format(""), eng.c[style])
+                    self.window.addstr(6, 2, "{0: ^20}".format(item[0]), eng.c[style])
+                    self.window.addstr(7, 2, "{0: ^20}".format(""), eng.c[style])
                 elif pos == 4:
                     self.window.addstr(5, 24, "{0: ^20}".format(""), eng.c[style])
                     self.window.addstr(6, 24, "{0: ^20}".format(item[0]), eng.c[style])
@@ -83,14 +83,14 @@ class Menu(object):
                         self.items[0][1]()
 
                     # bottom-left
-                    elif 50 <= mx <= 69 and 39 <= my <= 41 and len(self.items) > 1:
-                        self.position = 1
-                        self.items[1][1]()
-
-                    # top-right
-                    elif 72 <= mx <= 91 and 35 <= my <= 37 and len(self.items) > 2:
+                    elif 50 <= mx <= 69 and 39 <= my <= 41 and len(self.items) > 2:
                         self.position = 2
                         self.items[2][1]()
+
+                    # top-right
+                    elif 72 <= mx <= 91 and 35 <= my <= 37 and len(self.items) > 1:
+                        self.position = 1
+                        self.items[1][1]()
 
                     # bottom-right
                     elif 72 <= mx <= 91 and 39 <= my <= 41 and len(self.items) > 3:
@@ -116,42 +116,42 @@ class Menu(object):
                 if self.position == 0:
                     self.position = 0
                 elif self.position == 1:
-                    self.position = 0
+                    self.position = 1
                 elif self.position == 2:
-                    self.position = 2
+                    self.position = 0
                 elif self.position == 3:
-                    self.position = 2
+                    self.position = 1
 
             # Define where LEFT takes you from each position
             elif key in [ curses.KEY_LEFT, ord("a"), ord("A") ]:
                 if self.position == 0:
                     self.position = 0
                 elif self.position == 1:
-                    self.position = 1
-                elif self.position == 2:
                     self.position = 0
+                elif self.position == 2:
+                    self.position = 2
                 elif self.position == 3:
-                    self.position = 1
+                    self.position = 2
 
             # Define where DOWN takes you from each position
             elif key in [ curses.KEY_DOWN, ord("s"), ord("S") ]:
-                if self.position == 0 and len(self.items) > 1:
-                    self.position = 1
-                elif self.position == 1:
-                    self.position = 1
-                elif self.position == 2 and len(self.items) > 3:
-                    self.position = 3
-                elif self.position == 3:
-                    self.position = 3
-
-            # Define where RIGHT takes you from each position
-            elif key in [ curses.KEY_RIGHT, ord("d"), ord("D") ]:
                 if self.position == 0 and len(self.items) > 2:
                     self.position = 2
                 elif self.position == 1 and len(self.items) > 3:
                     self.position = 3
                 elif self.position == 2:
                     self.position = 2
+                elif self.position == 3:
+                    self.position = 3
+
+            # Define where RIGHT takes you from each position
+            elif key in [ curses.KEY_RIGHT, ord("d"), ord("D") ]:
+                if self.position == 0 and len(self.items) > 1:
+                    self.position = 1
+                elif self.position == 1:
+                    self.position = 1
+                elif self.position == 2 and len(self.items) > 3:
+                    self.position = 3
                 elif self.position == 3:
                     self.position = 3
 
