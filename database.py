@@ -753,8 +753,12 @@ def newGame(name):
     # get and store the new collection names
     collections = []
     for o in os.listdir("./json"):
-        f = o.replace(".json", "")
-        collections.append(f)
+        # ignore the README
+        if o.endswith("README.md"):
+            pass
+        else:
+            f = o.replace(".json", "")
+            collections.append(f)
 
     # for each json file found
     for n in collections:
