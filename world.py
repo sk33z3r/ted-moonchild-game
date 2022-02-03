@@ -1202,7 +1202,8 @@ class worldUI():
 
             # only run the command if debug is enabled
             if eng.DEBUG is True:
-                battleUI.build(screen)
+                global exit_battle
+                exit_battle = battleUI.build(screen)
             else:
                 worldUI.writeMsg("Ted doesn't understand what you want to do.", "RED")
 
