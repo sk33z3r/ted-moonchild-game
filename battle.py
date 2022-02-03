@@ -55,16 +55,24 @@ class Menu(object):
 
                 pos += 1
 
+            # wait for the next key
             key = self.window.getch()
 
-            if key in [curses.KEY_ENTER, ord("\n")]:
+            # if it's ENTER, run the command at the current position
+            if key in [curses.KEY_ENTER, ord("\n"), ord(" ")]:
                 self.items[self.position][1]()
                 if exit_battle is True:
                     break
 
+            # if it's a number, try to move to that position
+            if key in [ ord("1"), ord("2"), ord("3"), ord("4") ] and int(chr(key)) <= len(self.items):
+                self.position = int(chr(key)) - 1
+
+            # if it's HOME or BACKSPACE, return to the previous menu
             if key in [curses.KEY_BACKSPACE, curses.KEY_HOME]:
                 break
 
+            # Define where UP takes you from each position
             elif key == curses.KEY_UP:
                 if self.position == 0:
                     self.position = 0
@@ -75,6 +83,7 @@ class Menu(object):
                 elif self.position == 3:
                     self.position = 2
 
+            # Define where LEFT takes you from each position
             elif key == curses.KEY_LEFT:
                 if self.position == 0:
                     self.position = 0
@@ -85,6 +94,7 @@ class Menu(object):
                 elif self.position == 3:
                     self.position = 1
 
+            # Define where DOWN takes you from each position
             elif key == curses.KEY_DOWN:
                 if self.position == 0 and len(self.items) > 1:
                     self.position = 1
@@ -95,6 +105,7 @@ class Menu(object):
                 elif self.position == 3:
                     self.position = 3
 
+            # Define where RIGHT takes you from each position
             elif key == curses.KEY_RIGHT:
                 if self.position == 0 and len(self.items) > 2:
                     self.position = 2
