@@ -6,12 +6,15 @@ Currently, this process doesn't do much except package a lighter version of the 
 
 The script automates everything needed to package a release for each platform. Simply change to the release folder, and run the script. It will save the package into the `./build` directory.
 
-Example Linux output:
-
 ```bash
 $ cd ./release
 $ ./release.sh [platform]
-.. build output ..
+Building [platform] Release...
+...
+Cleaning up files...
+md5checksum: [md5 checksum]
+Build complete!
+
 ```
 
 ## Linux
