@@ -587,8 +587,6 @@ class worldUI():
         eng.refreshInfo()
 
         charWin.addstr(7, 0, "{0: ^28}".format("EQUIPPED"), eng.c["REVERSE_DIM_CYAN"])
-        charWin.addstr(13, 0, "{0: ^28}".format("INVENTORY"), eng.c["REVERSE_DIM"])
-        charWin.addstr(14, 0, "{0: >4} {1: <14} {2: <8}".format('#', 'ITEM', 'EFFECT'), eng.c["REVERSE_DIM"])
 
         # put the stat values into a dict
         stats = {
@@ -620,13 +618,19 @@ class worldUI():
         i = list(dbs.playerInv["ITEMS"])
         k = list(dbs.playerInv["KEY_ITEMS"])
 
+        count = len(i)
+        cap = dbs.playerInv["CAP"]
+
+        headerString = "INVENTORY ({0}/{1})".format(count, cap)
+        charWin.addstr(13, 0, "{0: ^28}".format(headerString), eng.c["REVERSE_DIM"])
+        charWin.addstr(14, 0, "{0: >4} {1: <14} {2: <8}".format('#', 'ITEM', 'EFFECT'), eng.c["REVERSE_DIM"])
+
         # sort the lists
         i = sorted(i)
         k = sorted(k)
 
         # if there are no items, print a message
-        if len(i) == 0 and len(k) == 0 and len(e) == 0:
-            writeMsg("Ted doesn't have shit in his pockets!", "RED")
+        if len(i) == 0 and len(k) == 0:
             return
 
         # get a count of each item in the ITEMS list only
@@ -723,7 +727,7 @@ class worldUI():
     def runAction(cmd, arg):
 
         # setup the environment
-        inv = eng.tempInv()
+        inv, count = eng.tempInv()
         itemInInv = eng.getFirstItemMatchingDesc(arg, inv)
 
         # check if we're in the winnie or not
@@ -852,6 +856,10 @@ class worldUI():
                 if itemInfo["TAKEABLE"] == False:
                     worldUI.writeMsg("Ted doesn't want to grab that.", "RED")
 
+                # if the player is already carrying too much, let them know
+                elif count == dbs.playerInv["CAP"]:
+                    worldUI.writeMsg("Ted is already carrying too much, you need to drop something first!", "RED")
+
                 # otherwise take the item
                 elif itemInfo["TAKEABLE"] == True:
                     dbs.updateGround(itemInfo["NAME"], "del") # remove from ground
@@ -955,8 +963,12 @@ class worldUI():
 
                 itemInfo = dbs.items.find_one( { "NAME": itemInInv } )
 
+                # if the player is already carrying too much, let them know
+                if count == dbs.playerInv["CAP"]:
+                    worldUI.writeMsg("Ted is carrying too much, you need to drop something before you can unequip this!", "RED")
+
                 # if the item is an instrument and equipped, reset to 'Fists'
-                if itemInfo["TYPE"] == "instrument" and itemInfo["NAME"] in dbs.playerInv["EQUIPPED"]:
+                elif itemInfo["TYPE"] == "instrument" and itemInfo["NAME"] in dbs.playerInv["EQUIPPED"]:
                     dbs.setInstrument("Fists")
                     worldUI.writeChar()
                     message = "Ted unequipped {0}.".format(itemInfo["NAME"])
@@ -992,7 +1004,7 @@ class worldUI():
                 worldUI.writeMsg("There's not a shop here to sell to, Ted!", "RED")
                 return
 
-            inv = eng.tempInv()
+            inv, count = eng.tempInv()
 
             # if the item is not in player's inventory, tell them
             if itemInInv not in inv:
@@ -1015,6 +1027,8 @@ class worldUI():
         # buy item
         elif cmd == "buy":
 
+            inv, count = eng.tempInv()
+
             # if the shop doesn't exist, tell the user
             if "SHOP" not in dbs.locationInfo:
                 worldUI.writeMsg("There's not a shop here to buy from, Ted!", "RED")
@@ -1023,6 +1037,10 @@ class worldUI():
             # if the item isn't in the shop's list, tell the player
             elif itemInShop not in dbs.locationInfo["SHOP"]:
                 worldUI.writeMsg("The shopkeep looks confused by that request. I don't think they have it, Ted.", "RED")
+                return
+
+            elif count == dbs.playerInv["CAP"]:
+                worldUI.writeMsg("You have too much shit, already Ted! Sell or drop something first.", "RED")
                 return
 
             # otherwise buy the item
@@ -1179,7 +1197,7 @@ class worldUI():
 
         # setup common vars
         cmd = args[0]
-        inv = eng.tempInv()
+        inv, count = eng.tempInv()
 
         # if 'with' doesn't appear in the command, then do a single item
         try:

@@ -25,7 +25,8 @@
         "ITEMS": [ "Cigarette", "Ham Sandwich", "Screwdriver", "DMT", "DMT", "DMT" ],
         "KEY_ITEMS": [ "Ted's Lighter", "Winnibego Keys" ],
         "EQUIPPED": [],
-        "WINNIE": [ "Ted's Bandana" ]
+        "WINNIE": [ "Ted's Bandana" ],
+        "CAP": 15
     },
     {
         "SECTION": "equipped",

@@ -320,9 +320,10 @@ def tempInv():
 
     # sort the list
     inv = sorted(inv)
+    count = len(dbs.playerInv["ITEMS"])
 
     # return the list
-    return inv
+    return inv, count
 
 # function to buy and sell items
 def itemTransaction(item, dowhat):
