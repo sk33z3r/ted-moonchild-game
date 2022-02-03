@@ -672,7 +672,7 @@
         "SHORTDESC": "the jimmy hat",
         "LONGDESC": "It's stuck to the table. You'd need a pretty strong cleaner for that one to come off.",
         "TAKEABLE": false,
-        "VALUE": 10,
+        "VALUE": 0,
         "TYPE": "static",
         "DESCWORDS": [
             "jimmy hat",
