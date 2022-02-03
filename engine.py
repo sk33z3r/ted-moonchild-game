@@ -190,6 +190,7 @@ def setStyles():
         "DIM": curses.A_DIM,
         "BRIGHT": curses.A_BOLD,
         "BLINK": curses.A_BLINK,
+        "REVERSE": curses.A_REVERSE,
         "BLINK_BRIGHT": curses.A_BOLD + curses.A_BLINK,
         "BLINK_DIM": curses.A_DIM + curses.A_BLINK,
         "REVERSE_DIM": curses.A_REVERSE + curses.A_DIM,

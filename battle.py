@@ -1,4 +1,5 @@
 import curses
+from curses import panel
 from textwrap import wrap
 from time import sleep
 from curses.textpad import Textbox, rectangle
@@ -6,6 +7,106 @@ from random import randrange, choice, choices
 import engine as eng
 import database as dbs
 import art
+
+class Menu(object):
+    def __init__(self, items, stdscr):
+        self.window = stdscr.subwin(eng.battleMenuDims["content"][0], eng.battleMenuDims["content"][1], eng.battleMenuDims["content"][2], eng.battleMenuDims["content"][3])
+        self.window.immedok(True)
+        self.window.keypad(1)
+        self.panel = panel.new_panel(self.window)
+        self.panel.hide()
+        panel.update_panels()
+
+        self.position = 0
+        self.items = items
+
+    def display(self):
+        self.panel.top()
+        self.panel.show()
+        self.window.clear()
+
+        while True:
+            self.window.refresh()
+            curses.doupdate()
+            pos = 1
+            for index, item in enumerate(self.items):
+
+                if index == self.position:
+                    style = "REVERSE"
+                else:
+                    style = "REVERSE_DIM"
+
+                if pos == 1:
+                    self.window.addstr(1, 2, "{0: ^20}".format(""), eng.c[style])
+                    self.window.addstr(2, 2, "{0: ^20}".format(item[0]), eng.c[style])
+                    self.window.addstr(3, 2, "{0: ^20}".format(""), eng.c[style])
+                elif pos == 2:
+                    self.window.addstr(5, 2, "{0: ^20}".format(""), eng.c[style])
+                    self.window.addstr(6, 2, "{0: ^20}".format(item[0]), eng.c[style])
+                    self.window.addstr(7, 2, "{0: ^20}".format(""), eng.c[style])
+                elif pos == 3:
+                    self.window.addstr(1, 24, "{0: ^20}".format(""), eng.c[style])
+                    self.window.addstr(2, 24, "{0: ^20}".format(item[0]), eng.c[style])
+                    self.window.addstr(3, 24, "{0: ^20}".format(""), eng.c[style])
+                elif pos == 4:
+                    self.window.addstr(5, 24, "{0: ^20}".format(""), eng.c[style])
+                    self.window.addstr(6, 24, "{0: ^20}".format(item[0]), eng.c[style])
+                    self.window.addstr(7, 24, "{0: ^20}".format(""), eng.c[style])
+
+                pos += 1
+
+            key = self.window.getch()
+
+            if key in [curses.KEY_ENTER, ord("\n")]:
+                self.items[self.position][1]()
+
+            if key in [curses.KEY_BACKSPACE, curses.KEY_HOME]:
+                break
+
+            elif key == curses.KEY_UP:
+                if self.position == 0:
+                    self.position = 0
+                elif self.position == 1:
+                    self.position = 0
+                elif self.position == 2:
+                    self.position = 2
+                elif self.position == 3:
+                    self.position = 2
+
+            elif key == curses.KEY_LEFT:
+                if self.position == 0:
+                    self.position = 0
+                elif self.position == 1:
+                    self.position = 1
+                elif self.position == 2:
+                    self.position = 0
+                elif self.position == 3:
+                    self.position = 1
+
+            elif key == curses.KEY_DOWN:
+                if self.position == 0 and len(self.items) > 1:
+                    self.position = 1
+                elif self.position == 1:
+                    self.position = 1
+                elif self.position == 2 and len(self.items) > 3:
+                    self.position = 3
+                elif self.position == 3:
+                    self.position = 3
+
+            elif key == curses.KEY_RIGHT:
+                if self.position == 0 and len(self.items) > 2:
+                    self.position = 2
+                elif self.position == 1 and len(self.items) > 3:
+                    self.position = 3
+                elif self.position == 2:
+                    self.position = 2
+                elif self.position == 3:
+                    self.position = 3
+
+        self.window.clear()
+        self.panel.hide()
+        panel.update_panels()
+        curses.doupdate()
 
 class battleUI():
 
@@ -106,26 +207,6 @@ class battleUI():
                     invWin.addstr(s, 0, itemString, eng.c["DIM"])
                     s += 1
 
-    def writeMenu():
-
-        menuWin.clear()
-
-        menuWin.addstr(1, 2, "{0: ^20}".format(""), eng.c["REVERSE_DIM"])
-        menuWin.addstr(2, 2, "{0: ^20}".format("ATTACK"), eng.c["REVERSE_DIM"])
-        menuWin.addstr(3, 2, "{0: ^20}".format(""), eng.c["REVERSE_DIM"])
-
-        menuWin.addstr(5, 2, "{0: ^20}".format(""), eng.c["REVERSE_DIM"])
-        menuWin.addstr(6, 2, "{0: ^20}".format("MOJO ABILITIES"), eng.c["REVERSE_DIM"])
-        menuWin.addstr(7, 2, "{0: ^20}".format(""), eng.c["REVERSE_DIM"])
-
-        menuWin.addstr(1, 24, "{0: ^20}".format(""), eng.c["REVERSE_DIM"])
-        menuWin.addstr(2, 24, "{0: ^20}".format("USE ITEM"), eng.c["REVERSE_DIM"])
-        menuWin.addstr(3, 24, "{0: ^20}".format(""), eng.c["REVERSE_DIM"])
-
-        menuWin.addstr(5, 24, "{0: ^20}".format(""), eng.c["REVERSE_DIM"])
-        menuWin.addstr(6, 24, "{0: ^20}".format("ESCAPE"), eng.c["REVERSE_DIM"])
-        menuWin.addstr(7, 24, "{0: ^20}".format(""), eng.c["REVERSE_DIM"])
-
     # function specifically to parse commands and run their relevant functions
     def runAction(cmd, arg):
 
@@ -202,7 +283,6 @@ class battleUI():
         battleUI.writeInv()
         battleUI.writeStats()
         battleUI.writeEnemy()
-        battleUI.writeMenu()
 
     # function to initialize the UI and get user input
     def displayBattle():
@@ -222,47 +302,58 @@ class battleUI():
         battleUI.initEnemy()
         battleUI.writeStats()
         battleUI.writeInv()
-        battleUI.writeMenu()
-
-        t = 0
-        while t < 6:
-            battleUI.writeLog("Ted smashes the {0} for 10 damage!".format(dbs.enemyInfo["NAME"]), "RED")
-            sleep(0.5)
-            t += 1
 
         # main command input loop
         exit_battle = False
         while exit_battle is False:
-            userInput = battleUI.getCmd()
-            battleUI.processCmd(userInput)
+            battleUI.runMenu()
 
-    # process the raw command received
-    def processCmd(userInput):
+    def mojoAbility():
+        battleUI.writeLog("You used a mojo ability!", "BLUE")
 
+    def atkAbility():
+        battleUI.writeLog("You used a regular attack!", "CYAN")
+
+    def chooseItem():
+        battleUI.writeLog("Item Menu coming soon!", "YELLOW")
+
+    def exitBattle():
         global exit_battle
-
-        # if it's empty, go back to the loop
-        if userInput == "" or userInput == None:
-            return
-
-        # split command into a list
-        args = userInput.split()
-
-        # some terminals + curses gives me a trailing "                  x x " string.
-        # try fixing that if it happens. no plans to have a single 'x' as a parameter
-        try:
-            args.remove("x")
-        except ValueError:
-            pass
-
-        if userInput == "done":
-            exit_battle = True
+        exit_battle = True
+        return
 
     # wait for user input
-    def getCmd():
+    def runMenu():
 
-        sleep(5)
-        return "done"
+        # make sure the cursor is hidden
+        curses.curs_set(0)
+
+        # define the attack menu
+        attack_menu_items = [
+            ("PUNCH",  battleUI.atkAbility)
+        ]
+        attack_menu = Menu(attack_menu_items, screen)
+
+        # define the mojo menu
+        mojo_menu_items = [
+            ("RISING FORCE", battleUI.mojoAbility),
+            ("PURPLE RAIN", battleUI.mojoAbility)
+        ]
+        mojo_menu = Menu(mojo_menu_items, screen)
+
+        # define the main menu
+        main_menu_items = [
+            ("ATTACK", attack_menu.display),
+            ("MOJO ABILITIES", mojo_menu.display),
+            ("USE ITEM", battleUI.chooseItem),
+            ("ESCAPE", battleUI.exitBattle)
+        ]
+        main_menu = Menu(main_menu_items, screen)
+
+        # run the main menu
+        main_menu.display()
+
+        return True
 
     # function to clear all screens
     def clearAllScreens():
@@ -271,7 +362,6 @@ class battleUI():
         enemyStatsBorder.clear()
         enemyStatsWin.clear()
         menuBorder.clear()
-        menuWin.clear()
         invBorder.clear()
         invWin.clear()
         eventBorder.clear()
@@ -362,9 +452,6 @@ class battleUI():
         menuBorder.immedok(True)
         menuBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
         menuBorder.addstr(0, 39, " ACTIONS ", eng.c["DIM"])
-        # define the content area
-        menuWin = stdscr.subwin(eng.battleMenuDims["content"][0], eng.battleMenuDims["content"][1], eng.battleMenuDims["content"][2], eng.battleMenuDims["content"][3])
-        menuWin.immedok(True)
 
         # run the world command loop
         battleUI.displayBattle()
