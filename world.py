@@ -481,7 +481,7 @@ class worldUI():
                 capacity = " STORAGE CAPACITY: {0}/{1} ".format(count, cap)
                 x = 48 - len(capacity)
 
-                groundBorder.addstr(10, x, capacity, eng.c["DIM"])
+                groundBorder.addstr(9, x, capacity, eng.c["REVERSE_DIM"])
 
             # set starting rows and columns in the window
             y, x, l = 1, 1, 0
@@ -511,7 +511,7 @@ class worldUI():
                     y = 1
 
                     # move to the next column
-                    x = l + x + 3
+                    x = l + x + 2
 
                     # reset longest string length to 0
                     l = 0
