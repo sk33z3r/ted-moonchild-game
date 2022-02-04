@@ -14,7 +14,7 @@ case $1 in
         cd linux
         tar zcvf ../build/ted-moonchild-linux_$commit.tar.gz *
         echo "Cleaning up files..."
-        rm -r *.py json/
+        rm -r *.py json/ requirements.txt
         cd ..
         echo "md5checksum: $(md5sum ./build/ted-moonchild-linux_$commit.tar.gz | awk '{print $1}')"
         echo "Build complete!"
