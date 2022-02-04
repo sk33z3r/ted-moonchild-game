@@ -526,17 +526,18 @@ class battleUI():
                     else:
                         # if not, set FLOYDS to 0 and tell the player about it
                         dbs.floydsTransaction(0, "set")
-                        battleUI.writeLog("Ted lost his FLOYDS on the way out!".format(str(rand)), "YELLOW")
+                        battleUI.writeLog("Ted lost all his FLOYDS on the way out!", "RED")
 
             # pause
-            sleep (3)
+            sleep (2)
 
             # exit battle
             exit_battle = True
 
     def runUseItem(item):
 
-        battleUI.writeLog("You chose to use {0}!".format(item), "YELLOW")
+        message = eng.useItem(item)
+        battleUI.writeLog(message[0], message[1])
 
     def setItemsMenu():
 
