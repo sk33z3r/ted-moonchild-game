@@ -26,9 +26,9 @@
         },
         "UP": "Winnibego",
         "PLANET": "Dagobar",
-        "SECTOR": "Jorlene Sector",
         "GROUND": [],
         "VISITED": 0,
+        "BATTLES": true,
         "SOLVED": 0
     },
     {
@@ -56,9 +56,9 @@
         },
         "UP": "Winnibego",
         "PLANET": "WMG Studios",
-        "SECTOR": "Jorlene Sector",
         "GROUND": [],
         "VISITED": 0,
+        "BATTLES": true,
         "SOLVED": 0
     }
 ]

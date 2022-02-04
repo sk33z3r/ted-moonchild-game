@@ -4,7 +4,7 @@ services:
 
   python:
     build: .
-    container_name: ted-moonchild-and-the-roadies-in-space
+    container_name: ted-moonchild-python
     restart: never
     stdin_open: true
     tty: true
@@ -16,7 +16,7 @@ services:
 
   mongo:
     image: mongo
-    container_name: mongodb
+    container_name: ted-moonchild-mongodb
     restart: unless-stopped
     environment:
       MONGO_INITDB_ROOT_USERNAME: root

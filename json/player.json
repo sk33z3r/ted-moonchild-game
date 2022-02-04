@@ -1,9 +1,9 @@
 [
     {
         "SECTION": "location",
-        "NAME": "EBGB Stage",
+        "ROOM": "EBGB Stage",
         "PLANET": "Zappa",
-        "SECTOR": "Melvin"
+        "SECTOR": "Melvin Sector"
     },
     {
         "SECTION": "stats",
@@ -22,9 +22,11 @@
     },
     {
         "SECTION": "inventory",
-        "ITEMS": [ "Cigarette", "Ham Sandwich", "Screwdriver", "DMT", "DMT", "DMT" ],
-        "KEY_ITEMS": [ "Ted's Lighter", "Winnibego Keys" ],
-        "EQUIPPED": []
+        "ITEMS": [ "Cigarette", "Ham Sandwich", "DMT", "DMT", "DMT" ],
+        "KEY_ITEMS": [ "Ted's Lighter", "Screwdriver", "Winnibego Keys" ],
+        "EQUIPPED": [],
+        "WINNIE": [ "Ted's Bandana" ],
+        "CAP": 15
     },
     {
         "SECTION": "equipped",

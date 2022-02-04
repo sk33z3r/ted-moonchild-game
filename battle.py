@@ -1,11 +1,256 @@
 import curses
+from curses import panel
 from textwrap import wrap
 from time import sleep
 from curses.textpad import Textbox, rectangle
-from random import randrange, choice
+from random import randrange, choice, choices
 import engine as eng
 import database as dbs
 import art
+
+class Menu(object):
+    def __init__(self, items, stdscr):
+        self.window = stdscr.subwin(eng.battleMenuDims["content"][0], eng.battleMenuDims["content"][1], eng.battleMenuDims["content"][2], eng.battleMenuDims["content"][3])
+        self.window.immedok(True)
+        self.window.keypad(True)
+        curses.mousemask(1)
+        self.panel = panel.new_panel(self.window)
+        self.panel.hide()
+        panel.update_panels()
+
+        self.position = 0
+        self.items = items
+
+    def display(self):
+        self.panel.top()
+        self.panel.show()
+        self.window.clear()
+
+        # main menu loop
+        while True:
+            self.window.refresh()
+            curses.doupdate()
+            pos = 1
+            for index, item in enumerate(self.items):
+
+                # define the style for active and inactive buttons
+                if index == self.position:
+                    # active
+                    style = "REVERSE"
+                else:
+                    # inactive
+                    style = "REVERSE_DIM"
+
+                # define each button's position
+                if pos == 1:
+                    self.window.addstr(1, 2, "{0: ^20}".format(""), eng.c[style])
+                    self.window.addstr(2, 2, "{0: ^20}".format(item[0]), eng.c[style])
+                    self.window.addstr(3, 2, "{0: ^20}".format(""), eng.c[style])
+                elif pos == 2:
+                    self.window.addstr(1, 24, "{0: ^20}".format(""), eng.c[style])
+                    self.window.addstr(2, 24, "{0: ^20}".format(item[0]), eng.c[style])
+                    self.window.addstr(3, 24, "{0: ^20}".format(""), eng.c[style])
+                elif pos == 3:
+                    self.window.addstr(5, 2, "{0: ^20}".format(""), eng.c[style])
+                    self.window.addstr(6, 2, "{0: ^20}".format(item[0]), eng.c[style])
+                    self.window.addstr(7, 2, "{0: ^20}".format(""), eng.c[style])
+                elif pos == 4:
+                    self.window.addstr(5, 24, "{0: ^20}".format(""), eng.c[style])
+                    self.window.addstr(6, 24, "{0: ^20}".format(item[0]), eng.c[style])
+                    self.window.addstr(7, 24, "{0: ^20}".format(""), eng.c[style])
+
+                pos += 1
+
+            # wait for the next key
+            key = self.window.getch()
+
+            # if it's ENTER, run the command at the current position
+            if key in [ curses.KEY_ENTER, ord("\n"), ord(" "), 343 ]:
+                self.items[self.position][1]()
+                if exit_battle is True:
+                    break
+
+            # define clickable areas
+            elif key == curses.KEY_MOUSE:
+
+                try:
+                    # get the current position of the click
+                    _, mx, my, _, _ = curses.getmouse()
+
+                    # top-left
+                    if 50 <= mx <= 69 and 35 <= my <= 37:
+                        self.position = 0
+                        self.items[0][1]()
+
+                    # bottom-left
+                    elif 50 <= mx <= 69 and 39 <= my <= 41 and len(self.items) > 2:
+                        self.position = 2
+                        self.items[2][1]()
+
+                    # top-right
+                    elif 72 <= mx <= 91 and 35 <= my <= 37 and len(self.items) > 1:
+                        self.position = 1
+                        self.items[1][1]()
+
+                    # bottom-right
+                    elif 72 <= mx <= 91 and 39 <= my <= 41 and len(self.items) > 3:
+                        self.position = 3
+                        self.items[3][1]()
+                        if exit_battle is True:
+                            break
+                    else:
+                        if eng.DEBUG is True:
+                            battleUI.writeLog("You clicked the mouse at {0}, {1}".format(mx, my), "CYAN")
+
+                # if an ERR is encountered, ignore it and move on
+                except curses.error:
+                    pass
+
+            # if it's a number, try to move to that position
+            elif key in [ ord("1"), ord("2"), ord("3"), ord("4") ] and int(chr(key)) <= len(self.items):
+                self.position = int(chr(key)) - 1
+
+            # if it's HOME or BACKSPACE, return to the previous menu
+            elif key in [ curses.KEY_BACKSPACE, curses.KEY_HOME, 27 ]:
+                break
+
+            # Define where UP takes you from each position
+            elif key in [ curses.KEY_UP, ord("w"), ord("W") ]:
+                if self.position == 0:
+                    self.position = 0
+                elif self.position == 1:
+                    self.position = 1
+                elif self.position == 2:
+                    self.position = 0
+                elif self.position == 3:
+                    self.position = 1
+
+            # Define where LEFT takes you from each position
+            elif key in [ curses.KEY_LEFT, ord("a"), ord("A") ]:
+                if self.position == 0:
+                    self.position = 0
+                elif self.position == 1:
+                    self.position = 0
+                elif self.position == 2:
+                    self.position = 2
+                elif self.position == 3:
+                    self.position = 2
+
+            # Define where DOWN takes you from each position
+            elif key in [ curses.KEY_DOWN, ord("s"), ord("S") ]:
+                if self.position == 0 and len(self.items) > 2:
+                    self.position = 2
+                elif self.position == 1 and len(self.items) > 3:
+                    self.position = 3
+                elif self.position == 2:
+                    self.position = 2
+                elif self.position == 3:
+                    self.position = 3
+
+            # Define where RIGHT takes you from each position
+            elif key in [ curses.KEY_RIGHT, ord("d"), ord("D") ]:
+                if self.position == 0 and len(self.items) > 1:
+                    self.position = 1
+                elif self.position == 1:
+                    self.position = 1
+                elif self.position == 2 and len(self.items) > 3:
+                    self.position = 3
+                elif self.position == 3:
+                    self.position = 3
+
+        # clear and hide the panel when the loop exits
+        self.window.clear()
+        self.panel.hide()
+        panel.update_panels()
+        curses.doupdate()
+
+class ItemMenu(object):
+    def __init__(self, items, stdscr):
+        self.window = stdscr.subwin(12, 12, 12, 125)
+        self.window.immedok(True)
+        self.window.keypad(True)
+        curses.mousemask(1)
+        self.panel = panel.new_panel(self.window)
+        self.panel.hide()
+        panel.update_panels()
+
+        self.position = 0
+        self.items = items
+
+    def navigate(self, n):
+        self.position += n
+        if self.position < 0:
+            self.position = 0
+        elif self.position >= len(self.items):
+            self.position = len(self.items) - 1
+
+    def display(self):
+        self.panel.top()
+        self.panel.show()
+        self.window.clear()
+
+        # main menu loop
+        while True:
+            self.window.refresh()
+            curses.doupdate()
+            l = len(self.items)
+            pos = 0
+            for index, item in enumerate(self.items):
+
+                # define the style for active and inactive buttons
+                if index == self.position:
+                    # active
+                    style = "REVERSE_DIM"
+                else:
+                    # inactive
+                    style = "DIM"
+
+                self.window.addstr(pos, 0, "{0: <12}".format(item[0]), eng.c[style])
+
+                pos += 1
+
+            # wait for the next key
+            key = self.window.getch()
+
+            # if it's ENTER, run the command at the current position
+            if key in [ curses.KEY_ENTER, ord("\n"), ord(" "), 343 ]:
+                self.items[self.position][1](self.items[self.position][0])
+                break
+
+            # define clickable areas
+            elif key == curses.KEY_MOUSE:
+
+                try:
+                    # get the current position of the click
+                    _, mx, my, _, _ = curses.getmouse()
+
+                    if 123 <= mx <= 137 and 12 <= my <= 24:
+                        self.position = my - 12
+                        self.items[self.position][1](self.items[self.position][0])
+                        break
+
+                # if an ERR is encountered, ignore it and move on
+                except curses.error:
+                    pass
+
+            # if it's HOME or BACKSPACE, return to the previous menu
+            elif key in [ curses.KEY_BACKSPACE, curses.KEY_HOME, 27 ]:
+                break
+
+            # Define which keys move you up the list
+            elif key in [ curses.KEY_UP, curses.KEY_LEFT, ord("w"), ord("W"), ord("a"), ord("A") ]:
+                self.navigate(-1)
+
+            # Define which keys move you down the list
+            elif key in [ curses.KEY_DOWN, curses.KEY_RIGHT, ord("s"), ord("S"), ord("d"), ord("D") ]:
+                self.navigate(1)
+
+        # clear and hide the panel when the loop exits
+        self.window.clear()
+        self.panel.hide()
+        panel.update_panels()
+        curses.doupdate()
+        battleUI.writeInv()
 
 class battleUI():
 
@@ -19,7 +264,7 @@ class battleUI():
             eventLine = 1
 
         # display the message
-        eventWin.addstr(eventLine, 0, msg, eng.c[style])
+        eventWin.addstr(eventLine, 1, msg, eng.c[style])
 
         eventLine += 1
 
@@ -27,52 +272,55 @@ class battleUI():
     def writeStats():
 
         # setup the strings
-        hpString = "HP:   {0}/{1}".format(playerBattleStats["HP"]["CUR"], playerBattleStats["HP"]["MAX"])
-        mpString = "MP:   {0}/{1}".format(playerBattleStats["MP"]["CUR"], playerBattleStats["MP"]["MAX"])
+        hpString = "{0: >5} {1: >4} / {2: <6}".format("HP:", playerBattleStats["HP"]["CUR"], playerBattleStats["HP"]["MAX"])
+        mpString = "{0: >5} {1: >4} / {2: <6}".format("MP:", playerBattleStats["MP"]["CUR"], playerBattleStats["MP"]["MAX"])
 
         # check if each bonus is negative or not, and adjust printout
         atkBase = playerBattleStats["ATK"]["BASE"]
         atkBns = playerBattleStats["ATK"]["BONUS"]
-        atkString = "{0:>6} {1:>2}{2:<+3} = {3:^2}".format("ATK:", atkBase, atkBns, (atkBase + atkBns))
+        atkString = "{0:>5} {1:>3}{2:<+4} = {3:^4}".format("ATK:", atkBase, atkBns, (atkBase + atkBns))
 
         defBase = playerBattleStats["DEF"]["BASE"]
         defBns = playerBattleStats["DEF"]["BONUS"]
-        defString = "{0:>6} {1:>2}{2:<+3} = {3:^2}".format("DEF:", defBase, defBns, (defBase + defBns))
+        defString = "{0:>5} {1:>3}{2:<+4} = {3:^4}".format("DEF:", defBase, defBns, (defBase + defBns))
 
         mojoBase = playerBattleStats["MOJO"]["BASE"]
         mojoBns = playerBattleStats["MOJO"]["BONUS"]
-        mojoString = "{0:>6} {1:>2}{2:<+3} = {3:^2}".format("MOJO:", mojoBase, mojoBns, (atkBase + mojoBns))
+        mojoString = "{0:>5} {1:>3}{2:<+4} = {3:^4}".format("MOJO:", mojoBase, mojoBns, (atkBase + mojoBns))
 
         lukBase = playerBattleStats["LUK"]["BASE"]
         lukBns = playerBattleStats["LUK"]["BONUS"]
-        lukString = "{0:>6} {1:>2}{2:<+3} = {3:^2}".format("LUK:", lukBase, lukBns, (lukBase + lukBns))
+        lukString = "{0:>5} {1:>3}{2:<+4} = {3:^4}".format("LUK:", lukBase, lukBns, (lukBase + lukBns))
 
         accBase = playerBattleStats["ACC"]["BASE"]
         accBns = playerBattleStats["ACC"]["BONUS"]
-        accString = "{0:>6} {1:>2}{2:<+3} = {3:^2}".format("ACC:", accBase, accBns, (accBase + accBns))
+        accString = "{0:>5} {1:>3}{2:<+4} = {3:^4}".format("ACC:", accBase, accBns, (accBase + accBns))
 
         # add each stat string
-        statsWin.addstr(1, 4, hpString, eng.c["RED"])
-        statsWin.addstr(2, 4, mpString, eng.c["BLUE"])
-        statsWin.addstr(4, 1, atkString, eng.c["DIM_YELLOW"])
-        statsWin.addstr(5, 1, defString, eng.c["DIM_YELLOW"])
-        statsWin.addstr(6, 1, mojoString, eng.c["DIM_YELLOW"])
-        statsWin.addstr(7, 1, lukString, eng.c["DIM_YELLOW"])
-        statsWin.addstr(8, 1, accString, eng.c["DIM_YELLOW"])
+        statsWin.addstr(1, 0, hpString, eng.c["RED"])
+        statsWin.addstr(2, 0, mpString, eng.c["BLUE"])
+        statsWin.addstr(4, 0, atkString, eng.c["DIM_YELLOW"])
+        statsWin.addstr(5, 0, defString, eng.c["DIM_YELLOW"])
+        statsWin.addstr(6, 0, mojoString, eng.c["DIM_YELLOW"])
+        statsWin.addstr(7, 0, lukString, eng.c["DIM_YELLOW"])
+        statsWin.addstr(8, 0, accString, eng.c["DIM_YELLOW"])
 
         # setup the strings
-        instString = "INST: {0}".format(dbs.equippedInstrument)
-        fxString = "FX: {0}".format(dbs.addedFX)
-        headString = "HEAD: {0}".format(dbs.equippedHead)
+        instString = "{0: >5} {1: ^14}".format("INST:", dbs.equippedInstrument)
+        fxString = "{0: >5} {1: ^14}".format("FX:", dbs.addedFX)
+        headString = "{0: >5} {1: ^14}".format("HEAD:", dbs.equippedHead)
 
         # display the equipment strings
-        statsBorder.addstr(11, 1, "  EQUIPPED            ", eng.c["REVERSE_DIM_CYAN"])
+        statsBorder.addstr(11, 1, "{0: ^22}".format("EQUIPPED"), eng.c["REVERSE_DIM_CYAN"])
         statsWin.addstr(12, 0, headString, eng.c["DIM_CYAN"])
         statsWin.addstr(13, 0, instString, eng.c["DIM_CYAN"])
-        statsWin.addstr(14, 2, fxString, eng.c["DIM_CYAN"])
+        statsWin.addstr(14, 0, fxString, eng.c["DIM_CYAN"])
 
     # function to clear and write the INVENTORY section
     def writeInv():
+
+        # define globals
+        global battle_items
 
         # clear and refresh info
         invWin.clear()
@@ -81,6 +329,7 @@ class battleUI():
         # get and sort all item lists individually
         i = list(dbs.playerInv["ITEMS"])
         i = sorted(i)
+        battle_items = []
 
         # get a count of each item in the ITEMS list only
         itemCount = {}
@@ -95,7 +344,7 @@ class battleUI():
 
         # set header
         invBorder.addstr(1, 1, "{0: ^25}".format("BATTLE ITEMS"), eng.c["REVERSE_DIM_GREEN"])
-        invBorder.addstr(2, 1, "{0: >3} {1: <12} {2: <8}".format('#', 'Item', 'Effect'), eng.c["REVERSE_DIM_GREEN"])
+        invBorder.addstr(2, 1, "{0: >3} {1: <12} {2: <8}".format('#', 'ITEM', 'EFFECT'), eng.c["REVERSE_DIM_GREEN"])
 
         # print items from ITEMS with their item count
         if len(i) != 0:
@@ -104,27 +353,8 @@ class battleUI():
                     effectString = eng.getEffectString(item)
                     itemString = "{0:>2}x {1:<12} {2:<7}".format(str(itemCount[item]), item, effectString)
                     invWin.addstr(s, 0, itemString, eng.c["DIM"])
+                    battle_items.append(item)
                     s += 1
-
-    def writeMenu():
-
-        menuWin.clear()
-
-        menuWin.addstr(1, 2, "{0: ^20}".format(""), eng.c["REVERSE_DIM"])
-        menuWin.addstr(2, 2, "{0: ^20}".format("ATTACK"), eng.c["REVERSE_DIM"])
-        menuWin.addstr(3, 2, "{0: ^20}".format(""), eng.c["REVERSE_DIM"])
-
-        menuWin.addstr(5, 2, "{0: ^20}".format(""), eng.c["REVERSE_DIM"])
-        menuWin.addstr(6, 2, "{0: ^20}".format("MOJO ABILITIES"), eng.c["REVERSE_DIM"])
-        menuWin.addstr(7, 2, "{0: ^20}".format(""), eng.c["REVERSE_DIM"])
-
-        menuWin.addstr(1, 24, "{0: ^20}".format(""), eng.c["REVERSE_DIM"])
-        menuWin.addstr(2, 24, "{0: ^20}".format("USE ITEM"), eng.c["REVERSE_DIM"])
-        menuWin.addstr(3, 24, "{0: ^20}".format(""), eng.c["REVERSE_DIM"])
-
-        menuWin.addstr(5, 24, "{0: ^20}".format(""), eng.c["REVERSE_DIM"])
-        menuWin.addstr(6, 24, "{0: ^20}".format("ESCAPE"), eng.c["REVERSE_DIM"])
-        menuWin.addstr(7, 24, "{0: ^20}".format(""), eng.c["REVERSE_DIM"])
 
     # function specifically to parse commands and run their relevant functions
     def runAction(cmd, arg):
@@ -135,22 +365,21 @@ class battleUI():
     # function to pick and print the initial stats for an encounter
     def initEnemy():
 
+        # define globals
         global enemyBattleStats
 
-        # TODO pick a random enemy (weighted) from the current planet
-        availableEnemies = []
+        # setup enemy name list and weights from the planets db
+        enemies = dbs.planets.find_one( { "PLANET": dbs.PLANET } )["ENEMY"]["NAMES"]
+        weights = dbs.planets.find_one( { "PLANET": dbs.PLANET } )["ENEMY"]["WEIGHTS"]
 
-        for e in dbs.enemies.find( { } ):
-            if dbs.PLANET in e["PLANETS"]:
-                availableEnemies.append(e["NAME"])
-
-        chosenEnemy = choice(availableEnemies)
+        # choose a random enemy based on the weights
+        chosenEnemy = choices(enemies, weights=weights)
 
         # setup enemy stats
-        dbs.getEnemyInfo(chosenEnemy)
+        dbs.getEnemyInfo(chosenEnemy[0])
 
         # write the enemy's name onto the border
-        displayName = " ENEMY: {0} ".format(chosenEnemy.upper())
+        displayName = " ENEMY: {0} ".format(chosenEnemy[0].upper())
         x = 48 - len(displayName)
         enemyStatsBorder.addstr(0, x, displayName, eng.c["DIM"])
 
@@ -203,7 +432,6 @@ class battleUI():
         battleUI.writeInv()
         battleUI.writeStats()
         battleUI.writeEnemy()
-        battleUI.writeMenu()
 
     # function to initialize the UI and get user input
     def displayBattle():
@@ -211,6 +439,8 @@ class battleUI():
         # define globals
         global playerBattleStats
         global eventLine
+        global exit_battle
+        global next_turn
 
         # get stats
         playerBattleStats = dbs.getPlayerDict()
@@ -218,44 +448,141 @@ class battleUI():
         # set the event starting line
         eventLine = 1
 
+        # set initial states
+        exit_battle = False
+
+        # decide who goes first
+        rand = randrange(1, 100)
+        if rand > 50:
+            next_turn = "enemy"
+            battleUI.writeLog("The enemy flanked you, Ted!", "DIM_RED")
+        else:
+            next_turn = "ted"
+            battleUI.writeLog("You beat 'em to the punch, Ted!", "DIM_GREEN")
+
         # write all data to the screen
         battleUI.initEnemy()
         battleUI.writeStats()
         battleUI.writeInv()
-        battleUI.writeMenu()
-
-        t = 0
-        while t < 25:
-            battleUI.writeLog("Ted smashes the {0} for 10 damage!".format(dbs.enemyInfo["NAME"]), "RED")
-            sleep(0.5)
-            t += 1
 
         # main command input loop
-        while True:
-            userInput = battleUI.getCmd()
-            #battleUI.processCmd(userInput)
+        while exit_battle is False:
+            battleUI.runMenu()
 
-    # process the raw command received
-    def processCmd(userInput):
+    def mojoAbility():
+        battleUI.writeLog("You used a mojo ability!", "BLUE")
 
-        # if it's empty, go back to the loop
-        if userInput == "" or userInput == None:
-            return
+    def atkAbility():
+        battleUI.writeLog("You used a regular attack!", "CYAN")
 
-        # split command into a list
-        args = userInput.split()
+    def escape():
 
-        # some terminals + curses gives me a trailing "                  x x " string.
-        # try fixing that if it happens. no plans to have a single 'x' as a parameter
-        try:
-            args.remove("x")
-        except ValueError:
-            pass
+        global exit_battle
+        global next_turn
+
+        # roll to see if the escape attempt is successful
+        rand = randrange(1, 100)
+        if rand >= 75:
+            attempt = True
+        else:
+            attempt = False
+
+        # if it fails, display a message and return to battle
+        if attempt is False:
+            battleUI.writeLog("Ted tripped when he tried to run!", "RED")
+            exit_battle = False
+            next_turn = "enemy"
+
+        # if it succeeds, display a message and pause
+        elif attempt is True:
+            battleUI.writeLog("Ted is gettin' the fuck outta here!", "YELLOW")
+
+            # if the player doesn't have any FLOYDS, don't bother trying to drop any
+            if dbs.playerStats["FLOYDS"] != 0:
+
+                # roll to see if the player loses any FLOYDS
+                rand = randrange(1, 100)
+                if rand >= 60:
+                    drop_floyds = True
+                else:
+                    drop_floyds = False
+
+                # if it fails, exit battle
+                if drop_floyds is False:
+                    battleUI.writeLog("Ted managed to hang onto all his coin.", "GREEN")
+                    sleep(2)
+                    exit_battle = True
+
+                # if it succeeds, how many will they lose
+                elif drop_floyds is True:
+
+                    # pick an amount to remove
+                    rand = randrange(0, 100)
+
+                    # try to remove the FLOYDS from player
+                    if dbs.floydsTransaction(rand, "dec") is True:
+                        # print a message if they still have some FLOYDS left
+                        battleUI.writeLog("Ted dropped {0} FLOYDS on the way out!".format(str(rand)), "YELLOW")
+                    else:
+                        # if not, set FLOYDS to 0 and tell the player about it
+                        dbs.floydsTransaction(0, "set")
+                        battleUI.writeLog("Ted lost his FLOYDS on the way out!".format(str(rand)), "YELLOW")
+
+            # pause
+            sleep (3)
+
+            # exit battle
+            exit_battle = True
+
+    def runUseItem(item):
+
+        battleUI.writeLog("You chose to use {0}!".format(item), "YELLOW")
+
+    def setItemsMenu():
+
+        menu_items = []
+        i = 0
+        while i < len(battle_items):
+            menu_items.append((battle_items[i], battleUI.runUseItem))
+            i += 1
+        return menu_items
 
     # wait for user input
-    def getCmd():
+    def runMenu():
 
-        sleep(5)
+        # make sure the cursor is hidden
+        curses.curs_set(0)
+
+        # define the item menu
+        item_menu_items = battleUI.setItemsMenu()
+        item_menu = ItemMenu(item_menu_items, screen)
+
+        # define the attack menu
+        attack_menu_items = [
+            ("PUNCH",  battleUI.atkAbility)
+        ]
+        attack_menu = Menu(attack_menu_items, screen)
+
+        # define the mojo menu
+        mojo_menu_items = [
+            ("RISING FORCE", battleUI.mojoAbility),
+            ("PURPLE RAIN", battleUI.mojoAbility)
+        ]
+        mojo_menu = Menu(mojo_menu_items, screen)
+
+        # define the main menu
+        main_menu_items = [
+            ("ATTACK", attack_menu.display),
+            ("MOJO ABILITIES", mojo_menu.display),
+            ("USE ITEM", item_menu.display),
+            ("ESCAPE", battleUI.escape)
+        ]
+        main_menu = Menu(main_menu_items, screen)
+
+        # run the main menu
+        main_menu.display()
+
+        return True
 
     # function to clear all screens
     def clearAllScreens():
@@ -264,7 +591,6 @@ class battleUI():
         enemyStatsBorder.clear()
         enemyStatsWin.clear()
         menuBorder.clear()
-        menuWin.clear()
         invBorder.clear()
         invWin.clear()
         eventBorder.clear()
@@ -291,12 +617,14 @@ class battleUI():
         global max_x
         global max_y
         global screen
+        global next_turn
+        global exit_battle
 
         screen = stdscr
 
         # define max size
-        max_x = 110
-        max_y = 40
+        max_x = 101
+        max_y = 36
 
         # get current terminal size and setup UI positions
         height, width = stdscr.getmaxyx()
@@ -355,11 +683,11 @@ class battleUI():
         menuBorder.immedok(True)
         menuBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
         menuBorder.addstr(0, 39, " ACTIONS ", eng.c["DIM"])
-        # define the content area
-        menuWin = stdscr.subwin(eng.battleMenuDims["content"][0], eng.battleMenuDims["content"][1], eng.battleMenuDims["content"][2], eng.battleMenuDims["content"][3])
-        menuWin.immedok(True)
 
         # run the world command loop
         battleUI.displayBattle()
 
-        return
+        # clear screens before changing UIs
+        battleUI.clearAllScreens()
+
+        return True

@@ -29,7 +29,7 @@ class main():
         while p < len(top) and l < logoHeight:
             line = top[str(p)]
             style = eng.c[line[0]]
-            logoWin.addstr(l, 5, line[1], style)
+            logoWin.addstr(l, 2, "{0: ^76}".format(line[1]), style)
             p += 1
             l += 1
 
@@ -40,7 +40,7 @@ class main():
         while p < len(mid) and l < logoHeight:
             line = mid[str(p)]
             style = eng.c[line[0]]
-            logoWin.addstr(l, 5, line[1], style)
+            logoWin.addstr(l, 2, "{0: ^76}".format(line[1]), style)
             p += 1
             l += 1
 
@@ -51,7 +51,7 @@ class main():
         while p < len(low) and l < logoHeight:
             line = low[str(p)]
             style = eng.c[line[0]]
-            logoWin.addstr(l, 5, line[1], style)
+            logoWin.addstr(l, 2, "{0: ^76}".format(line[1]), style)
             p += 1
             l += 1
 
@@ -85,11 +85,13 @@ class main():
     def exitGame():
 
         # clear the screen and display the logo
-        mainWin.clear()
-        inputWin.clear()
+        screen.clear()
 
-        # TODO display logo and a message
+        # display logo and a message
         main.displayLogo(0)
+        mainWin.addstr(2, 0, "{0: ^76}".format("Thanks for ROCKING with Ted. See ya later, nerd!"), eng.c["RED"])
+
+        sleep(5)
 
         # exit application
         sys.exit()
@@ -102,10 +104,10 @@ class main():
 
             # ask about the intro
             mainWin.clear()
-            mainWin.addstr(2, 18, "Watch the intro animation? (yes/no)", eng.c["CYAN"])
+            mainWin.addstr(2, 0, "{0: ^76}".format("Watch the intro animation? (yes/no)"), eng.c["CYAN"])
             choice = main.getCmd()
 
-            # TODO port animation to mongo and curses
+            # display the intro if yes
             if choice == "yes" or choice == "y":
                 main.introAnimation()
 
@@ -169,10 +171,10 @@ class main():
 
             # print the options
             mainWin.clear()
-            mainWin.addstr(1, 19, "COMMANDS:", eng.c["DIM"])
-            mainWin.addstr(3, 19, "     new |  Fucking ROCK a new story", eng.c["DIM_YELLOW"])
-            mainWin.addstr(4, 19, "    load |  Load your old shitty save", eng.c["DIM_CYAN"])
-            mainWin.addstr(5, 19, "    quit |  Exit this garbage", eng.c["DIM_RED"])
+            mainWin.addstr(1, 20, "COMMANDS:", eng.c["DIM"])
+            mainWin.addstr(3, 24, "{0: >4} | {1: <25}".format("new", "Fucking ROCK a new story"), eng.c["DIM_YELLOW"])
+            mainWin.addstr(4, 24, "{0: >4} | {1: <25}".format("load", "Load your old shitty save"), eng.c["DIM_CYAN"])
+            mainWin.addstr(5, 24, "{0: >4} | {1: <25}".format("quit", "Exit this garbage"), eng.c["DIM_RED"])
 
             userInput = main.getCmd()
             main.processCmd(userInput)
@@ -194,17 +196,17 @@ class main():
                     mainWin.clear()
 
                     # display a message
-                    mainWin.addstr(2, 12, "Enter a save slot or 'back'", eng.c["DIM_YELLOW"])
-                    mainWin.addstr(3, 12, "to return to the main menu.", eng.c["DIM_YELLOW"])
+                    mainWin.addstr(2, 0, "{0: ^38}".format("Enter a save slot or 'back'"), eng.c["DIM_YELLOW"])
+                    mainWin.addstr(3, 0, "{0: ^38}".format("to return to the main menu."), eng.c["DIM_YELLOW"])
 
                     # display the existing save slots
-                    mainWin.addstr(1, 47, "Existing Save Slots:", eng.c["CYAN"])
+                    mainWin.addstr(0, 40, "{0: ^38}".format("Existing Save Slots:"), eng.c["CYAN"])
                     i, l = 1, 2
 
                     # for each folder in ./save-states, print the name and its index
                     while i < len(slots):
                         string = "[{0}] - {1}".format(str(i), slots[i])
-                        mainWin.addstr(l, 51, string, eng.c["DIM_CYAN"])
+                        mainWin.addstr(l, 40, "{0: ^38}".format(string), eng.c["DIM_CYAN"])
                         i += 1
                         l += 1
 
@@ -228,7 +230,7 @@ class main():
                     # if nothing works, tell the player
                     else:
                         mainWin.clear()
-                        mainWin.addstr(2, 24, "Save slot doesn't exist!", eng.c["DIM_RED"])
+                        mainWin.addstr(2, 0, "{0: ^76}".format("Save slot doesn't exist!"), eng.c["DIM_RED"])
                         sleep(2)
                         return
 
@@ -236,9 +238,9 @@ class main():
                 else:
                     # clear the screen and print the message
                     mainWin.clear()
-                    mainWin.addstr(1, 26, "No save slots exist!", eng.c["DIM_RED"])
-                    mainWin.addstr(2, 21, "Enter a new save slot name or", eng.c["DIM_RED"])
-                    mainWin.addstr(3, 20, "back to return to the main menu", eng.c["DIM_RED"])
+                    mainWin.addstr(1, 0, "{0: ^76}".format("No save slots exist!"), eng.c["DIM_RED"])
+                    mainWin.addstr(2, 0, "{0: ^76}".format("Enter a new save slot name or"), eng.c["DIM_RED"])
+                    mainWin.addstr(3, 0, "{0: ^76}".format("back to return to the main menu"), eng.c["DIM_RED"])
 
                     # ask for a slot name
                     slotName = main.getCmd()
@@ -257,7 +259,7 @@ class main():
         mainWin.clear()
 
         # print the message
-        mainWin.addstr(2, 18, "Enter the name for the new save slot.", eng.c["YELLOW"])
+        mainWin.addstr(2, 0, "{0: ^76}".format("Enter the name for the new save slot."), eng.c["YELLOW"])
 
         # ask for an option
         slotName = main.getCmd()
@@ -284,10 +286,10 @@ class main():
                 mainWin.clear()
 
                 # print the message
-                mainWin.addstr(2, 10, "You already have 3 slots saved!", eng.c["RED"])
-                mainWin.addstr(3, 9, "Create a new save with an existing", eng.c["RED"])
-                mainWin.addstr(4, 15, "name to overwrite one!", eng.c["RED"])
-                mainWin.addstr(1, 47, "Existing Save Slots:", eng.c["CYAN"])
+                mainWin.addstr(2, 0, "{0: ^38}".format("You already have 3 slots saved!"), eng.c["RED"])
+                mainWin.addstr(3, 0, "{0: ^38}".format("Create a new save with an existing"), eng.c["RED"])
+                mainWin.addstr(4, 0, "{0: ^38}".format("name to overwrite one!"), eng.c["RED"])
+                mainWin.addstr(0, 40, "{0: ^38}".format("Existing Save Slots:"), eng.c["CYAN"])
 
                 l = 2
                 # print list of found saves
@@ -296,7 +298,7 @@ class main():
                         pass
                     else:
                         string = "[{0}] - {1}".format(str(slots.index(s)), s)
-                        mainWin.addstr(l, 51, string, eng.c["DIM_CYAN"])
+                        mainWin.addstr(l, 40, "{0: ^38}".format(string), eng.c["DIM_CYAN"])
                         l += 1
 
                 # get a slot name from the user again
@@ -321,7 +323,7 @@ class main():
             mainWin.clear()
 
             # print the message
-            mainWin.addstr(2, 13, "Save slot already exists! Overwrite? (yes/no)", eng.c["RED"])
+            mainWin.addstr(2, 0, "{0: ^76}".format("Save slot already exists! Overwrite? (yes/no)"), eng.c["RED"])
 
             # get the answer
             ans = main.getCmd()
@@ -336,8 +338,8 @@ class main():
                 mainWin.clear()
 
                 # print the message
-                mainWin.addstr(2, 25, "Overwriting save game!", eng.c["GREEN"])
-                mainWin.addstr(3, 19, "Enter a name for this save slot:", eng.c["GREEN"])
+                mainWin.addstr(2, 0, "{0: ^76}".format("Overwriting save game!"), eng.c["GREEN"])
+                mainWin.addstr(3, 0, "{0: ^76}".format("Enter a name for this save slot:"), eng.c["GREEN"])
 
                 # get a slot name from the user again
                 newSlotName = main.getCmd()
@@ -352,7 +354,7 @@ class main():
                     # otherwise print an error and return to the main menu
                     else:
                         mainWin.clear()
-                        mainWin.addstr(2, 14, "Something went wrong when deleting the old save.", eng.c["BRIGHT_RED"])
+                        mainWin.addstr(2, 0, "{0: ^76}".format("Something went wrong when deleting the old save."), eng.c["BRIGHT_RED"])
                         sleep(2)
                         return
 
@@ -362,7 +364,7 @@ class main():
                     mainWin.clear()
 
                     # print the message
-                    mainWin.addstr(2, 22, "That name matches another slot!", eng.c["RED"])
+                    mainWin.addstr(2, 0, "{0: ^76}".format("That name matches another slot!"), eng.c["RED"])
 
                     # return to menu
                     sleep(2)
@@ -375,7 +377,7 @@ class main():
                 mainWin.clear()
 
                 # print the message
-                mainWin.addstr(2, 23, "Not overwriting save slot.", eng.c["RED"])
+                mainWin.addstr(2, 0, "{0: ^76}".format("Not overwriting save slot."), eng.c["RED"])
 
                 # return to menu
                 sleep(2)
@@ -387,7 +389,7 @@ class main():
             mainWin.clear()
 
             # print the message
-            mainWin.addstr(2, 2, "That slot doesn't exist, but you already have 3 slots saved. Try again.", eng.c["RED"])
+            mainWin.addstr(2, 0, "{0: ^76}".format("That slot doesn't exist, but you already have 3 slots saved. Try again."), eng.c["RED"])
 
             # return to menu
             sleep(2)

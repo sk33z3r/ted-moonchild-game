@@ -1,4 +1,4 @@
 #!/bin/sh
 
 cd /home/ted
-python main.py
+python main.py $@

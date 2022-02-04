@@ -7,3 +7,5 @@ dockerfiles/ssh_host_dsa_key*
 db/
 save-states/
 game_notes.md
+balance_tables.ods
+.~lock.balance_tables.ods#

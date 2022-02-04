@@ -53,16 +53,11 @@ def setLocation(n):
     global PLANET
 
     # set the new location in payer's db
-    player.update_one( { "SECTION": "location" }, { "$set": { "NAME": n } } )
+    player.update_one( { "SECTION": "location" }, { "$set": { "ROOM": n } } )
 
-    # if the new location is a sector, set the space db only
+    # if the new location is a sector, load the space location
     if n.endswith("Sector"):
-        locationInfo = locations.find_one( { "$and": { { "NAME": "space" }, { "SECTOR": SECTOR } } } )
-
-    # otherwise, if this is the winnibego, set the sector and load the winnie location
-    elif n.lower() == "winnibego":
-        locations.update_one( { "NAME": "Winnibego" }, { "$set": { "SECTOR": SECTOR } } )
-        locationInfo = locations.find_one( { "NAME": n } )
+        locationInfo = locations.find_one( { "NAME": "Space" } )
 
     # otherwise just load the location
     else:
@@ -70,8 +65,16 @@ def setLocation(n):
 
     # set easy to reference vars
     ROOM = locationInfo["NAME"]
-    SECTOR = locationInfo["SECTOR"]
-    PLANET = locationInfo["PLANET"]
+
+    if ROOM == "Space":
+        SECTOR = locationInfo["SECTOR"]
+    else:
+        PLANET = locationInfo["PLANET"]
+        SECTOR = planets.find_one( { "PLANET": PLANET } )["SECTOR"]
+
+    # update the player's db
+    player.update_one( { "SECTION": "location" }, { "$set": { "PLANET": PLANET } } )
+    player.update_one( { "SECTION": "location" }, { "$set": { "SECTOR": SECTOR } } )
 
 # function to define a new location in Space
 def setSpaceLocation(sector):
@@ -83,34 +86,30 @@ def setSpaceLocation(sector):
     global PLANET
 
     # first set the player's new location
-    player.update_one( { "SECTION": "location" }, { "$set": { "NAME": "Space" } } )
-    locationInfo = locations.find_one( { "NAME": "Space" } )
-
-    # set the current sector
-    locations.update_one( { "NAME": "Winnibego" }, { "$set": { "SECTOR": sector } } )
+    player.update_one( { "SECTION": "location" }, { "$set": { "ROOM": "Space" } } )
+    player.update_one( { "SECTION": "location" }, { "$set": { "SECTOR": sector } } )
     locations.update_one( { "NAME": "Space" }, { "$set": { "SECTOR": sector } } )
+
+    # store the new data
+    locationInfo = locations.find_one( { "NAME": "Space" } )
 
     # setup easy to reference vars from new info
     ROOM = locationInfo["NAME"]
-    SECTOR = locationInfo["SECTOR"]
-    PLANET = locationInfo["PLANET"]
 
-# function to refresh the current location in memory
-def getLocation():
+    if ROOM == "Space":
+        SECTOR = locationInfo["SECTOR"]
+    else:
+        PLANET = locationInfo["PLANET"]
+        SECTOR = planets.find_one( { "PLANET": PLANET } )["SECTOR"]
+
+# get latest info for current location
+def updateLocation():
 
     # define globals
     global locationInfo
-    global ROOM
-    global SECTOR
-    global PLANET
 
-    # define info var with current values
+    # get the location from player's db
     locationInfo = locations.find_one( { "NAME": ROOM } )
-
-    # setup easy to reference vars from the info
-    ROOM = locationInfo["NAME"]
-    SECTOR = locationInfo["SECTOR"]
-    PLANET = locationInfo["PLANET"]
 
 # function to load a new location into memory
 def loadLocation(n):
@@ -126,8 +125,12 @@ def loadLocation(n):
 
     # setup easy to reference vars from the new info
     ROOM = locationInfo["NAME"]
-    SECTOR = locationInfo["SECTOR"]
-    PLANET = locationInfo["PLANET"]
+
+    if ROOM == "Space":
+        SECTOR = locationInfo["SECTOR"]
+    else:
+        PLANET = locationInfo["PLANET"]
+        SECTOR = planets.find_one( { "PLANET": PLANET } )["SECTOR"]
 
 # equip a new instrument
 def setInstrument(n):
@@ -349,31 +352,53 @@ def getEnemyDict():
 # function to update ground items in a room
 def updateGround(item, action):
 
+    # check if we're in the winnie or not
+    if ROOM.lower() in [ "winnibego", "space" ] or ROOM.endswith("Sector"):
+        space = True
+    else:
+        space = False
+
     # if asked to delete, remove item from ground
     if action == "del":
 
         # set the groundList
-        groundList = list(locations.find_one( { "NAME": ROOM } )["GROUND"])
+        if space is True:
+            groundList = list(playerInv["WINNIE"])
+        else:
+            groundList = list(locations.find_one( { "NAME": ROOM } )["GROUND"])
 
         # if the item is in the ground list, remove it
         if item in groundList:
             groundList.remove(item)
 
             # set the update list as the new value
-            locations.update_one( { "NAME": ROOM }, { "$set": { "GROUND": groundList } } )
+            if space is True:
+                player.update_one( { "SECTION": "inventory" }, { "$set": { "WINNIE": groundList } } )
+            else:
+                locations.update_one( { "NAME": ROOM }, { "$set": { "GROUND": groundList } } )
 
     # if asked to add, add the item to the ground
     elif action == "add":
 
         # set a temp ground list and add the item
-        groundTemp = list(locationInfo["GROUND"])
-        groundTemp.append(item)
+        if space is True:
+            groundList = list(playerInv["WINNIE"])
+        else:
+            groundList = list(locationInfo["GROUND"])
+
+        groundList.append(item)
 
         # set the new value as the list
-        locations.update_one( { "NAME": ROOM }, { "$set": { "GROUND": groundTemp } } )
+        if space is True:
+            player.update_one( { "SECTION": "inventory" }, { "$set": { "WINNIE": groundList } } )
+        else:
+            locations.update_one( { "NAME": ROOM }, { "$set": { "GROUND": groundList } } )
 
         # set a new list from the database
-        groundList = list(locations.find_one( { "NAME": ROOM } )["GROUND"])
+        if space is True:
+            groundList = list(player.find_one( { "SECTION": "inventory" } )["WINNIE"])
+        else:
+            groundList = list(locations.find_one( { "NAME": ROOM } )["GROUND"])
 
         # if the item doesn't exist for some reason, raise an exception
         if item not in groundList:
@@ -566,6 +591,7 @@ def define(n):
     global locations
     global player
     global levels
+    global planets
     global playerPath
     global playerInv
 
@@ -585,6 +611,7 @@ def define(n):
     locations = db['locations']
     player = db['player']
     levels = db["levels"]
+    planets = db["planets"]
 
     # set SLOT_NAME variable
     eng.SLOT_NAME = n
@@ -708,7 +735,7 @@ def loadGame(name):
     setHead(equipment["HEAD"])
 
     # load player's location to memory
-    locationName = player.find_one( { "SECTION": "location" } )["NAME"]
+    locationName = player.find_one( { "SECTION": "location" } )["ROOM"]
     loadLocation(locationName)
 
 # function to create new database and set initial values
@@ -726,8 +753,12 @@ def newGame(name):
     # get and store the new collection names
     collections = []
     for o in os.listdir("./json"):
-        f = o.replace(".json", "")
-        collections.append(f)
+        # ignore the README
+        if o.endswith("README.md"):
+            pass
+        else:
+            f = o.replace(".json", "")
+            collections.append(f)
 
     # for each json file found
     for n in collections:
@@ -806,5 +837,5 @@ def newGame(name):
     setHead(equipment["HEAD"])
 
     # set player's location
-    locationName = player.find_one( { "SECTION": "location" } )["NAME"]
+    locationName = player.find_one( { "SECTION": "location" } )["ROOM"]
     loadLocation(locationName)

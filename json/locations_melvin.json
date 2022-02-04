@@ -34,9 +34,9 @@
         "EAST": "EBGB Backstage",
         "WEST": "EBGB Bathrooms",
         "PLANET": "Zappa",
-        "SECTOR": "Melvin Sector",
         "GROUND": [ "Empty Bottle", "Neat Cables", "EBGB Drums" ],
         "VISITED": 0,
+        "BATTLES": true,
         "SOLVED": 0
     },
     {
@@ -74,9 +74,9 @@
         "ADD_GROUND": [ "WMG Keycard" ],
         "UP": "EBGB Stage",
         "PLANET": "Zappa",
-        "SECTOR": "Melvin Sector",
         "GROUND": [ "EBGB Moonshine" ],
         "VISITED": 0,
+        "BATTLES": true,
         "SOLVED": 0
     },
     {
@@ -107,9 +107,9 @@
         "SOUTH": "EBGB Stage",
         "WEST": "EBGB Jukebox",
         "PLANET": "Zappa",
-        "SECTOR": "Melvin Sector",
         "GROUND": [ "Guitar Pick", "Drumstick Tip" ],
         "VISITED": 0,
+        "BATTLES": true,
         "SOLVED": 0
     },
     {
@@ -138,9 +138,9 @@
         "DEL_GROUND": [ "Used Condom" ],
         "WEST": "EBGB Stage",
         "PLANET": "Zappa",
-        "SECTOR": "Melvin Sector",
         "GROUND": [ "Squire Strat", "Used Condom", "Chaz's Note" ],
         "VISITED": 0,
+        "BATTLES": true,
         "SOLVED": 0
     },
     {
@@ -172,14 +172,14 @@
         "ADD_GROUND": [ "Schnitmuckle" ],
         "EAST": "EBGB Stage",
         "PLANET": "Zappa",
-        "SECTOR": "Melvin Sector",
         "GROUND": [ "Lit Joint" ],
         "VISITED": 0,
+        "BATTLES": true,
         "SOLVED": 0
     },
     {
         "NAME": "EBGB Bar",
-        "SHORTDESC": [ "DIM", "The bartender is still hanging out, maybe Ted can get snag some road beers." ],
+        "SHORTDESC": [ "DIM", "The bartender is still hanging out, maybe Ted can snag some road beers." ],
         "FIRST_EVENTS": {
             "0": [ "DIM", "Ted sizes up the bartender. He's a large rotund individual from the planet Zappa. Best not to try anything stupid with him." ],
             "1": [ "BRIGHT_MAGENTA", "BONGO: \"Whatchoo won' Ted?\"" ],
@@ -203,9 +203,9 @@
         "WEST": "EBGB Dance Floor",
         "SHOP": [ "DM Ale", "Whiskey" ],
         "PLANET": "Zappa",
-        "SECTOR": "Melvin Sector",
         "GROUND": [],
         "VISITED": 0,
+        "BATTLES": true,
         "SOLVED": 0
     },
     {
@@ -235,9 +235,9 @@
         "NORTH": "Zappa Lot",
         "EAST": "EBGB Dance Floor",
         "PLANET": "Zappa",
-        "SECTOR": "Melvin Sector",
         "GROUND": [],
         "VISITED": 0,
+        "BATTLES": true,
         "SOLVED": 0
     },
     {
@@ -261,9 +261,9 @@
         "UP": "Winnibego",
         "SOUTH": "EBGB Bar",
         "PLANET": "Zappa",
-        "SECTOR": "Melvin Sector",
         "GROUND": [],
         "VISITED": 0,
+        "BATTLES": true,
         "SOLVED": 0
     },
     {
@@ -288,9 +288,9 @@
         "WEST": "Mactel 6 Lot",
         "SHOP": [ "Magic Mushies", "ACiD", "Mescalin", "Amanitas" ],
         "PLANET": "Mactel 6",
-        "SECTOR": "Melvin Sector",
         "GROUND": [],
         "VISITED": 0,
+        "BATTLES": true,
         "SOLVED": 0
     },
     {
@@ -316,9 +316,9 @@
         "UP": "Winnibego",
         "SHOP": [],
         "PLANET": "Mactel 6",
-        "SECTOR": "Melvin Sector",
         "GROUND": [],
         "VISITED": 0,
+        "BATTLES": true,
         "SOLVED": 0
     }
 ]

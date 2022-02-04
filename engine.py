@@ -1,7 +1,25 @@
-import curses, sys
+import curses, sys, argparse
 from os import system
 from time import sleep
 import database as dbs
+
+# check for command line arguments
+parser = argparse.ArgumentParser()
+parser.add_argument("-d", "--debug", help="Turn on some extra messages and enable fight command.", action="store_true")
+parser.add_argument("-s", "--speed", nargs=1, help="Set a custom game speed for animations.", type=int)
+args = parser.parse_args()
+
+# debug check
+if args.debug:
+    DEBUG = True
+else:
+    DEBUG = False
+
+# setup a game text speed
+if args.speed:
+    GAME_SPEED = int(args.speed[0])
+else:
+    GAME_SPEED = 4
 
 # define border styles so they're easier to change later
 lb, rb = 0, 0
@@ -14,7 +32,7 @@ USE_CMDS = [ "use", "try" ]
 EAT_CMDS = [ "eat", "gobble", "consume" ]
 DRINK_CMDS = [ "swallow", "gulp", "slurp", "drink" ]
 SMOKE_CMDS = [ "smoke", "toke", "inhale" ]
-DRUG_CMDS = [ "swallow", "snort", "lick" ]
+DRUG_CMDS = [ "swallow", "snort", "lick", "freebase" ]
 BATTLE_COMMANDS = [ "attack", "mojo", "magic", "hit" ]
 MOVE_CMDS = [ "move", "walk", "run", "shimmy", "slide" ]
 ALL_COMMANDS = BASE_COMMANDS + EAT_CMDS + DRINK_CMDS + SMOKE_CMDS + DRUG_CMDS
@@ -24,9 +42,6 @@ ROOM_WORDS = [ "here", "room", "around", "ground", "floor", "area" ]
 
 # define stats
 STATS = [ "ATK", "DEF", "MOJO", "LUK", "ACC" ]
-
-# setup a game text speed
-GAME_SPEED = 4
 
 # function to calculate section dimensions and starting points based on terminal size
 def calculateWindows(height, width, max_y, max_x, ui):
@@ -39,9 +54,7 @@ def calculateWindows(height, width, max_y, max_x, ui):
     global worldEventDims
     global worldInputDims
     global worldMsgDims
-    global worldStatDims
-    global worldInvDims
-    global worldHelpDims
+    global worldCharDims
     global battleEnemyDims
     global battleEventDims
     global battleStatDims
@@ -49,8 +62,8 @@ def calculateWindows(height, width, max_y, max_x, ui):
     global battleMenuDims
 
     # determine where curses needs to start the windows to be centered in the terminal
-    initBegin_y = round((height - max_y) / 2)
-    initBegin_x = round((width - max_x) / 2)
+    initBegin_y = (height - max_y) // 2
+    initBegin_x = (width - max_x) // 2
 
     ### all tuples (height, width, begin_y, begin_x)
     ### input border tuple (uly, ulx, lry, lrx)
@@ -78,41 +91,33 @@ def calculateWindows(height, width, max_y, max_x, ui):
     elif ui == "world":
         worldSectionDims = {
             "title": {
-                "border": [ 3, 80, initBegin_y, (initBegin_x + 1) ],
-                "content": [ 1, 76, (initBegin_y + 1), (initBegin_x + 3) ]
-            },
-            "ground": {
-                "border": [ 8, 50, (initBegin_y + 25), (initBegin_x + 1) ],
-                "content": [ 6, 46, (initBegin_y + 26), (initBegin_x + 3) ]
-            },
-            "exits": {
-                "border": [ 8, 29, (initBegin_y + 25), (initBegin_x + 52) ],
-                "content": [ 6, 25, (initBegin_y + 26), (initBegin_x + 53) ]
+                "border": [ 3, 80, initBegin_y, initBegin_x ],
+                "content": [ 1, 77, (initBegin_y + 1), (initBegin_x + 2) ]
             },
             "events": {
-                "border": [ 22, 80, (initBegin_y + 3), (initBegin_x + 1) ],
-                "content": [ 20, 76, (initBegin_y + 4), (initBegin_x + 3) ]
+                "border": [ 24, 80, (initBegin_y + 3), initBegin_x ],
+                "content": [ 22, 77, (initBegin_y + 4), (initBegin_x + 2) ]
+            },
+            "ground": {
+                "border": [ 10, 50, (initBegin_y + 27), initBegin_x ],
+                "content": [ 8, 47, (initBegin_y + 28), (initBegin_x + 2) ]
+            },
+            "exits": {
+                "border": [ 10, 30, (initBegin_y + 27), (initBegin_x + 50) ],
+                "content": [ 8, 27, (initBegin_y + 28), (initBegin_x + 52) ]
             },
             "input": {
-                "border": [ (initBegin_y + 33), (initBegin_x + 1), (initBegin_y + 35), (initBegin_x + 80) ],
-                "content": [ 1, 72, (initBegin_y + 34), (initBegin_x + len(PROMPT) + 3) ],
-                "prompt": [ (initBegin_y + 34), (initBegin_x + 3) ]
+                "border": [ (initBegin_y + 37), initBegin_x, (initBegin_y + 39), (initBegin_x + 79) ],
+                "content": [ 1, 70, (initBegin_y + 38), (initBegin_x + len(PROMPT) + 3) ],
+                "prompt": [ (initBegin_y + 38), (initBegin_x + 2) ]
             },
             "msg": {
-                "border": [ 4, 109, (initBegin_y + 36), (initBegin_x + 1) ],
-                "content": [ 2, 105, (initBegin_y + 37), (initBegin_x + 3) ]
+                "border": [ 4, 111, (initBegin_y + 40), initBegin_x ],
+                "content": [ 2, 108, (initBegin_y + 41), (initBegin_x + 2) ]
             },
-            "stats": {
-                "border": [ 9, 28, initBegin_y, (initBegin_x + 82) ],
-                "content": [ 7, 24, (initBegin_y + 1), (initBegin_x + 84) ]
-            },
-            "inventory": {
-                "border": [ 27, 28, (initBegin_y + 9), (initBegin_x + 82) ],
-                "content": [ 25, 25, (initBegin_y + 10), (initBegin_x + 83) ]
-            },
-            "help": {
-                "border": [35, 55, (initBegin_y + 17), (initBegin_x + 27)],
-                "content": [33, 51, (initBegin_y + 18), (initBegin_x + 29)]
+            "character": {
+                "border": [ 40, 30, initBegin_y, (initBegin_x + 81) ],
+                "content": [ 38, 28, (initBegin_y + 1), (initBegin_x + 82) ]
             }
         }
 
@@ -123,9 +128,7 @@ def calculateWindows(height, width, max_y, max_x, ui):
         worldEventDims = worldSectionDims["events"]
         worldInputDims = worldSectionDims["input"]
         worldMsgDims = worldSectionDims["msg"]
-        worldStatDims = worldSectionDims["stats"]
-        worldInvDims = worldSectionDims["inventory"]
-        worldHelpDims = worldSectionDims["help"]
+        worldCharDims = worldSectionDims["character"]
 
     # battle section dimension map
     elif ui == "battle":
@@ -202,6 +205,7 @@ def setStyles():
         "DIM": curses.A_DIM,
         "BRIGHT": curses.A_BOLD,
         "BLINK": curses.A_BLINK,
+        "REVERSE": curses.A_REVERSE,
         "BLINK_BRIGHT": curses.A_BOLD + curses.A_BLINK,
         "BLINK_DIM": curses.A_DIM + curses.A_BLINK,
         "REVERSE_DIM": curses.A_REVERSE + curses.A_DIM,
@@ -253,7 +257,7 @@ def setStyles():
 def refreshInfo():
     dbs.getInventory()
     dbs.getStats()
-    dbs.getLocation()
+    dbs.updateLocation()
 
 # get the effects string for inventory and shop printouts
 def getEffectString(item):
@@ -331,9 +335,10 @@ def tempInv():
 
     # sort the list
     inv = sorted(inv)
+    count = len(dbs.playerInv["ITEMS"])
 
     # return the list
-    return inv
+    return inv, count
 
 # function to buy and sell items
 def itemTransaction(item, dowhat):

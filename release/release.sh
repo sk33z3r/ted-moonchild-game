@@ -1,19 +1,22 @@
 #!/usr/bin/env bash
 
+mkdir -p ./build
+commit=$(git rev-parse --short HEAD)
+
 case $1 in
     linux)
         echo "Building Linux Release..."
         echo "Cleaning up old builds..."
-        if [ -f ../ted-moonchild-linux* ]; then rm ../ted-moonchild-linux*; fi
+        if [ -f ./build/ted-moonchild-linux* ]; then rm ./build/ted-moonchild-linux*; fi
         cp ../*.py linux/
         cp -r ../json linux/
         cp ../dockerfiles/requirements.txt linux/
         cd linux
-        tar zcvf ../../ted-moonchild-linux_$(git rev-parse --short HEAD).tar.gz *
+        tar zcvf ../build/ted-moonchild-linux_$commit.tar.gz *
         echo "Cleaning up files..."
         rm -r *.py json/
         cd ..
-        echo "md5checksum: $(md5sum ../ted-moonchild-linux* | awk '{print $1}')"
+        echo "md5checksum: $(md5sum ./build/ted-moonchild-linux_$commit.tar.gz | awk '{print $1}')"
         echo "Build complete!"
     ;;
     windows)

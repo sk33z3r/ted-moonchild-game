@@ -1,9 +1,9 @@
 FROM python:3-alpine AS build
 # upgrade pip
 RUN pip install --upgrade pip
-# add openssh and clean
-RUN apk add --update gcc libc-dev jpeg-dev zlib-dev \
-&& rm  -rf /tmp/* /var/cache/apk/*
+# add build pkgs
+#RUN apk add --update gcc libc-dev jpeg-dev zlib-dev \
+#&& rm  -rf /tmp/* /var/cache/apk/*
 # install python modules
 ADD dockerfiles/requirements.txt /
 RUN pip install -r /requirements.txt

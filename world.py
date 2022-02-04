@@ -12,6 +12,12 @@ class worldUI():
     # updates room visited and solved status
     def updateRoomStatus(what):
 
+        # check if we're in the winnie or not
+        if dbs.ROOM.lower() in [ "winnibego", "space" ] or dbs.ROOM.endswith("Sector"):
+            space = True
+        else:
+            space = False
+
         # set the VISITED value
         if what == "VISITED":
             status = dbs.locationInfo["VISITED"]
@@ -25,12 +31,18 @@ class worldUI():
             # add an item to the ground if specified
             if "ADD_GROUND" in dbs.locationInfo:
                 for item in dbs.locationInfo["ADD_GROUND"]:
-                    dbs.locations.update_one( { "NAME": dbs.ROOM }, { "$push": { "GROUND" : item } } )
+                    if space is True:
+                        dbs.player.update_one( { "SECTION": "inventory" }, { "$push": { "WINNIE" : item } } )
+                    else:
+                        dbs.locations.update_one( { "NAME": dbs.ROOM }, { "$push": { "GROUND" : item } } )
 
             # remove an item from the ground if specified
             if "DEL_GROUND" in dbs.locationInfo:
                 for item in dbs.locationInfo["DEL_GROUND"]:
-                    dbs.locations.update_one( { "NAME": dbs.ROOM }, { "$pull": { "GROUND" : item } } )
+                    if space is True:
+                        dbs.player.update_one( { "SECTION": "inventory" }, { "$pull": { "WINNIE" : item } } )
+                    else:
+                        dbs.locations.update_one( { "NAME": dbs.ROOM }, { "$pull": { "GROUND" : item } } )
 
             # add a direction to the room if specified
             if "ADD_DIRS" in dbs.locationInfo:
@@ -90,7 +102,7 @@ class worldUI():
 
             # if the dialogue is taking up the whole window, we need to clear it and start writing at the beginning again
             if y >= 15:
-                eventWin.addstr(18, 4, ">>>>>", eng.c["BLINK_BRIGHT_YELLOW"])
+                eventWin.addstr(20, 65, ">>>>>", eng.c["BLINK_BRIGHT_YELLOW"])
                 sleep(speed)
                 y = 1
                 eventWin.clear()
@@ -114,13 +126,13 @@ class worldUI():
                 sleep(speed)
             if len(eventString) > 75 and len(eventString) < 150:
                 y += 3
-                sleep((speed + 1))
+                sleep((speed * 2))
             elif len(eventString) > 150 and len(eventString) < 225:
                 y += 4
-                sleep((speed + 2))
+                sleep((speed * 3))
             elif len(eventString) > 225 and len(eventString) < 300:
                 y += 5
-                sleep((speed + 3))
+                sleep((speed * 4))
 
     # display FIRST and KEY events to the EVENTS section
     def writeTimedEvents(speed, what):
@@ -147,7 +159,7 @@ class worldUI():
             if y >= 15:
 
                 # first give a visual warning
-                eventWin.addstr(18, 4, ">>>>>", eng.c["BLINK_BRIGHT_YELLOW"])
+                eventWin.addstr(20, 65, ">>>>>", eng.c["BLINK_BRIGHT_YELLOW"])
                 sleep(speed)
 
                 # then reset
@@ -173,13 +185,13 @@ class worldUI():
                 sleep(speed)
             if len(eventString) > 75 and len(eventString) < 150:
                 y += 3
-                sleep((speed + 1))
+                sleep((speed * 2))
             elif len(eventString) > 150 and len(eventString) < 225:
                 y += 4
-                sleep((speed + 2))
+                sleep((speed * 3))
             elif len(eventString) > 225 and len(eventString) < 300:
                 y += 5
-                sleep((speed + 3))
+                sleep((speed * 4))
 
     # display SOLVED and UNSOLVED events
     def writeStaticEvents(what):
@@ -236,9 +248,6 @@ class worldUI():
         # if this is to be the Winnibego
         if where == "winnibego":
 
-            # set the new room data
-            dbs.setLocation(room)
-
             # setup DOWN direction
             dbs.locations.update_one( { "NAME": "Winnibego" }, { "$set": { dbs.locationInfo["PLANET_DIRS"][dbs.PLANET][0] : dbs.locationInfo["PLANET_DIRS"][dbs.PLANET][1] } } )
             eng.refreshInfo()
@@ -266,9 +275,6 @@ class worldUI():
         # if this is to be Space
         elif where == "space":
 
-            # set new room data
-            dbs.setSpaceLocation(room)
-
             # get a list of directions that need to be displayed for this sector
             dirList = dbs.locationInfo["SECTOR_DIRS"][room]
 
@@ -294,14 +300,11 @@ class worldUI():
             titleWin.addstr(0, 0, title, eng.c["BRIGHT"])
 
             # display the space travel room
-            worldUI.writeSpaceEvents((eng.GAME_SPEED - 2), room)
+            worldUI.writeSpaceEvents((eng.GAME_SPEED), room)
             worldUI.updateSectorStatus(room)
 
         # default to being a Planet
         elif where == "planet":
-
-            # set new room data
-            dbs.setLocation(room)
 
             # refresh new data
             eng.refreshInfo()
@@ -343,39 +346,46 @@ class worldUI():
         shopItems = dbs.locationInfo["SHOP"]
 
         # set the starting line for text
-        y = 0
+        y = 1
 
         # for each item in the rooms SHOP list
         for item in shopItems:
 
+            beginning = y
+
             # set some vars
             itemInfo = dbs.items.find_one( { "NAME": item } )
-            effectString = eng.getEffectString(item)
-            nameString = "{0} {1}".format(itemInfo["NAME"], effectString)
+            nameString = "{0: <14}".format(itemInfo["NAME"])
+            effectString = "{0: <14}".format(eng.getEffectString(item))
+            floydsString = "{0: <7} {1: <6}".format("FLOYDS:", str(itemInfo["VALUE"]))
 
             # print the name in bold
-            eventWin.addstr(y, 0, nameString, eng.c["BRIGHT"])
-
-            # move to next line
+            eventWin.addstr(y, 0, nameString, eng.c["DIM"])
             y += 1
+            eventWin.addstr(y, 0, effectString, eng.c["DIM_YELLOW"])
+            y += 1
+            eventWin.addstr(y, 0, floydsString, eng.c["DIM_GREEN"])
+
+            # move back to first line
+            y = beginning
+
+            # wrap the description text to fit
+            itemDesc = wrap(itemInfo["LONGDESC"], 60)
 
             # wrap the LONGDESC to fit the window before displaying it
-            eventWin.addstr(y, 0, '\n'.join(wrap(itemInfo["LONGDESC"], 75)), eng.c["DIM"])
+            l = 0
+            while l < len(itemDesc):
+                eventWin.addstr(y, 15, "{0: <60}".format(itemDesc[l]), eng.c["DIM"])
+                y += 1
+                l += 1
 
             # add empty lines appropriately if the above string is long enough
-            if len(itemInfo["LONGDESC"]) < 76:
-                y += 1
+            if len(itemInfo["LONGDESC"]) > 180:
+                y += 3
             else:
                 y += 2
 
-            # display the value in green
-            floydsString = "[FLOYDS: {0}]".format(str(itemInfo["VALUE"]))
-            eventWin.addstr(y, 0, floydsString, eng.c["GREEN"])
-
-            # add newline between items
-            y += 2
-
-    # function to write the SHOP menu in the EVENTS section
+    # function to write the HELP screen in the EVENTS section
     def writeHelp():
 
         # clear the EVENTS section first
@@ -385,36 +395,98 @@ class worldUI():
         eventWin.clear()
 
         # print the help text to screen
-        eventWin.addstr(1, 0, "           TED MOONCHILD AND THE ROADIES IN SPACE: THE COMMANDS", eng.c["BRIGHT_YELLOW"])
-        eventWin.addstr(2, 0, "   CHANGE ROOMS BY TYPING A DIRECTION, OR THE FIRST LETTER OF A DIRECTION   ", eng.c["REVERSE_DIM_YELLOW"])
-        eventWin.addstr(4, 0, "BASIC Commands:                           SHOP Commands:", eng.c["MAGENTA"])
-        eventWin.addstr(5, 0, "    save - save progress                  shop - display the room's stock", eng.c["DIM"])
-        eventWin.addstr(6, 0, "    quit - save game and exit             sell - sell an item", eng.c["DIM"])
-        eventWin.addstr(7, 0, "    help - this help message               buy - buy an item", eng.c["DIM"])
-        eventWin.addstr(9, 0, "ITEM Commands:                            CONSUME Commands:", eng.c["MAGENTA"])
-        eventWin.addstr(10, 0, "    look - look at an item or the room     eat - consume food for effects", eng.c["DIM"])
-        eventWin.addstr(11, 0, "    take - take an item                  drink - drink for effects", eng.c["DIM"])
-        eventWin.addstr(12, 0, "    drop - drop an item on the ground    smoke - smoke for effects", eng.c["DIM"])
-        eventWin.addstr(13, 0, "   equip - equip an item                 snort - consume drugs for effects", eng.c["DIM"])
-        eventWin.addstr(14, 0, " unequip - remove an equipped item", eng.c["DIM"])
-        eventWin.addstr(15, 0, "     use - use a key item", eng.c["DIM"])
-        eventWin.addstr(17, 0, "    Some items can be combined:        (There are lots of alternate words   ", eng.c["DIM_GREEN"])
-        eventWin.addstr(18, 0, "      use [item] with [item]               to consume items. Try some!)     ", eng.c["DIM_GREEN"])
+        eventWin.addstr(1, 0, "{0: ^76}".format("TED MOONCHILD AND THE ROADIES IN SPACE: THE COMMANDS"), eng.c["BRIGHT_YELLOW"])
+        eventWin.addstr(3, 0, "{0: ^76}".format("CHANGE ROOMS BY TYPING A DIRECTION, OR THE FIRST LETTER OF A DIRECTION"), eng.c["REVERSE_DIM_MAGENTA"])
+        eventWin.addstr(4, 0, "{0: ^76}".format("TYPICAL COMMAND USAGE: [command] [item/room/direction]"), eng.c["REVERSE_DIM_MAGENTA"])
+
+        eventWin.addstr(6, 0, "{0: <38} {1: <38}".format("BASIC Commands", "SHOP Commands"), eng.c["MAGENTA"])
+
+        eventWin.addstr(7, 3, "{0: >4}:".format("save"))
+        eventWin.addstr(8, 3, "{0: >4}:".format("quit"))
+        eventWin.addstr(9, 3, "{0: >4}:".format("help"))
+        eventWin.addstr(7, 41, "{0: >4}:".format("shop"))
+        eventWin.addstr(8, 41, "{0: >4}:".format("sell"))
+        eventWin.addstr(9, 41, "{0: >4}:".format("buy"))
+
+        eventWin.addstr(7, 9, "{0: <24}".format("save progress"), eng.c["DIM"])
+        eventWin.addstr(8, 9, "{0: <24}".format("save game and exit"), eng.c["DIM"])
+        eventWin.addstr(9, 9, "{0: <24}".format("this help message"), eng.c["DIM"])
+        eventWin.addstr(7, 47, "{0: <24}".format("display the room's stock"), eng.c["DIM"])
+        eventWin.addstr(8, 47, "{0: <24}".format("sell an item"), eng.c["DIM"])
+        eventWin.addstr(9, 47, "{0: <24}".format("buy an item"), eng.c["DIM"])
+
+        eventWin.addstr(11, 0, "{0: <38} {1: <38}".format("ITEM Commands", "CONSUME Commands"), eng.c["MAGENTA"])
+
+        eventWin.addstr(12, 0, "{0: >7}:".format("look"))
+        eventWin.addstr(13, 0, "{0: >7}:".format("take"))
+        eventWin.addstr(14, 0, "{0: >7}:".format("drop"))
+        eventWin.addstr(15, 0, "{0: >7}:".format("equip"))
+        eventWin.addstr(16, 0, "{0: >7}:".format("unequip"))
+        eventWin.addstr(17, 0, "{0: >7}:".format("use"))
+        eventWin.addstr(12, 40, "{0: >5}:".format("eat"))
+        eventWin.addstr(13, 40, "{0: >5}:".format("drink"))
+        eventWin.addstr(14, 40, "{0: >5}:".format("smoke"))
+        eventWin.addstr(15, 40, "{0: >5}:".format("snort"))
+
+        eventWin.addstr(12, 9, "look at an item or the room", eng.c["DIM"])
+        eventWin.addstr(13, 9, "take an item", eng.c["DIM"])
+        eventWin.addstr(14, 9, "drop an item on the ground", eng.c["DIM"])
+        eventWin.addstr(15, 9, "equip an item", eng.c["DIM"])
+        eventWin.addstr(16, 9, "remove an equipped item", eng.c["DIM"])
+        eventWin.addstr(17, 9, "use a key item", eng.c["DIM"])
+        eventWin.addstr(12, 47, "consume food for effects", eng.c["DIM"])
+        eventWin.addstr(13, 47, "drink for effects", eng.c["DIM"])
+        eventWin.addstr(14, 47, "smoke for effects", eng.c["DIM"])
+        eventWin.addstr(15, 47, "consume drugs for effects", eng.c["DIM"])
+
+        eventWin.addstr(19, 0, "{0: ^36}".format("Some items can be combined:"), eng.c["DIM_YELLOW"])
+        eventWin.addstr(20, 0, "{0: ^36}".format("use [item] with [item]"), eng.c["DIM_YELLOW"])
+
+        eventWin.addstr(18, 37, "{0: ^38}".format("There are lots of alternate words"), eng.c["DIM_GREEN"])
+        eventWin.addstr(19, 37, "{0: ^38}".format("for consuming items. Try different"), eng.c["DIM_GREEN"])
+        eventWin.addstr(20, 37, "{0: ^38}".format("words with different items!"), eng.c["DIM_GREEN"])
 
     # function to write the GROUND section
-    def writeGround():
+    def writeGround(where):
 
         # set the list of items on the ground
-        groundList = list(dbs.locationInfo["GROUND"])
+        # if this is the winnie, we need to grab special inventory
+        if where.lower() in [ "winnibego", "space" ] or where.endswith("Sector"):
+            groundList = list(dbs.playerInv["WINNIE"])
+
+        # otherwise get the room's ground items
+        else:
+            groundList = list(dbs.locationInfo["GROUND"])
+
+        count = len(groundList)
+        cap = 10
+        capacity = " WINNIBEGO STORAGE: {0}/{1} ".format(count, cap)
 
         # if there are no items, clear the window, otherwise print a list of items
         if len(groundList) == 0:
             groundWin.clear()
+            groundBorder.clear()
+            groundBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
+
+            if dbs.ROOM in [ "Winnibego", "Space" ]:
+                x = 48 - len(capacity)
+                groundBorder.addstr(0, x, capacity, eng.c["DIM"])
+            else:
+                groundBorder.addstr(0, 40, " GROUND ", eng.c["DIM"])
+
             pass
 
         # otherwise get to printin'
         else:
             groundWin.clear()
+            groundBorder.clear()
+            groundBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
+
+            if dbs.ROOM in [ "Winnibego", "Space" ]:
+                x = 48 - len(capacity)
+                groundBorder.addstr(0, x, capacity, eng.c["DIM"])
+            else:
+                groundBorder.addstr(0, 40, " GROUND ", eng.c["DIM"])
 
             # get a count of each item in the ITEMS list only
             itemCount = {}
@@ -425,7 +497,7 @@ class worldUI():
                     itemCount[item] = 1
 
             # set starting rows and columns in the window
-            y, x, l = 1, 0, 0
+            y, x, l = 1, 1, 0
 
             # for each item on the ground
             for item in set(groundList):
@@ -452,7 +524,7 @@ class worldUI():
                     y = 1
 
                     # move to the next column
-                    x = l + x + 3
+                    x = l + x + 2
 
                     # reset longest string length to 0
                     l = 0
@@ -486,7 +558,7 @@ class worldUI():
         eventWin.clear()
 
         # make sure GROUND and EXITS are still visible
-        worldUI.writeGround()
+        worldUI.writeGround(room)
         worldUI.writeDirs()
 
         # if this is to be a room
@@ -529,11 +601,13 @@ class worldUI():
         msgWin.addstr(0, 0, msg, eng.c[style])
 
     # funcion to clear and write the STATS section
-    def writeStats():
+    def writeChar():
 
         # clear and refresh info
-        statsWin.clear()
+        charWin.clear()
         eng.refreshInfo()
+
+        charWin.addstr(7, 0, "{0: ^28}".format("EQUIPPED"), eng.c["REVERSE_DIM_CYAN"])
 
         # put the stat values into a dict
         stats = {
@@ -548,40 +622,36 @@ class worldUI():
         }
 
         # setup stat display
-        stat1 = 'HEALTH: {hp}/{hpmax}'.format(**stats)
-        stat2 = '  MOJO: {mp}/{mpmax}'.format(**stats)
-        stat3 = '   LVL: {lvl}'.format(**stats)
-        stat4 = '    XP: {xp}/{lvlReq}'.format(**stats)
-        stat5 = 'FLOYDS: {floyds}'.format(**stats)
+        stat1 = "{0: >10} {hp: >6} / {hpmax: <6}".format("HEALTH:", **stats)
+        stat2 = "{0: >10} {mp: >6} / {mpmax: <6}".format("MOJO:", **stats)
+        stat3 = "{0: >10} {lvl: ^15}".format("LEVEL:", **stats)
+        stat4 = "{0: >10} {xp: >6} / {lvlReq: <6}".format("TO NEXT:", **stats)
+        stat5 = "{0: >10} {floyds: ^15}".format("FLOYDS:", **stats)
 
         # print the strings to the stats wndow
-        statsWin.addstr(1, 4, stat1, eng.c["RED"])
-        statsWin.addstr(2, 4, stat2, eng.c["BLUE"])
-        statsWin.addstr(3, 4, stat3, eng.c["YELLOW"])
-        statsWin.addstr(4, 4, stat4, eng.c["YELLOW"])
-        statsWin.addstr(5, 4, stat5, eng.c["GREEN"])
-
-    # function to clear and write the INVENTORY section
-    def writeInv():
-
-        # clear and refresh info
-        invWin.clear()
-        invBorder.clear()
-        invBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
-        invBorder.addstr(0, 2, " INVENTORY ", eng.c["DIM"])
-        eng.refreshInfo()
+        charWin.addstr(1, 0, stat1, eng.c["RED"])
+        charWin.addstr(2, 0, stat2, eng.c["BLUE"])
+        charWin.addstr(3, 0, stat3, eng.c["YELLOW"])
+        charWin.addstr(4, 0, stat4, eng.c["YELLOW"])
+        charWin.addstr(5, 0, stat5, eng.c["GREEN"])
 
         # get and sort all item lists individually
         i = list(dbs.playerInv["ITEMS"])
         k = list(dbs.playerInv["KEY_ITEMS"])
+
+        count = len(i)
+        cap = dbs.playerInv["CAP"]
+
+        headerString = "INVENTORY ({0}/{1})".format(count, cap)
+        charWin.addstr(13, 0, "{0: ^28}".format(headerString), eng.c["REVERSE_DIM"])
+        charWin.addstr(14, 0, "{0: >4} {1: <14} {2: <8}".format('#', 'ITEM', 'EFFECT'), eng.c["REVERSE_DIM"])
 
         # sort the lists
         i = sorted(i)
         k = sorted(k)
 
         # if there are no items, print a message
-        if len(i) == 0 and len(k) == 0 and len(e) == 0:
-            writeMsg("Ted doesn't have shit in his pockets!", "RED")
+        if len(i) == 0 and len(k) == 0:
             return
 
         # get a count of each item in the ITEMS list only
@@ -593,43 +663,34 @@ class worldUI():
                 itemCount[item] = 1
 
         # set starting line in the window
-        s = 3
-
-        invBorder.addstr(2, 1, "{0: >3} {1: <13} {2: <8}".format('#', 'Item', 'Effect'), eng.c["REVERSE_DIM"])
+        s = 16
 
         # print items from ITEMS with their item count
         if len(i) != 0:
             for item in set(i):
                 effectString = eng.getEffectString(item)
-                itemString = "{0:>2}x {1:<13} {2:<7}".format(str(itemCount[item]), item, effectString)
-                invWin.addstr(s, 0, itemString)
+                itemString = "{0: >3}x {1: <14} {2: <8}".format(str(itemCount[item]), item, effectString)
+                charWin.addstr(s, 0, itemString)
                 s += 1
             s += 1
 
         # print items from KEY_ITEMS
         if len(k) != 0:
-            invBorder.addstr((s + 1), 1, "  KEY ITEMS               ", eng.c["REVERSE_DIM_YELLOW"])
+            charWin.addstr(s, 0, "{0: ^28}".format("KEY ITEMS"), eng.c["REVERSE_DIM_YELLOW"])
             s += 2
             for item in set(k):
-                invWin.addstr(s, 2, item, eng.c["YELLOW"])
+                charWin.addstr(s, 2, item, eng.c["YELLOW"])
                 s += 1
 
-        # print EQUIPPED header
-        s += 1
-        invBorder.addstr((s + 1), 1, "  EQUIPPED                ", eng.c["REVERSE_DIM_CYAN"])
-        s += 2
-
         # setup strings
-        headString = "HEAD: {0}".format(dbs.playerEquip["HEAD"])
-        instString = "INST: {0}".format(dbs.playerEquip["INSTRUMENT"])
-        fxString = "FX: {0}".format(dbs.playerEquip["FX"])
+        headString = "{0: >9} {1: ^15}".format("HEAD:", dbs.playerEquip["HEAD"])
+        instString = "{0: >9} {1: ^15}".format("INST:", dbs.playerEquip["INSTRUMENT"])
+        fxString = "{0: >9} {1: ^15}".format("FX:", dbs.playerEquip["FX"])
 
         # display the strings
-        invWin.addstr(s, 2, headString, eng.c["CYAN"])
-        s += 1
-        invWin.addstr(s, 2, instString, eng.c["CYAN"])
-        s += 1
-        invWin.addstr(s, 4, fxString, eng.c["CYAN"])
+        charWin.addstr(9, 0, headString, eng.c["CYAN"])
+        charWin.addstr(10, 0, instString, eng.c["CYAN"])
+        charWin.addstr(11, 0, fxString, eng.c["CYAN"])
 
     # function to move the player from room to room
     def moveDirection(direction):
@@ -659,42 +720,42 @@ class worldUI():
         if upper in dbs.locationInfo:
 
             # make sure to set the Winnibego's current planet before we move, just in case the player is stepping into the Winnie itself
-            dbs.locations.update_one( { "NAME": "Winnibego" }, { "$set": { "PLANET": dbs.locations.find_one( { "NAME": dbs.ROOM } )["PLANET"] } } )
+            dbs.locations.update_one( { "NAME": "Winnibego" }, { "$set": { "PLANET": dbs.PLANET } } )
+            dbs.locations.update_one( { "NAME": "Space" }, { "$set": { "SECTOR": dbs.SECTOR } } )
+
+            # set the new location
+            if dbs.locationInfo[upper].endswith("Sector"):
+                dbs.setSpaceLocation(dbs.locationInfo[upper])
+            else:
+                dbs.setLocation(dbs.locationInfo[upper])
 
             # if combat should happen, make it happen
-            if combatCheck > 40:
-                # TODO combatMode().fight()
-                worldUI.writeLocation(dbs.locationInfo[upper], "room", False)
+            if combatCheck > 40 and dbs.locationInfo["BATTLES"] is True:
+
+                battleUI.build(screen)
+                worldUI.rewriteUI()
+                worldUI.writeLocation(dbs.locationInfo["NAME"], "room", False)
 
             # otherwise move to the new room
             else:
-                worldUI.writeLocation(dbs.locationInfo[upper], "room", False)
+                worldUI.writeLocation(dbs.locationInfo["NAME"], "room", False)
 
         # let the player know if the direction can't be found
         else:
             worldUI.writeMsg("Ted can't walk through walls.", "RED")
 
-    # function to initialize the UI and get user input
-    def displayWorld():
-
-        # write all data to the screen
-        worldUI.writeStats()
-        worldUI.writeInv()
-        worldUI.writeMsg("", "DIM")
-        worldUI.writeLocation(dbs.ROOM, "room", False)
-
-        # main command input loop
-        while True:
-            userInput = worldUI.getCmd()
-            worldUI.processCmd(userInput)
-
     # function specifically to parse commands and run their relevant functions
     def runAction(cmd, arg):
 
         # setup the environment
-        inv = eng.tempInv()
-        itemOnGround = eng.getFirstItemMatchingDesc(arg, dbs.locationInfo["GROUND"])
+        inv, count = eng.tempInv()
         itemInInv = eng.getFirstItemMatchingDesc(arg, inv)
+
+        # check if we're in the winnie or not
+        if dbs.ROOM.lower() in [ "winnibego", "space" ] or dbs.ROOM.endswith("Sector"):
+            itemOnGround = eng.getFirstItemMatchingDesc(arg, dbs.playerInv["WINNIE"])
+        else:
+            itemOnGround = eng.getFirstItemMatchingDesc(arg, dbs.locationInfo["GROUND"])
 
         # some times an item might not be in the SHOP, let's make sure to catch the exception
         try:
@@ -717,9 +778,22 @@ class worldUI():
         # look (room|item|direction)
         elif cmd == "look":
 
+            # get a list of room names from the available exits in this room
+            exits = {}
+            for direction in eng.LONG_DIRS:
+                try:
+                    exits[dbs.locationInfo[direction.upper()].lower()] = direction.upper()
+                except:
+                    pass
+
             # with no specifics given, assume the player wants to refresh the room event
             if arg == None or arg in eng.ROOM_WORDS:
                 worldUI.writeLocation(dbs.ROOM, "room", False)
+
+            # if the arg is a name in available exits
+            elif arg in exits.keys():
+                roomInDirection = dbs.locations.find_one( { "NAME": dbs.locationInfo[exits[arg]] } )
+                worldUI.writeMsg(roomInDirection["SHORTDESC"][1], roomInDirection["SHORTDESC"][0])
 
             # if the arg is a direction
             elif arg in eng.LONG_DIRS or arg in eng.SHORT_DIRS:
@@ -728,30 +802,40 @@ class worldUI():
                 if arg in eng.SHORT_DIRS:
                     if arg == "n":
                         upper = "NORTH"
-                    if arg == "s":
+                    elif arg == "s":
                         upper = "SOUTH"
-                    if arg == "e":
+                    elif arg == "e":
                         upper = "EAST"
-                    if arg == "w":
+                    elif arg == "w":
                         upper = "WEST"
-                    if arg == "u":
+                    elif arg == "u":
                         upper = "UP"
-                    if arg == "d":
+                    elif arg == "d":
                         upper = "DOWN"
-                    else:
-                        # if there isn't a matching shortname, then make the arg uppercase
-                        upper = arg.upper()
+                else:
+                    # if there isn't a matching shortname, then make the arg uppercase
+                    upper = arg.upper()
 
                 # check if the direction exists in the current room
-                try:
+                if upper in dbs.locationInfo:
                     roomInDirection = dbs.locations.find_one( { "NAME": dbs.locationInfo[upper] } )
-                # if it doesn't print something whimsical
-                # TODO make this dialogue a list and choose one at random
-                except:
-                    worldUI.writeMsg("Ted cops a feel on the wall, hoping for a hidden latch or some secret button. All he finds is disappointment.", "DIM_RED")
-                # if it exists print a message with the shortdesc
-                else:
                     worldUI.writeMsg(roomInDirection["SHORTDESC"][1], roomInDirection["SHORTDESC"][0])
+
+                # if it doesn't print something whimsical
+                else:
+
+                    # list of responses
+                    msgList = [
+                        "Ted cops a feel on the wall, hoping for a hidden latch or some secret button. All he finds is disappointment.",
+                        "Ted stares at nothing for a while.",
+                        "I don't think there's anything to look at in that direction, Ted.",
+                        "Why don't you take a look somewhere else, Ted?",
+                        "Oh, look! Nothing."
+                    ]
+
+                    # pick a response randomly and display it
+                    message = choice(msgList)
+                    worldUI.writeMsg(message, "RED")
 
             # if the arg matches an item on the ground, display the info
             elif itemOnGround != None:
@@ -793,12 +877,16 @@ class worldUI():
                 if itemInfo["TAKEABLE"] == False:
                     worldUI.writeMsg("Ted doesn't want to grab that.", "RED")
 
+                # if the player is already carrying too much, let them know
+                elif count == dbs.playerInv["CAP"]:
+                    worldUI.writeMsg("Ted is already carrying too much, you need to drop something first!", "RED")
+
                 # otherwise take the item
                 elif itemInfo["TAKEABLE"] == True:
                     dbs.updateGround(itemInfo["NAME"], "del") # remove from ground
                     dbs.updateInv(itemInfo["NAME"], "add") # add to inventory
-                    worldUI.writeInv()
-                    worldUI.writeGround()
+                    worldUI.writeChar()
+                    worldUI.writeGround(dbs.locationInfo["NAME"])
                     message = "Ted grabs {0}.".format(itemInfo["SHORTDESC"])
                     worldUI.writeMsg(message, "DIM")
 
@@ -821,19 +909,29 @@ class worldUI():
                 # if it's a key item, tell the player not to drop it
                 if itemInfo["TYPE"] == "key":
                     worldUI.writeMsg("You don't wanna drop that, Ted. You might need it later!", "YELLOW")
+                    return
 
                 # if it's equipped, tell the player they need to unequip first
                 elif itemInInv in dbs.playerInv["EQUIPPED"]:
                     worldUI.writeMsg("You have to let go of that before you can drop it, Ted!", "CYAN")
+                    return
 
-                # otherwise drop the item
-                else:
-                    dbs.updateGround(itemInfo["NAME"], "add") # remove from ground
-                    dbs.updateInv(itemInfo["NAME"], "del") # add to inventory
-                    worldUI.writeInv()
-                    worldUI.writeGround()
-                    message = "Ted drops {0}.".format(itemInfo["SHORTDESC"])
-                    worldUI.writeMsg(message, "DIM")
+                elif dbs.ROOM in [ "Winnibego", "Space" ]:
+                    if len(list(dbs.playerInv["WINNIE"])) == 10:
+                        worldUI.writeMsg("There's too much shit in the Winnie, Ted. Clean this place up, will ya!", "RED")
+                        return
+
+                elif len(list(dbs.locationInfo["GROUND"])) == 10:
+                    worldUI.writeMsg("There's too many items on the ground, Ted.", "RED")
+                    return
+
+                # drop the item
+                dbs.updateGround(itemInfo["NAME"], "add") # remove from ground
+                dbs.updateInv(itemInfo["NAME"], "del") # add to inventory
+                worldUI.writeChar()
+                worldUI.writeGround(dbs.locationInfo["NAME"])
+                message = "Ted drops {0}.".format(itemInfo["SHORTDESC"])
+                worldUI.writeMsg(message, "DIM")
 
             # let the player know if the item can't be found anywhere
             else:
@@ -854,24 +952,21 @@ class worldUI():
                 # if the item is an instrument and not already equipped, equip it
                 if itemInfo["TYPE"] == "instrument" and itemInfo["NAME"] not in dbs.playerInv["EQUIPPED"]:
                     dbs.setInstrument(itemInfo["NAME"])
-                    worldUI.writeInv()
-                    worldUI.writeStats()
+                    worldUI.writeChar()
                     message = "Ted equipped {0}.".format(itemInfo["NAME"])
                     worldUI.writeMsg(message, "CYAN")
 
                 # if the item is an fx and not already equipped, equip it
                 elif itemInfo["TYPE"] == "fx" and itemInfo["NAME"] not in dbs.playerInv["EQUIPPED"]:
                     dbs.setFX(itemInfo["NAME"])
-                    worldUI.writeInv()
-                    worldUI.writeStats()
+                    worldUI.writeChar()
                     message = "Ted equipped {0}.".format(itemInfo["SHORTDESC"])
                     worldUI.writeMsg(message, "CYAN")
 
                 # if the item is head gear and not already equipped, equip it
                 elif itemInfo["TYPE"] == "head" and itemInfo["NAME"] not in dbs.playerInv["EQUIPPED"]:
                     dbs.setHead(itemInfo["NAME"])
-                    worldUI.writeInv()
-                    worldUI.writeStats()
+                    worldUI.writeChar()
                     message = "Ted equipped {0}.".format(itemInfo["SHORTDESC"])
                     worldUI.writeMsg(message, "CYAN")
 
@@ -899,27 +994,28 @@ class worldUI():
 
                 itemInfo = dbs.items.find_one( { "NAME": itemInInv } )
 
+                # if the player is already carrying too much, let them know
+                if count == dbs.playerInv["CAP"]:
+                    worldUI.writeMsg("Ted is carrying too much, you need to drop something before you can unequip this!", "RED")
+
                 # if the item is an instrument and equipped, reset to 'Fists'
-                if itemInfo["TYPE"] == "instrument" and itemInfo["NAME"] in dbs.playerInv["EQUIPPED"]:
+                elif itemInfo["TYPE"] == "instrument" and itemInfo["NAME"] in dbs.playerInv["EQUIPPED"]:
                     dbs.setInstrument("Fists")
-                    worldUI.writeInv()
-                    worldUI.writeStats()
+                    worldUI.writeChar()
                     message = "Ted unequipped {0}.".format(itemInfo["NAME"])
                     worldUI.writeMsg(message, "CYAN")
 
                 # if the item is an fx and equipped, reset to 'noFX'
                 elif itemInfo["TYPE"] == "fx" and itemInfo["NAME"] in dbs.playerInv["EQUIPPED"]:
                     dbs.setFX("noFX")
-                    worldUI.writeInv()
-                    worldUI.writeStats()
+                    worldUI.writeChar()
                     message = "Ted unequipped {0}.".format(itemInfo["SHORTDESC"])
                     worldUI.writeMsg(message, "CYAN")
 
                 # if the item is head gear and equipped, reset to 'Hair'
                 elif itemInfo["TYPE"] == "head" and itemInfo["NAME"] in dbs.playerInv["EQUIPPED"]:
                     dbs.setHead("Hair")
-                    worldUI.writeInv()
-                    worldUI.writeStats()
+                    worldUI.writeChar()
                     message = "Ted unequipped {0}.".format(itemInfo["SHORTDESC"])
                     worldUI.writeMsg(message, "CYAN")
 
@@ -939,7 +1035,7 @@ class worldUI():
                 worldUI.writeMsg("There's not a shop here to sell to, Ted!", "RED")
                 return
 
-            inv = eng.tempInv()
+            inv, count = eng.tempInv()
 
             # if the item is not in player's inventory, tell them
             if itemInInv not in inv:
@@ -956,12 +1052,13 @@ class worldUI():
             # otherwise sell the item
             else:
                 message = eng.itemTransaction(itemInInv, "sell")
-                worldUI.writeInv()
-                worldUI.writeStats()
+                worldUI.writeChar()
                 worldUI.writeMsg(message[0], message[1])
 
         # buy item
         elif cmd == "buy":
+
+            inv, count = eng.tempInv()
 
             # if the shop doesn't exist, tell the user
             if "SHOP" not in dbs.locationInfo:
@@ -973,11 +1070,14 @@ class worldUI():
                 worldUI.writeMsg("The shopkeep looks confused by that request. I don't think they have it, Ted.", "RED")
                 return
 
+            elif count == dbs.playerInv["CAP"]:
+                worldUI.writeMsg("You have too much shit, already Ted! Sell or drop something first.", "RED")
+                return
+
             # otherwise buy the item
             else:
                 message = eng.itemTransaction(itemInShop, "buy")
-                worldUI.writeInv()
-                worldUI.writeStats()
+                worldUI.writeChar()
                 worldUI.writeMsg(message[0], message[1])
 
         # smoke item
@@ -1001,8 +1101,7 @@ class worldUI():
                 # otherwise, smoke the item
                 else:
                     message = eng.useItem(itemInfo["NAME"])
-                    worldUI.writeInv()
-                    worldUI.writeStats()
+                    worldUI.writeChar()
                     worldUI.writeMsg(message[0], message[1])
 
             # let the player know if the item isn't found anywhere
@@ -1030,8 +1129,7 @@ class worldUI():
                 # otherwise use the item
                 else:
                     message = eng.useItem(itemInfo["NAME"])
-                    worldUI.writeInv()
-                    worldUI.writeStats()
+                    worldUI.writeChar()
                     worldUI.writeMsg(message[0], message[1])
 
             # let the player know if the item isn't found anywhere'
@@ -1059,8 +1157,7 @@ class worldUI():
                 # otherwise drink the item
                 else:
                     message = eng.useItem(itemInfo["NAME"])
-                    worldUI.writeInv()
-                    worldUI.writeStats()
+                    worldUI.writeChar()
                     worldUI.writeMsg(message[0], message[1])
 
             # let the player know if the item isn't found anywhere'
@@ -1088,8 +1185,7 @@ class worldUI():
                 # otherwise snort the item
                 else:
                     message = eng.useItem(itemInfo["NAME"])
-                    worldUI.writeInv()
-                    worldUI.writeStats()
+                    worldUI.writeChar()
                     worldUI.writeMsg(message[0], message[1])
 
             # let the player know if the item isn't found anywhere
@@ -1102,8 +1198,14 @@ class worldUI():
             worldUI.writeMsg(message[0], message[1])
 
         # battle
-        elif cmd == "fight" or cmd == "battle":
-            battleUI.build(screen)
+        elif cmd in [ "fight", "battle" ]:
+
+            # only run the command if debug is enabled
+            if eng.DEBUG is True:
+                global exit_battle
+                exit_battle = battleUI.build(screen)
+            else:
+                worldUI.writeMsg("Ted doesn't understand what you want to do.", "RED")
 
         # help
         elif cmd == "help":
@@ -1111,11 +1213,14 @@ class worldUI():
 
         # exit
         elif cmd == "quit" or cmd == "exit":
+
+            global exit_game
+
             message = dbs.saveGame()
             worldUI.writeMsg(message[0], message[1])
             sleep(2)
             worldUI.clearAllScreens()
-            exitGame()
+            exit_game = True
 
         # catch possible exceptions
         else:
@@ -1126,7 +1231,7 @@ class worldUI():
 
         # setup common vars
         cmd = args[0]
-        inv = eng.tempInv()
+        inv, count = eng.tempInv()
 
         # if 'with' doesn't appear in the command, then do a single item
         try:
@@ -1242,10 +1347,41 @@ class worldUI():
     def rewriteScreen():
 
         # rewrites current data into their sections
-        worldUI.writeInv()
-        worldUI.writeStats()
-        worldUI.writeGround()
+        worldUI.writeChar()
+        worldUI.writeGround(dbs.locationInfo["NAME"])
         worldUI.writeDirs()
+
+    # function to initialize the UI and get user input
+    def displayWorld():
+
+        global exit_game
+        global exit_battle
+
+        # write all data to the screen
+        worldUI.writeChar()
+        worldUI.writeMsg("", "DIM")
+        worldUI.writeLocation(dbs.ROOM, "room", False)
+
+        # set initial state of when to change to each UI
+        exit_battle = False
+        exit_game = False
+
+        # main command input loop
+        while exit_game is False:
+            userInput = worldUI.getCmd()
+            worldUI.processCmd(userInput)
+
+            # if we just exited a battle, we need to redraw the screen sections
+            if exit_battle is True:
+
+                # write all data to the screen
+                worldUI.rewriteUI()
+                worldUI.writeChar()
+                worldUI.writeMsg("", "DIM")
+                worldUI.writeLocation(dbs.ROOM, "room", False)
+
+                # reset battle status
+                exit_battle = False
 
     # process the raw command received
     def processCmd(userInput):
@@ -1317,13 +1453,11 @@ class worldUI():
         screen.clear()
         titleBorder.clear()
         titleWin.clear()
-        statsBorder.clear()
-        statsWin.clear()
+        charBorder.clear()
+        charWin.clear()
         inputWin.clear()
         msgBorder.clear()
         msgWin.clear()
-        invBorder.clear()
-        invWin.clear()
         eventBorder.clear()
         eventWin.clear()
         groundBorder.clear()
@@ -1331,20 +1465,52 @@ class worldUI():
         exitBorder.clear()
         exitWin.clear()
 
+    def rewriteUI():
+
+        # refresh info in memory
+        eng.refreshInfo()
+
+        # LOCATION
+        titleBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
+        titleBorder.addstr(0, 68, " LOCATION ", eng.c["DIM"])
+
+        # GROUND
+        groundBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
+        groundBorder.addstr(0, 40, " GROUND ", eng.c["DIM"])
+
+        # EXITS
+        exitBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll)
+        exitBorder.addstr(0, 21, " EXITS ", eng.c["DIM"])
+
+        # EVENTS / SHOP
+        eventBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
+
+        # PROMPT
+        # define the border
+        rectangle(screen, eng.worldInputDims["border"][0], eng.worldInputDims["border"][1], eng.worldInputDims["border"][2], eng.worldInputDims["border"][3])
+        # place PROMPT in the input window
+        screen.addstr(eng.worldInputDims["prompt"][0], eng.worldInputDims["prompt"][1], eng.PROMPT, eng.c["RED"])
+
+        # MESSAGES
+        msgBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
+        msgBorder.addstr(0, 83, " MESSAGES ", eng.c["DIM"])
+
+        # CHARACTER
+        charBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
+        charBorder.addstr(0, 2, " TED MOONCHILD ", eng.c["DIM"])
+
     # define the main world UI screen boundaries
     def build(stdscr):
 
         # define globals
         global titleBorder
         global titleWin
-        global statsBorder
-        global statsWin
+        global charBorder
+        global charWin
         global inputWin
         global inputCmd
         global msgBorder
         global msgWin
-        global invBorder
-        global invWin
         global eventBorder
         global eventWin
         global groundBorder
@@ -1356,12 +1522,13 @@ class worldUI():
         global max_x
         global max_y
         global screen
+        global invStart
 
         screen = stdscr
 
         # define max size
-        max_x = 110
-        max_y = 40
+        max_x = 111
+        max_y = 43
 
         # get current terminal size and setup UI positions
         height, width = stdscr.getmaxyx()
@@ -1401,7 +1568,7 @@ class worldUI():
         exitBorder = stdscr.subwin(eng.worldExitDims["border"][0], eng.worldExitDims["border"][1], eng.worldExitDims["border"][2], eng.worldExitDims["border"][3])
         exitBorder.immedok(True)
         exitBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll)
-        exitBorder.addstr(0, 20, " EXITS ", eng.c["DIM"])
+        exitBorder.addstr(0, 21, " EXITS ", eng.c["DIM"])
         # define the content area
         exitWin = stdscr.subwin(eng.worldExitDims["content"][0], eng.worldExitDims["content"][1], eng.worldExitDims["content"][2], eng.worldExitDims["content"][3])
         exitWin.immedok(True)
@@ -1435,25 +1602,16 @@ class worldUI():
         msgWin = stdscr.subwin(eng.worldMsgDims["content"][0], eng.worldMsgDims["content"][1], eng.worldMsgDims["content"][2], eng.worldMsgDims["content"][3])
         msgWin.immedok(True)
 
-        # STATS
+        # CHARACTER
         # define the border
-        statsBorder = stdscr.subwin(eng.worldStatDims["border"][0], eng.worldStatDims["border"][1], eng.worldStatDims["border"][2], eng.worldStatDims["border"][3])
-        statsBorder.immedok(True)
-        statsBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
-        statsBorder.addstr(0, 2, " STATS ", eng.c["DIM"])
+        charBorder = stdscr.subwin(eng.worldCharDims["border"][0], eng.worldCharDims["border"][1], eng.worldCharDims["border"][2], eng.worldCharDims["border"][3])
+        charBorder.immedok(True)
+        charBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
+        charBorder.addstr(0, 2, " TED MOONCHILD ", eng.c["DIM"])
+        invStart = 22
         # define the content area
-        statsWin = stdscr.subwin(eng.worldStatDims["content"][0], eng.worldStatDims["content"][1], eng.worldStatDims["content"][2], eng.worldStatDims["content"][3])
-        statsWin.immedok(True)
-
-        # INVENTORY
-        # define the border
-        invBorder = stdscr.subwin(eng.worldInvDims["border"][0], eng.worldInvDims["border"][1], eng.worldInvDims["border"][2], eng.worldInvDims["border"][3])
-        invBorder.immedok(True)
-        invBorder.border(eng.lb, eng.rb, eng.tb, eng.bb, eng.tl, eng.tr, eng.ll, eng.lr)
-        invBorder.addstr(0, 2, " INVENTORY ", eng.c["DIM"])
-        # define content area
-        invWin = stdscr.subwin(eng.worldInvDims["content"][0], eng.worldInvDims["content"][1], eng.worldInvDims["content"][2], eng.worldInvDims["content"][3])
-        invWin.immedok(True)
+        charWin = stdscr.subwin(eng.worldCharDims["content"][0], eng.worldCharDims["content"][1], eng.worldCharDims["content"][2], eng.worldCharDims["content"][3])
+        charWin.immedok(True)
 
         # run the world command loop
         worldUI.displayWorld()
