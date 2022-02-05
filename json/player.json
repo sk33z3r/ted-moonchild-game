@@ -33,7 +33,7 @@
         "INSTRUMENT": "Fists",
         "FX": "noFX",
         "HEAD": "Hair",
-        "ATTACKS": [ "Punch" ],
+        "ATTACKS": [ "PUNCH" ],
         "MOJO": []
     }
 ]

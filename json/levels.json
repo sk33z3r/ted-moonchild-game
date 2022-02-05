@@ -5,7 +5,7 @@
         "HPMAX": 75,
         "MPMAX": 25,
         "SP": 0,
-        "ABILITIES": [ "Punch" ],
+        "ABILITIES": [ "PUNCH" ],
         "MSG": [ "Welcome to Level 1!" ]
     },
     {
@@ -14,7 +14,7 @@
         "HPMAX": 150,
         "MPMAX": 50,
         "SP": 5,
-        "ABILITIES": [ "Rising Force", "Headbang" ],
+        "ABILITIES": [ "RISING FORCE", "HEADBANG" ],
         "MSG": [ "HP +, MP +!", "Ted learned new combat abilities: Headbang, Rising Force!" ]
     },
     {
@@ -23,7 +23,7 @@
         "HPMAX": 225,
         "MPMAX": 75,
         "SP": 5,
-        "ABILITIES": [ "Purple Rain" ],
+        "ABILITIES": [ "PURPLE RAIN" ],
         "MSG": [ "HP +, MP +!", "Ted learned new combat ability: Purple Rain!" ]
     },
     {

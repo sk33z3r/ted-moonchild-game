@@ -1,24 +1,24 @@
 [
     {
-        "NAME": "Punch",
+        "NAME": "PUNCH",
         "HEROMIN": 2,
         "HEROMAX": 5,
         "TYPE": "physical"
     },
     {
-        "NAME": "Headbang",
+        "NAME": "HEADBANG",
         "HEROMIN": 4,
         "HEROMAX": 8,
         "TYPE": "physical"
     },
     {
-        "NAME": "Rising Force",
+        "NAME": "RISING FORCE",
         "MPREQ": 5,
         "DMG": 10,
         "TYPE": "mojo"
     },
     {
-        "NAME": "Purple Rain",
+        "NAME": "PURPLE RAIN",
         "MPREQ": 8,
         "DMG": 15,
         "TYPE": "mojo"
