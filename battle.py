@@ -66,7 +66,10 @@ class Menu(object):
 
             # if it's ENTER, run the command at the current position
             if key in [ curses.KEY_ENTER, ord("\n"), ord(" "), 343 ]:
+
                 self.items[self.position][1]()
+
+                # exit the loop if requested
                 if exit_battle is True:
                     break
 
@@ -76,31 +79,36 @@ class Menu(object):
                 try:
                     # get the current position of the click
                     _, mx, my, _, _ = curses.getmouse()
+                    cy, cx = self.window.getbegyx()
 
                     # top-left
-                    if 50 <= mx <= 69 and 35 <= my <= 37:
+                    if (cx + 2) <= mx <= (cx + 21) and (cy + 1) <= my <= (cy + 3):
                         self.position = 0
-                        self.items[0][1]()
+                        self.items[self.position][1]()
 
                     # bottom-left
-                    elif 50 <= mx <= 69 and 39 <= my <= 41 and len(self.items) > 2:
+                    elif (cx + 2) <= mx <= (cx + 21) and (cy + 5) <= my <= (cy + 7) and len(self.items) > 2:
                         self.position = 2
-                        self.items[2][1]()
+                        self.items[self.position][1]()
 
                     # top-right
-                    elif 72 <= mx <= 91 and 35 <= my <= 37 and len(self.items) > 1:
+                    elif (cx + 24) <= mx <= (cx + 43) and (cy + 1) <= my <= (cy + 3) and len(self.items) > 1:
                         self.position = 1
-                        self.items[1][1]()
+                        self.items[self.position][1]()
 
                     # bottom-right
-                    elif 72 <= mx <= 91 and 39 <= my <= 41 and len(self.items) > 3:
+                    elif (cx + 24) <= mx <= (cx + 43) and (cy + 5) <= my <= (cy + 7) and len(self.items) > 3:
                         self.position = 3
-                        self.items[3][1]()
-                        if exit_battle is True:
-                            break
+                        self.items[self.position][1]()
+
+                    # debug message
                     else:
                         if eng.DEBUG is True:
                             battleUI.writeLog("You clicked the mouse at {0}, {1}".format(mx, my), "CYAN")
+
+                    # exit the battle if requested
+                    if exit_battle is True:
+                        break
 
                 # if an ERR is encountered, ignore it and move on
                 except curses.error:
@@ -158,6 +166,176 @@ class Menu(object):
                 elif self.position == 3:
                     self.position = 3
 
+            if player_turn[0] is False:
+                break
+
+        # clear and hide the panel when the loop exits
+        self.window.clear()
+        self.panel.hide()
+        panel.update_panels()
+        curses.doupdate()
+
+class AbilityMenu(object):
+    def __init__(self, items, stdscr):
+        self.window = stdscr.subwin(eng.battleMenuDims["content"][0], eng.battleMenuDims["content"][1], eng.battleMenuDims["content"][2], eng.battleMenuDims["content"][3])
+        self.window.immedok(True)
+        self.window.keypad(True)
+        curses.mousemask(1)
+        self.panel = panel.new_panel(self.window)
+        self.panel.hide()
+        panel.update_panels()
+
+        self.position = 0
+        self.items = items
+
+    def display(self):
+        self.panel.top()
+        self.panel.show()
+        self.window.clear()
+
+        # main menu loop
+        while True:
+            self.window.refresh()
+            curses.doupdate()
+            pos = 1
+            for index, item in enumerate(self.items):
+
+                # define the style for active and inactive buttons
+                if index == self.position:
+                    # active
+                    style = "REVERSE"
+                else:
+                    # inactive
+                    style = "REVERSE_DIM"
+
+                # define each button's position
+                if pos == 1:
+                    self.window.addstr(1, 2, "{0: ^20}".format(""), eng.c[style])
+                    self.window.addstr(2, 2, "{0: ^20}".format(item[0]), eng.c[style])
+                    self.window.addstr(3, 2, "{0: ^20}".format(""), eng.c[style])
+                elif pos == 2:
+                    self.window.addstr(1, 24, "{0: ^20}".format(""), eng.c[style])
+                    self.window.addstr(2, 24, "{0: ^20}".format(item[0]), eng.c[style])
+                    self.window.addstr(3, 24, "{0: ^20}".format(""), eng.c[style])
+                elif pos == 3:
+                    self.window.addstr(5, 2, "{0: ^20}".format(""), eng.c[style])
+                    self.window.addstr(6, 2, "{0: ^20}".format(item[0]), eng.c[style])
+                    self.window.addstr(7, 2, "{0: ^20}".format(""), eng.c[style])
+                elif pos == 4:
+                    self.window.addstr(5, 24, "{0: ^20}".format(""), eng.c[style])
+                    self.window.addstr(6, 24, "{0: ^20}".format(item[0]), eng.c[style])
+                    self.window.addstr(7, 24, "{0: ^20}".format(""), eng.c[style])
+
+                pos += 1
+
+            # wait for the next key
+            key = self.window.getch()
+
+            # if it's ENTER, run the command at the current position
+            if key in [ curses.KEY_ENTER, ord("\n"), ord(" "), 343 ]:
+
+                self.items[self.position][1](self.items[self.position][0])
+
+                # exit the loop if requested
+                if exit_battle is True:
+                    break
+
+            # define clickable areas
+            elif key == curses.KEY_MOUSE:
+
+                try:
+                    # get the current position of the click
+                    _, mx, my, _, _ = curses.getmouse()
+                    cy, cx = self.window.getbegyx()
+
+                    # top-left
+                    if (cx + 2) <= mx <= (cx + 21) and (cy + 1) <= my <= (cy + 3):
+                        self.position = 0
+                        self.items[self.position][1](self.items[self.position][0])
+
+                    # bottom-left
+                    elif (cx + 2) <= mx <= (cx + 21) and (cy + 5) <= my <= (cy + 7) and len(self.items) > 2:
+                        self.position = 2
+                        self.items[self.position][1](self.items[self.position][0])
+
+                    # top-right
+                    elif (cx + 24) <= mx <= (cx + 43) and (cy + 1) <= my <= (cy + 3) and len(self.items) > 1:
+                        self.position = 1
+                        self.items[self.position][1](self.items[self.position][0])
+
+                    # bottom-right
+                    elif (cx + 24) <= mx <= (cx + 43) and (cy + 5) <= my <= (cy + 7) and len(self.items) > 3:
+                        self.position = 3
+                        self.items[self.position][1](self.items[self.position][0])
+
+                    # debug message
+                    else:
+                        if eng.DEBUG is True:
+                            battleUI.writeLog("You clicked the mouse at {0}, {1}".format(mx, my), "CYAN")
+
+                    # exit the battle if requested
+                    if exit_battle is True:
+                        break
+
+                # if an ERR is encountered, ignore it and move on
+                except curses.error:
+                    pass
+
+            # if it's a number, try to move to that position
+            elif key in [ ord("1"), ord("2"), ord("3"), ord("4") ] and int(chr(key)) <= len(self.items):
+                self.position = int(chr(key)) - 1
+
+            # if it's HOME or BACKSPACE, return to the previous menu
+            elif key in [ curses.KEY_BACKSPACE, curses.KEY_HOME, 27 ]:
+                break
+
+            # Define where UP takes you from each position
+            elif key in [ curses.KEY_UP, ord("w"), ord("W") ]:
+                if self.position == 0:
+                    self.position = 0
+                elif self.position == 1:
+                    self.position = 1
+                elif self.position == 2:
+                    self.position = 0
+                elif self.position == 3:
+                    self.position = 1
+
+            # Define where LEFT takes you from each position
+            elif key in [ curses.KEY_LEFT, ord("a"), ord("A") ]:
+                if self.position == 0:
+                    self.position = 0
+                elif self.position == 1:
+                    self.position = 0
+                elif self.position == 2:
+                    self.position = 2
+                elif self.position == 3:
+                    self.position = 2
+
+            # Define where DOWN takes you from each position
+            elif key in [ curses.KEY_DOWN, ord("s"), ord("S") ]:
+                if self.position == 0 and len(self.items) > 2:
+                    self.position = 2
+                elif self.position == 1 and len(self.items) > 3:
+                    self.position = 3
+                elif self.position == 2:
+                    self.position = 2
+                elif self.position == 3:
+                    self.position = 3
+
+            # Define where RIGHT takes you from each position
+            elif key in [ curses.KEY_RIGHT, ord("d"), ord("D") ]:
+                if self.position == 0 and len(self.items) > 1:
+                    self.position = 1
+                elif self.position == 1:
+                    self.position = 1
+                elif self.position == 2 and len(self.items) > 3:
+                    self.position = 3
+                elif self.position == 3:
+                    self.position = 3
+
+            if player_turn[0] is False:
+                break
+
         # clear and hide the panel when the loop exits
         self.window.clear()
         self.panel.hide()
@@ -166,7 +344,7 @@ class Menu(object):
 
 class ItemMenu(object):
     def __init__(self, items, stdscr):
-        self.window = stdscr.subwin(12, 12, 12, 125)
+        self.window = stdscr.subwin(12, 12, (eng.battleInvDims["border"][2] + 4), (eng.battleInvDims["border"][3] + 5))
         self.window.immedok(True)
         self.window.keypad(True)
         curses.mousemask(1)
@@ -223,9 +401,10 @@ class ItemMenu(object):
                 try:
                     # get the current position of the click
                     _, mx, my, _, _ = curses.getmouse()
+                    cy, cx = self.window.getbegyx()
 
-                    if 123 <= mx <= 137 and 12 <= my <= 24:
-                        self.position = my - 12
+                    if cx <= mx <= (cx + 15) and cy <= my <= (cy + 24):
+                        self.position = my - cy
                         self.items[self.position][1](self.items[self.position][0])
                         break
 
@@ -356,12 +535,6 @@ class battleUI():
                     battle_items.append(item)
                     s += 1
 
-    # function specifically to parse commands and run their relevant functions
-    def runAction(cmd, arg):
-
-        # TODO run the selected action
-        sleep(1)
-
     # function to pick and print the initial stats for an encounter
     def initEnemy():
 
@@ -440,7 +613,7 @@ class battleUI():
         global playerBattleStats
         global eventLine
         global exit_battle
-        global next_turn
+        global player_turn
 
         # get stats
         playerBattleStats = dbs.getPlayerDict()
@@ -452,12 +625,10 @@ class battleUI():
         exit_battle = False
 
         # decide who goes first
-        rand = randrange(1, 100)
-        if rand > 50:
-            next_turn = "enemy"
+        player_turn = choices([True,False], [50,50])
+        if player_turn[0] is False:
             battleUI.writeLog("The enemy flanked you, Ted!", "DIM_RED")
-        else:
-            next_turn = "ted"
+        elif player_turn[0] is True:
             battleUI.writeLog("You beat 'em to the punch, Ted!", "DIM_GREEN")
 
         # write all data to the screen
@@ -467,57 +638,84 @@ class battleUI():
 
         # main command input loop
         while exit_battle is False:
-            battleUI.runMenu()
+            if player_turn[0] is True:
+                battleUI.runMenu()
+            elif player_turn[0] is False:
+                battleUI.runEnemyTurn()
+            #battleUI.checkBattle() # TODO check if player or enemy is dead
 
-    def mojoAbility():
-        battleUI.writeLog("You used a mojo ability!", "BLUE")
+    def runEnemyTurn():
 
-    def atkAbility():
-        battleUI.writeLog("You used a regular attack!", "CYAN")
+        global player_turn
+
+        battleUI.writeLog("The {0} lands a blow!".format(dbs.enemyInfo["NAME"]), "RED")
+        sleep(eng.GAME_SPEED // 2)
+
+        player_turn = [True]
+
+    def mojoAbility(name):
+
+        global player_turn
+
+        battleUI.writeLog("Ted used {0}!".format(name), "BLUE")
+        sleep(eng.GAME_SPEED // 2)
+
+        player_turn = [False]
+
+    def atkAbility(name):
+
+        global player_turn
+
+        battleUI.writeLog("Ted used {0}!".format(name), "CYAN")
+        sleep(eng.GAME_SPEED // 2)
+
+        player_turn = [False]
+
+    def runUseItem(item):
+
+        global player_turn
+
+        message = eng.useItem(item)
+        battleUI.writeLog(message[0], message[1])
+        sleep(eng.GAME_SPEED // 2)
+
+        player_turn = [False]
 
     def escape():
 
         global exit_battle
-        global next_turn
+        global player_turn
 
         # roll to see if the escape attempt is successful
-        rand = randrange(1, 100)
-        if rand >= 75:
-            attempt = True
-        else:
-            attempt = False
+        attempt = choices([True,False], weights=[65,35])
 
         # if it fails, display a message and return to battle
-        if attempt is False:
+        if attempt[0] is False:
             battleUI.writeLog("Ted tripped when he tried to run!", "RED")
             exit_battle = False
-            next_turn = "enemy"
+            player_turn = [False]
 
         # if it succeeds, display a message and pause
-        elif attempt is True:
+        elif attempt[0] is True:
             battleUI.writeLog("Ted is gettin' the fuck outta here!", "YELLOW")
 
             # if the player doesn't have any FLOYDS, don't bother trying to drop any
             if dbs.playerStats["FLOYDS"] != 0:
 
                 # roll to see if the player loses any FLOYDS
-                rand = randrange(1, 100)
-                if rand >= 60:
-                    drop_floyds = True
-                else:
-                    drop_floyds = False
+                drop_floyds = choices([True,False], weights=[50,50])
 
                 # if it fails, exit battle
-                if drop_floyds is False:
+                if drop_floyds[0] is False:
                     battleUI.writeLog("Ted managed to hang onto all his coin.", "GREEN")
                     sleep(2)
                     exit_battle = True
 
                 # if it succeeds, how many will they lose
-                elif drop_floyds is True:
+                elif drop_floyds[0] is True:
 
                     # pick an amount to remove
-                    rand = randrange(0, 100)
+                    rand = randrange(5, 100, 5)
 
                     # try to remove the FLOYDS from player
                     if dbs.floydsTransaction(rand, "dec") is True:
@@ -534,18 +732,45 @@ class battleUI():
             # exit battle
             exit_battle = True
 
-    def runUseItem(item):
-
-        message = eng.useItem(item)
-        battleUI.writeLog(message[0], message[1])
-
     def setItemsMenu():
 
         menu_items = []
+
         i = 0
         while i < len(battle_items):
             menu_items.append((battle_items[i], battleUI.runUseItem))
             i += 1
+
+        if len(menu_items) == 0:
+            return False
+
+        return menu_items
+
+    def setAttackMenu():
+
+        menu_items = []
+        attack_list = list(dbs.playerEquip["ATTACKS"])
+
+        i = 0
+        while i < len(attack_list):
+            menu_items.append((attack_list[i], battleUI.atkAbility))
+            i += 1
+
+        return menu_items
+
+    def setMojoMenu():
+
+        menu_items = []
+        mojo_list = list(dbs.playerEquip["MOJO"])
+
+        if len(mojo_list) == 0:
+            return False
+
+        i = 0
+        while i < len(mojo_list):
+            menu_items.append((mojo_list[i], battleUI.mojoAbility))
+            i += 1
+
         return menu_items
 
     # wait for user input
@@ -556,34 +781,41 @@ class battleUI():
 
         # define the item menu
         item_menu_items = battleUI.setItemsMenu()
-        item_menu = ItemMenu(item_menu_items, screen)
+        if item_menu_items is not False:
+            item_menu = ItemMenu(item_menu_items, screen)
 
         # define the attack menu
-        attack_menu_items = [
-            ("PUNCH",  battleUI.atkAbility)
-        ]
-        attack_menu = Menu(attack_menu_items, screen)
+        attack_menu_items = battleUI.setAttackMenu()
+        attack_menu = AbilityMenu(attack_menu_items, screen)
 
         # define the mojo menu
-        mojo_menu_items = [
-            ("RISING FORCE", battleUI.mojoAbility),
-            ("PURPLE RAIN", battleUI.mojoAbility)
-        ]
-        mojo_menu = Menu(mojo_menu_items, screen)
+        mojo_menu_items = battleUI.setMojoMenu()
+        if mojo_menu_items is not False:
+            mojo_menu = AbilityMenu(mojo_menu_items, screen)
 
         # define the main menu
-        main_menu_items = [
-            ("ATTACK", attack_menu.display),
-            ("MOJO ABILITIES", mojo_menu.display),
-            ("USE ITEM", item_menu.display),
-            ("ESCAPE", battleUI.escape)
-        ]
+        if mojo_menu_items is not False and item_menu_items is not False:
+            main_menu_items = [
+                ("ATTACKS", attack_menu.display),
+                ("MOJO ABILITIES", mojo_menu.display),
+                ("USE ITEM", item_menu.display),
+                ("ESCAPE", battleUI.escape)
+            ]
+        elif mojo_menu_items is False and item_menu_items is not False:
+            main_menu_items = [
+                ("ATTACKS", attack_menu.display),
+                ("USE ITEM", item_menu.display),
+                ("ESCAPE", battleUI.escape)
+            ]
+        elif mojo_menu_items is False and item_menu_items is False:
+            main_menu_items = [
+                ("ATTACKS", attack_menu.display),
+                ("ESCAPE", battleUI.escape)
+            ]
         main_menu = Menu(main_menu_items, screen)
 
         # run the main menu
         main_menu.display()
-
-        return True
 
     # function to clear all screens
     def clearAllScreens():
@@ -618,7 +850,7 @@ class battleUI():
         global max_x
         global max_y
         global screen
-        global next_turn
+        global player_turn
         global exit_battle
 
         screen = stdscr
