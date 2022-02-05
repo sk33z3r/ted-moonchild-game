@@ -483,7 +483,7 @@ def useItem(name):
 
         # otherwise, the effect should buff a stat in battle
         elif stat in STATS:
-            message = [ "TODO: use the item during battle", "MAGENTA" ]
+            message = [ "TODO: use {0} during battle".format(shortdesc), "MAGENTA" ]
             return message
 
         # catch exceptions
